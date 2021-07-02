@@ -6,9 +6,14 @@
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>dagger</ToolCommandName>
     <PackageOutputPath>../nupkg</PackageOutputPath>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Dagger.Services\Dagger.Services.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+      <None Include="../LICENSE" Pack="true" PackagePath="" />
   </ItemGroup>
 </Project>
