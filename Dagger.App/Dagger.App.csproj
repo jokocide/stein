@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>dagger</ToolCommandName>
+    <PackageOutputPath>../nupkg</PackageOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Dagger.Services\Dagger.Services.csproj" />
+  </ItemGroup>
+</Project>
