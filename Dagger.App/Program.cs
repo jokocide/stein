@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using Dagger.Abstract;
 using Dagger.Routines;
 using Dagger.Services;
 
@@ -9,13 +8,20 @@ namespace Dagger.App
     {
         static void Main(string[] args)
         {
-            Routine instructions;
+            Routine instructions = new Build();
             
-            if (args.Length == 0)
+            /// <Middleware>
+            /// Actions that need to run before the routine can go here.
+            /// </Middleware>
+
+            // If arguments are received, use ArgumentsHandler to determine which routine we need to run.
+            if (args.Length > 0)
             {
-                instructions = new Automatic();
-                instructions.Execute();
+                ArgumentsHandler argumentsHandler = new ArgumentsHandler(args);
+                instructions = argumentsHandler.Evaluate();
             }
+
+            instructions.Execute();
         }
     }
 }
