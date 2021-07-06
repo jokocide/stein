@@ -1,4 +1,7 @@
+using System;
+using System.IO;
 using Dagger.Abstract;
+using Dagger.Data.Models;
 using Dagger.Routines;
 
 namespace Dagger.Services
@@ -14,7 +17,7 @@ namespace Dagger.Services
         private string[] _args { get; }
 
         // Represents the maximum amount of arguments.
-        private int _argsMaximum { get; } = 1;
+        private int _argsMaximum { get; } = 2;
 
         public ArgumentsHandler(string[] args)
         {
@@ -32,6 +35,19 @@ namespace Dagger.Services
                 }
                 else if (_args[0].ToLower() == "build")
                 {
+                    if (_args.Length > 1)
+                    {
+                        // Expect next argument to be a path that leads to a Dagger project.
+                        try
+                        {
+                            Directory.SetCurrentDirectory(_args[1]);
+                        }
+                        catch (IOException)
+                        {
+                            return new Help(new Message {message = $"'{_args[1]}' is not a valid path.", type = Message.Type.Error});
+                        }
+                    }
+
                     return new Build();
                 }
                 else 

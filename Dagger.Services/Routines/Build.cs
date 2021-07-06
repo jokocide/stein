@@ -12,7 +12,7 @@ namespace Dagger.Routines
         public override void Execute()
         {
             Console.WriteLine("Build routine.");
-            Console.Write($"Result of check: {Helper.DirectoryIsResources()}");
+            Console.Write($"Result of check: {Helper.CheckIsProject()}");
         }
     }
 }

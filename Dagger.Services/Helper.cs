@@ -11,20 +11,19 @@ namespace Dagger.Services
     {
         private static string _headerSeparator { get; } = "------------------------------";
 
-        // Return true if the current directory is a Dagger project.
-        public static bool DirectoryIsResources()
+        /*
+        Return true if the path is a Dagger project as indicated by the prescence 
+        of a .dagger file. Defaults to the current directory with no given path.
+        */
+        public static bool CheckIsProject(string path = null)
         {
-            // Determine if this directory contains a .dagger file
-            string currentDirectory = Directory.GetCurrentDirectory();
-            string indicator = ".dagger";
-            bool isDaggerProject = File.Exists(Path.Join(currentDirectory, indicator));
-            return isDaggerProject;
-        }
+            if (path == null)
+            {
+                path = Directory.GetCurrentDirectory();
+            }
 
-        // Return true if the current directory contains a Dagger project.
-        public static bool DirectoryContainsResources()
-        {
-            throw new NotImplementedException();
+            bool isDaggerProject = File.Exists(Path.Join(path, ".dagger"));
+            return isDaggerProject;
         }
 
         // Prints out the command that was called.
