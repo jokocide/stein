@@ -1,20 +1,19 @@
-using System;
 using Dagger.Abstract;
 using Dagger.Routines;
 
 namespace Dagger.Services
 {
     /// <summary>
-    /// Receive and handle command line arguments.
+    /// Receive arguments and determine which Routine to respond with.
     /// </summary>
     /// <returns>
-    /// A Routine-typed object.
+    /// A class instance that derives from the Routine abstract class.
     /// </returns>
     public class ArgumentsHandler
     {
         private string[] _args { get; }
 
-        // Define some 'rules' here that can be used by private 'validator' methods.
+        // Represents the maximum amount of arguments.
         private int _argsMaximum { get; } = 1;
 
         public ArgumentsHandler(string[] args)
@@ -22,7 +21,8 @@ namespace Dagger.Services
             _args = args;
         }
 
-        public Routine Evaluate() // Return a routine based on the arguments that were passed in.
+        // Examine the received arguments and respond with a Routine instance.
+        public Routine Evaluate() 
         {
             if (_args.Length <= _argsMaximum)
             {
@@ -30,13 +30,11 @@ namespace Dagger.Services
                 {
                     return new Help();
                 }
-
-                if (_args[0].ToLower() == "build")
+                else if (_args[0].ToLower() == "build")
                 {
                     return new Build();
                 }
-                
-                else // Arguments were received, but we don't understand them.
+                else 
                 {
                     return new NotRecognized();
                 }

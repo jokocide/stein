@@ -6,12 +6,8 @@ namespace Dagger.Routines
     public class Help : Routine
     {
         /// <summary>
-        /// Used to display some helpful informatino related to the CLI, optionally
-        /// includes a message to indicate what triggered this routine.
+        /// Display some 'help' text for the Dagger CLI.
         /// </summary>
-        /// <returns>
-        /// A string value with instructions for using Dagger.
-        /// </returns>
         private string _message { get; }
 
         public Help(string message = null)
@@ -21,12 +17,16 @@ namespace Dagger.Routines
              
         public override void Execute()
         {
-            // Write out some CLI information, include _message somewhere if it isn't null.
             if (_message != null)
             {
                 Console.WriteLine(_message);
+                Console.WriteLine();
             }
-            Console.WriteLine("Help goes here!");
+
+            Console.WriteLine("- build [target]");
+            Console.WriteLine("Builds the site that exists at 'target', or builds the current directory if no target is given.");
+            Console.WriteLine("- help");
+            Console.WriteLine("Display help.");
         }
     }
 }

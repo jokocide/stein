@@ -3,17 +3,21 @@ using Dagger.Abstract;
 
 namespace Dagger.Routines
 {
+    /// <summary>
+    /// Report that arguments were received but not understood.
+    /// </summary>
     public class NotRecognized : Routine
     {
-        /// <summary>
-        /// Triggered when arguments are received but not recognized.
-        /// </summary>
-        /// <returns>
-        /// A string value with instructions for getting to the Dagger 'help' command.
-        /// </returns>
         public override void Execute()
-        {
-            Console.WriteLine("Command not recognized.\nTry reviewing the documentation with 'dagger help' or submit an issue:\nhttps://github.com/jokocide/dagger/issues/new");
+        {   
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("Command not recognized.");
+            Console.ResetColor();
+            Console.Write("Get help with 'dagger help' or submit an issue: ");
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.Write("https://github.com/jokocide/dagger/issues/new");
+            Console.ResetColor();
+            Console.WriteLine();
         }
     }
 }
