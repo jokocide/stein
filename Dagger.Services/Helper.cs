@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace Dagger.Services
 {
@@ -13,7 +14,11 @@ namespace Dagger.Services
         // Return true if the current directory is a Dagger project.
         public static bool DirectoryIsResources()
         {
-            throw new NotImplementedException();
+            // Determine if this directory contains a .dagger file
+            string currentDirectory = Directory.GetCurrentDirectory();
+            string indicator = ".dagger";
+            bool isDaggerProject = File.Exists(Path.Join(currentDirectory, indicator));
+            return isDaggerProject;
         }
 
         // Return true if the current directory contains a Dagger project.

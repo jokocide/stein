@@ -15,7 +15,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Dagger.Services\Dagger.Services.csproj" />
-    <ProjectReference Include="..\Dagger.Data\Dagger.Data.csproj" />
   </ItemGroup>
 
   <ItemGroup>

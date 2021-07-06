@@ -1,17 +1,18 @@
 using System;
 using Dagger.Abstract;
+using Dagger.Services;
 
 namespace Dagger.Routines
 {
     /// <summary>
-    /// Verify we are inside of a Dagger project folder or are at least given the path of one,
-    /// and attempt to compile all Markdown and HTML documents associated with the project.
+    /// Attempt to compile the Dagger project that exists in the current directory.
     /// </summary>
     public class Build : Routine
     {
         public override void Execute()
         {
             Console.WriteLine("Build routine.");
+            Console.Write($"Result of check: {Helper.DirectoryIsResources()}");
         }
     }
 }

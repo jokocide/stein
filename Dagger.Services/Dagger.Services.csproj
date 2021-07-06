@@ -9,8 +9,4 @@
       <None Include="../LICENSE" Pack="true" PackagePath="" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Dagger.Data\Dagger.Data.csproj" />
-  </ItemGroup>
-
 </Project>
