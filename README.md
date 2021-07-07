@@ -21,9 +21,7 @@ Dagger should now be available. Call it from anywhere with the `dagger` command,
 
 ## New project
 
-`dagger new`
-
-Initializes a new Dagger project in the current directory, which consists of a **resources** and **site** folder, as well as a hidden .dagger file that is used to identify Dagger projects in the future.
+`dagger new` creates a new Dagger project in the current directory, which consists of a **resources** and **site** folder, as well as a hidden .dagger file that is used to identify Dagger projects in the future.
 
 The **resources** folder should contain all of your content. When Dagger is finished processing the contents it will deposit the results into the **site** folder in a largely similiar file structure.
 
