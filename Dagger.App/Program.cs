@@ -1,7 +1,5 @@
 ﻿using System;
-using System.IO;
-using Dagger.Abstract;
-using Dagger.Routines;
+using Dagger.Services.Routines;
 using Dagger.Services;
 
 namespace Dagger.App
@@ -14,13 +12,13 @@ namespace Dagger.App
     {
         static void Main(string[] args)
         {
-            // Build is the 'default' routine and is called when dagger is invoked with no arguments.
-            Routine instructions = new Build();
+            // Help is the 'default' routine and is called when dagger is invoked with no arguments.
+            Routine instructions = new Help();
 
             // If arguments were received, call ArgumentsHandler and receive a new type of Routine.
             if (args.Length > 0)
             {
-                ArgumentsHandler argumentsHandler = new ArgumentsHandler(args);
+                Dispatch argumentsHandler = new Dispatch(args);
                 instructions = argumentsHandler.Evaluate();
             }
  

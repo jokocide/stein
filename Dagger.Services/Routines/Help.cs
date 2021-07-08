@@ -1,8 +1,7 @@
 using System;
-using Dagger.Abstract;
 using Dagger.Data.Models;
 
-namespace Dagger.Routines
+namespace Dagger.Services.Routines
 {
     public class Help : Routine
     {
@@ -37,6 +36,8 @@ namespace Dagger.Routines
 
             Console.WriteLine("- build [PATH]");
             Console.WriteLine("Builds the site that exists at the given path, or builds the current directory if no target is given.");
+            Console.WriteLine("- new");
+            Console.WriteLine("Creates a new Dagger project in the current directory.");
             // Console.WriteLine("- help");
             // Console.WriteLine("Display help.");
         }

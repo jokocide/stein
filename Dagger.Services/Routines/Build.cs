@@ -1,8 +1,8 @@
 using System;
-using Dagger.Abstract;
-using Dagger.Services;
+using System.IO;
+using HandlebarsDotNet;
 
-namespace Dagger.Routines
+namespace Dagger.Services.Routines
 {
     /// <summary>
     /// Attempt to compile the Dagger project that exists in the current directory.
@@ -11,8 +11,17 @@ namespace Dagger.Routines
     {
         public override void Execute()
         {
-            Console.WriteLine("Build routine.");
-            Console.Write($"Result of check: {Helper.CheckIsProject()}");
+            // Find partial files.
+            string partialsDirectory = Path.Join(Directory.GetCurrentDirectory(), "resources", "templates", "partials");
+            string[] partialsFiles = Directory.GetFiles(partialsDirectory, "*.hbs");
+            
+            // Register partials with Handlebars.
+            foreach (string path in partialsFiles)
+            {
+                string name = Path.GetFileNameWithoutExtension(path);
+                string content = File.ReadAllText(path);
+                Handlebars.RegisterTemplate(name, content);
+            }
         }
     }
 }

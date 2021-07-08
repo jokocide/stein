@@ -1,8 +1,6 @@
-using System;
 using System.IO;
-using Dagger.Abstract;
 using Dagger.Data.Models;
-using Dagger.Routines;
+using Dagger.Services.Routines;
 
 namespace Dagger.Services
 {
@@ -12,11 +10,11 @@ namespace Dagger.Services
     /// <returns>
     /// A class instance that derives from the Routine abstract class.
     /// </returns>
-    public class ArgumentsHandler
+    public class Dispatch
     {
         private string[] _args { get; }
 
-        public ArgumentsHandler(string[] args)
+        public Dispatch(string[] args)
         {
             _args = args;
         }
@@ -42,7 +40,15 @@ namespace Dagger.Services
                         return new Help(new Message { message = $"'{_args[1]}' is not a valid path.", type = Message.Type.Error });
                     }
                 }
-                return new Build();
+
+                if (Helper.CheckIsProject())
+                {
+                    return new Build();
+                }
+                else
+                {
+                    return new Help(new Message { message = "Provide a path to a Dagger project or move to project before calling build.", type = Message.Type.Error });
+                }
             }
             else if (_args[0].ToLower() == "new") // dagger new - create new project
             {
