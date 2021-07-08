@@ -21,19 +21,21 @@
       <None Include="../LICENSE" Pack="true" PackagePath="" />
       <None Remove="example\.dagger" />
       <None Remove="jokocide\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="example\site\posts" />
-    <Folder Include="example\site\public\css" />
+      <None Remove="example\**" />
   </ItemGroup>
 
   <ItemGroup>
     <Compile Remove="jokocide\**" />
+    <Compile Remove="example\**" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Remove="jokocide\**" />
+    <EmbeddedResource Remove="example\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="example\site" />
   </ItemGroup>
 
 </Project>

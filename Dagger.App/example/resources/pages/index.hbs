@@ -1,0 +1,23 @@
+{{> header }}
+
+<div class="index-container">
+    <div class="widget" id="posts">
+        <h1 class="section-title">Recent</h1>
+        <div id="posts-container">
+
+            {{#each posts}}
+                <div onclick={{ this.relative }} style="cursor: pointer;" class="post">
+                    <ul class="title-container">
+                        <li class="title">{{ this.title }}</li>
+                    </ul>
+                    <div class="description-container">
+                        <p class="description">{{ this.description }}</p>
+                    </div>
+                </div>
+            {{/each}}
+
+        </div>
+    </div>
+</div>
+
+{{> footer }}

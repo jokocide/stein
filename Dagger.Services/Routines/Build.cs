@@ -22,6 +22,26 @@ namespace Dagger.Services.Routines
                 string content = File.ReadAllText(path);
                 Handlebars.RegisterTemplate(name, content);
             }
+
+            string postsDirectory = Path.Join(Directory.GetCurrentDirectory(), "resources", "posts");
+            string[] postsFiles = Directory.GetFiles(postsDirectory, "*.md");
+
+            foreach (string path in postsFiles)
+            {
+                // Read file to memory, but do it line by line so we can detect and form a metadata object.
+                string line = null;
+                int count = 0;
+                StreamReader reader = new StreamReader(path);
+                
+                while ((line = reader.ReadLine()) != null)
+                {
+                    if (line == "---")
+                    {
+                        count++;
+                        Console.WriteLine($"Found ---, count: {count}");
+                    }
+                }
+            }
         }
     }
 }
