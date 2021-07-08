@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using HandlebarsDotNet;
 
@@ -18,8 +17,12 @@ namespace Dagger.Services.Routines
             // Register partials with Handlebars.
             foreach (string path in partialsFiles)
             {
-                string name = Path.GetFileNameWithoutExtension(path);
+                // File is loaded into memory.
                 string content = File.ReadAllText(path);
+                
+                // The partial is registered with the name of the file.
+                string name = Path.GetFileNameWithoutExtension(path);
+                
                 Handlebars.RegisterTemplate(name, content);
             }
 
@@ -28,19 +31,16 @@ namespace Dagger.Services.Routines
 
             foreach (string path in postsFiles)
             {
-                // Read file to memory, but do it line by line so we can detect and form a metadata object.
-                string line = null;
-                int count = 0;
-                StreamReader reader = new StreamReader(path);
+                // File is loaded into memory.
+                string content = File.ReadAllText(path);
                 
-                while ((line = reader.ReadLine()) != null)
-                {
-                    if (line == "---")
-                    {
-                        count++;
-                        Console.WriteLine($"Found ---, count: {count}");
-                    }
-                }
+                // Looking for metadata indicator, "---" in YAML.
+                int firstIndicatorEndIndex = content.IndexOf("---", 0) + 3;
+                int secondIndicatorStartIndex = content.IndexOf("---", firstIndicatorEndIndex);
+                
+                // Separating metadata and content.
+                string metadata = content.Substring(firstIndicatorEndIndex, secondIndicatorStartIndex - firstIndicatorEndIndex).Trim();
+                string body = content.Substring(secondIndicatorStartIndex + 3).Trim();
             }
         }
     }

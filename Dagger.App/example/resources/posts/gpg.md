@@ -5,7 +5,6 @@ title: "GPG: Crash Course"
 description: "A very brief reference guide on encrypting and decrypting files with GPG."
 date: "2020-12-04"
 ---
-
 ## Key Creation
 
 To begin, you need to create your keys.
