@@ -41,6 +41,8 @@ namespace Dagger.Services.Routines
                 // Separating metadata and content.
                 string metadata = content.Substring(firstIndicatorEndIndex, secondIndicatorStartIndex - firstIndicatorEndIndex).Trim();
                 string body = content.Substring(secondIndicatorStartIndex + 3).Trim();
+                
+                // Add the information to a "posts" collection in the data store.
             }
         }
     }
