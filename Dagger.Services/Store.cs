@@ -3,8 +3,8 @@ using Dagger.Data.Models;
 
 namespace Dagger.Services
 {
-    public class Store
+    public static class Store
     {
-        public List<MetaData> posts { get; }
+        public static List<MetaData> Posts { get; }
     }
 }

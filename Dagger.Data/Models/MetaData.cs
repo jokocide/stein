@@ -5,6 +5,6 @@ namespace Dagger.Data.Models
 {
     public class MetaData
     {
-        public Dictionary<String, String> data { get; }
+        public Dictionary<String, String> Data { get; }
     }
 }

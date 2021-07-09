@@ -1,4 +1,6 @@
+using System;
 using System.IO;
+using System.Text.RegularExpressions;
 using HandlebarsDotNet;
 
 namespace Dagger.Services.Routines
@@ -39,10 +41,26 @@ namespace Dagger.Services.Routines
                 int secondIndicatorStartIndex = content.IndexOf("---", firstIndicatorEndIndex);
                 
                 // Separating metadata and content.
-                string metadata = content.Substring(firstIndicatorEndIndex, secondIndicatorStartIndex - firstIndicatorEndIndex).Trim();
-                string body = content.Substring(secondIndicatorStartIndex + 3).Trim();
+                string metadata = content.Substring(firstIndicatorEndIndex, secondIndicatorStartIndex - firstIndicatorEndIndex).Trim(); // MetaData object -> Posts list.
+                string body = content.Substring(secondIndicatorStartIndex + 3).Trim(); // Writable object (need to calculate path)
                 
-                // Add the information to a "posts" collection in the data store.
+                // Convert the metadata string into multiple new MetaData objects.
+                string[] splitMetadata = metadata.Split(Environment.NewLine);
+                
+                foreach (string line in splitMetadata)
+                {
+                    string[] splitLines = line.Split(":", 2);
+                    
+                    string key = splitLines[0].Trim();
+                    string value = splitLines[1].Trim();
+
+                    if (value.StartsWith('"') && value.EndsWith('"'))
+                    {
+                        Console.WriteLine($"Before: {value}");
+                        value = value.Trim('"');
+                        Console.WriteLine($"After: {value}");
+                    }
+                }
             }
         }
     }
