@@ -61,34 +61,6 @@ namespace Dagger.Services
                 {
                     return new Help(new Message { message = "A project has already been initialized in this directory.", type = Message.Type.Error });
                 }
-                // Create resources folder
-                // Create site folder
-                // Create site folder
-            }
-            else if (_args[0].ToLower() == "serve") // dagger serve - preview site
-            {
-                if (_args.Length > 1 && Helper.CheckIsProject(_args[1]))
-                {
-                    // Expect next argument to be a path that leads to a Dagger project.
-                    try
-                    {
-                        Directory.SetCurrentDirectory(_args[1]);
-                        Console.WriteLine(Directory.GetCurrentDirectory());
-                        return new Serve();
-                    }
-                    catch (IOException)
-                    {
-                        return new Help(new Message { message = $"'{_args[1]}' is not a valid path.", type = Message.Type.Error });
-                    }
-                }
-                else
-                {
-                    return new Help(new Message
-                    {
-                        message = "Provide a path to a Dagger project or move to project before calling serve.",
-                        type = Message.Type.Error
-                    });
-                }
             }
             else
             {
