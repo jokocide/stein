@@ -1,10 +1,9 @@
-using System;
 using System.Collections.Generic;
 
 namespace Dagger.Data.Models
 {
     public class MetaData
     {
-        public Dictionary<String, String> Data { get; }
+        public Dictionary<string, string> Pair { get; } = new Dictionary<string, string>();
     }
 }

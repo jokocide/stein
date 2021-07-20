@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/160/google/274/castle_1f3f0.png" />
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="public/css/main.css">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,800;1,300;1,800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <script src="https://kit.fontawesome.com/477d5dc120.js" crossorigin="anonymous"></script>
+    
+    <!-- Meta -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+
+    <title>Jokoci.de</title>
+</head>
+<body>
+
+    <div class="nav-container">
+<nav id="nav">
+    <div id="nav-1">
+    </div>
+    <div id="nav-2">
+        <a id="name" href="/">Jokoci.de</a>
+        <a href="mailto:jokobox@outlook.com">Mail</a>
+        <a href="https://github.com/jokocide" target="_blank">Github</a>
+        <a id="axe" href="https://github.com/jokocide/AXE" target="_blank">🪓</a>
+    </div>
+    <div id="nav-2">
+    </div>
+</nav>    </div>
+
+    <div class="base-container">
+<div class='post-container'>
+    <h1>Microscripts</h1>
+    <p>My Powershell/BASH configuration. These are essentially just miniature scripts that make common tasks (almost) 3 seconds faster for me.</p>
+    <h2>INSTALLATION</h2>
+<p>Clone the <a href="https://github.com/jokocide/microscripts.git">repository.</a> Review the files and remove the directories that are not relevant to you. (ie 'pwsh' on unix systems)</p>
+<p>The bash and pwsh directories include a <span class="refer-code">.bashrc</span> and <span class="refer-code">profile.ps1</span> respectively, but the functions have their own individual files as well. I sometimes like to keep them in a separate directory, add it to my <a href="https://linuxize.com/post/how-to-add-directory-to-path-in-linux/">path</a> and call them that way rather than pollute my configuration file with a ton of functions.</p>
+<pre><code class="language-sh">git clone https://github.com/jokocide/microscripts.git
+</code></pre>
+<p>I focus on developing the scripts in Powershell and BASH. They should all perform exactly the same barring any bugs, so you should delete the directories that are not relevant to you. Keeping everything together in one repository is easier for me, so I apologize for any inconvenience that might cause you.</p>
+<h2>USAGE</h2>
+<p>If you are keeping the functions in a directory rather than adding them directly to your profile, you should be able to start typing the name of the function you are after to get some nice tab completion. This is assuming you didn't forget to add the directory to your path as described above, and you might also need to log out/in to get this working.</p>
+<p>If you've added some of the functionality directly to your profile, don't forget to <a href="https://linuxize.com/post/bash-source-command/">source!</a></p>
+
+</div>
+
+    </div>
+
+</body>
+</html>

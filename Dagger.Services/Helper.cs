@@ -17,13 +17,8 @@ namespace Dagger.Services
         */
         public static bool CheckIsProject(string path = null)
         {
-            if (path == null)
-            {
-                path = Directory.GetCurrentDirectory();
-            }
-
-            bool isDaggerProject = File.Exists(Path.Join(path, ".dagger"));
-            return isDaggerProject;
+            if (path == null) path = Directory.GetCurrentDirectory();
+            return File.Exists(Path.Join(path, ".dagger"));
         }
 
         // Prints out the command that was called.
@@ -42,6 +37,43 @@ namespace Dagger.Services
             }
 
             Colorize(ConsoleColor.DarkGray, _headerSeparator); // Display visible separator before the routine is executed.
+        }
+
+        // Synchronize two directories, recursive functionality is optional.
+        public static void Synchronize(string sourceDirName, string destDirName, bool copySubDirs)
+        {
+            // Get the subdirectories for the specified directory.
+            DirectoryInfo dir = new DirectoryInfo(sourceDirName);
+
+            if (!dir.Exists)
+            {
+                throw new DirectoryNotFoundException(
+                    "Source directory does not exist or could not be found: "
+                    + sourceDirName);
+            }
+
+            DirectoryInfo[] dirs = dir.GetDirectories();
+        
+            // If the destination directory doesn't exist, create it.       
+            Directory.CreateDirectory(destDirName);        
+
+            // Get the files in the directory and copy them to the new location.
+            FileInfo[] files = dir.GetFiles();
+            foreach (FileInfo file in files)
+            {
+                string tempPath = Path.Combine(destDirName, file.Name);
+                file.CopyTo(tempPath, false);
+            }
+
+            // If copying subdirectories, copy them and their contents to new location.
+            if (copySubDirs)
+            {
+                foreach (DirectoryInfo subdir in dirs)
+                {
+                    string tempPath = Path.Combine(destDirName, subdir.Name);
+                    Synchronize(subdir.FullName, tempPath, copySubDirs);
+                }
+            }
         }
 
         /* 

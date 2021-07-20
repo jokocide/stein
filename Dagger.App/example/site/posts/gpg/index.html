@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/160/google/274/castle_1f3f0.png" />
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="public/css/main.css">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,800;1,300;1,800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <script src="https://kit.fontawesome.com/477d5dc120.js" crossorigin="anonymous"></script>
+    
+    <!-- Meta -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+
+    <title>Jokoci.de</title>
+</head>
+<body>
+
+    <div class="nav-container">
+<nav id="nav">
+    <div id="nav-1">
+    </div>
+    <div id="nav-2">
+        <a id="name" href="/">Jokoci.de</a>
+        <a href="mailto:jokobox@outlook.com">Mail</a>
+        <a href="https://github.com/jokocide" target="_blank">Github</a>
+        <a id="axe" href="https://github.com/jokocide/AXE" target="_blank">🪓</a>
+    </div>
+    <div id="nav-2">
+    </div>
+</nav>    </div>
+
+    <div class="base-container">
+<div class='post-container'>
+    <h1>GPG: Crash Course</h1>
+    <p>A very brief reference guide on encrypting and decrypting files with GPG.</p>
+    <h2>Key Creation</h2>
+<p>To begin, you need to create your keys.</p>
+<pre><code class="language-sh">gpg --full-gen-key
+</code></pre>
+<p>Follow the prompts and your keys will be created and added to your keyring -- unless you have a reason not to, go with the defaults.</p>
+<h2>Encryption</h2>
+<p>In our current directory, we have a text file called 'message' containing a secret.</p>
+<pre><code class="language-sh">&gt; ls -l
+total 16
+-rw-r--r--  1 jkoenig  staff    22 Dec  4 09:33 message
+
+&gt; cat message
+37.2431° N, 115.7930° W
+</code></pre>
+<p>To encrypt our message, we use the <span class="refer-code">-r</span> option and specify the email that was used during key creation. The <span class="refer-code">-e</span> option allows you to target the file.</p>
+<pre><code class="language-sh">&gt; gpg -r jokobox@outlook.com -e message
+&gt; ls -l
+total 24
+-rw-r--r--  1 jkoenig  staff    22 Dec  4 09:33 message
+-rw-r--r--  1 jkoenig  staff   488 Dec  4 09:37 message.gpg
+</code></pre>
+<p>You can see a new file <span class="refer-code">message.gpg</span> now exists, which represents our encrypted message.</p>
+<p>Remember that deleting the original unencrypted file with your GUI on Windows/MacOS or <span class="refer-code">rm</span> on the command line <a href="https://en.wikipedia.org/wiki/Data_remanence">will not destroy the data</a> and you should never rely on this when you are working with real, sensitive information!</p>
+<h2>Decryption</h2>
+<p>To decrypt our file and make it human readable again, the <span class="refer-code">-d</span> option is used.</p>
+<pre><code class="language-sh">&gt; gpg -d message.gpg
+
+gpg: encrypted with 3072-bit RSA key, ID xxxxxxxxxxxx, created 2020-12-02
+&quot;Jon Koenig &lt;jokobox@outlook.com&gt;&quot;
+
+37.2431° N, 115.7930° W
+</code></pre>
+<p>This will prompt you to enter the key's password. If you do so, the contents of the file will be sent to <a href="https://en.wikipedia.org/wiki/Standard_streams">stdout</a> by default. Your password will be cached to make decrypting multiple files at once a less painful process, but this can be <a href="https://forums.linuxmint.com/viewtopic.php?t=254042">changed</a>.</p>
+
+</div>
+
+    </div>
+
+</body>
+</html>

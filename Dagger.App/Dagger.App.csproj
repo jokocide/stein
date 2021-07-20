@@ -41,6 +41,8 @@
   <ItemGroup>
     <Content Include="example\resources\pages\index.hbs" />
     <Content Include="example\resources\posts\gpg.md" />
+    <Content Include="example\resources\posts\jackolert.md" />
+    <Content Include="example\resources\posts\microscripts.md" />
     <Content Include="example\resources\public\css\main.css" />
     <Content Include="example\resources\templates\partials\footer.hbs" />
     <Content Include="example\resources\templates\partials\header.hbs" />

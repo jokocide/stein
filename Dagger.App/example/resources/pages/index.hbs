@@ -5,13 +5,13 @@
         <h1 class="section-title">Recent</h1>
         <div id="posts-container">
 
-            {{#each posts}}
-                <div onclick={{ this.relative }} style="cursor: pointer;" class="post">
+            {{#each this}}
+                <div onclick={{ relative }} style="cursor: pointer;" class="post">
                     <ul class="title-container">
-                        <li class="title">{{ this.title }}</li>
+                        <li class="title">{{ title }}</li>
                     </ul>
                     <div class="description-container">
-                        <p class="description">{{ this.description }}</p>
+                        <p class="description">{{ description }}</p>
                     </div>
                 </div>
             {{/each}}
