@@ -3,11 +3,11 @@ using Dagger.Data.Models;
 
 namespace Dagger.Services.Routines
 {
+    /// <summary>
+    /// Display some 'help' text for the Dagger CLI.
+    /// </summary>
     public class Help : Routine
     {
-        /// <summary>
-        /// Display some 'help' text for the Dagger CLI.
-        /// </summary>
         private Message _message { get; }
 
         public Help(Message message = null)
@@ -19,7 +19,6 @@ namespace Dagger.Services.Routines
         {
             if (_message != null)
             {
-                
                 if (_message.type == Message.Type.Error)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
@@ -38,8 +37,16 @@ namespace Dagger.Services.Routines
             Console.WriteLine("Builds the site that exists at the given path, or builds the current directory if no target is given.");
             Console.WriteLine("- new");
             Console.WriteLine("Creates a new Dagger project in the current directory.");
-            // Console.WriteLine("- help");
-            // Console.WriteLine("Display help.");
+        }
+
+        public static Routine TooManyArguments(string routineName)
+        {
+            // Helper method to return a common version of Help.
+            return new Help(new Message()
+            {
+                message = $"{routineName} command received too many arguments.",
+                type = Message.Type.Error
+            });
         }
     }
 }

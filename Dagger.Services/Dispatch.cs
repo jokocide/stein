@@ -1,4 +1,4 @@
-using System;
+using System.Collections.Generic;
 using System.IO;
 using Dagger.Data.Models;
 using Dagger.Services.Routines;
@@ -6,66 +6,92 @@ using Dagger.Services.Routines;
 namespace Dagger.Services
 {
     /// <summary>
-    /// Receive arguments and determine which Routine to respond with.
+    /// Examine the received arguments and respond with some Routine-typed object.
     /// </summary>
     /// <returns>
     /// A class instance that derives from the Routine abstract class.
     /// </returns>
-    public class Dispatch
+    public static class Dispatch
     {
-        private string[] _args { get; }
+        private static int MaxTotalArgs { get; } = 3;
+        private static int MaxBuildArgs { get; } = 2;
 
-        public Dispatch(string[] args)
+        public static Routine Evaluate(string[] arguments)
         {
-            _args = args;
+            List<string> args = new List<string>(arguments);
+            
+            // We can return right away if too many arguments are passed in.
+            if (args.Count > MaxTotalArgs) return new Help(new Message
+            {
+                message = "Too many arguments were received.", 
+                type = Message.Type.Error
+            });
+
+            // foreach is not allowed when assigning to iterator.
+            for (int count = 0; count < args.Count; count++)
+            {
+                args[count] = args[count].ToLower();
+            }
+
+            switch (args[0])
+            {
+                case "help":
+                    return PipelineHelp(args);
+                case "build":
+                    return PipelineBuild(args);
+                case "new":
+                    return PipelineNew(args);
+                default:
+                    return new NotRecognized();
+            }
         }
 
-        // Examine the received arguments and respond with a Routine instance.
-        public Routine Evaluate() 
+        private static Routine PipelineHelp(List<string> args)
         {
-            if (_args[0].ToLower() == "help") // dagger help - display help info
-            {
-                return new Help();
-            }
-            else if (_args[0].ToLower() == "build") // dagger build - process project
-            {
-                if (_args.Length > 1)
+            // We aren't expecting any arguments after help.
+            return args.Count > 1
+                ? new Help(new Message()
                 {
-                    // Expect next argument to be a path that leads to a Dagger project.
-                    try
-                    {
-                        Directory.SetCurrentDirectory(_args[1]);
-                    }
-                    catch (IOException)
-                    {
-                        return new Help(new Message { message = $"'{_args[1]}' is not a valid path.", type = Message.Type.Error });
-                    }
-                }
+                    message = $"Dagger doesn't support help specific to the command: {args[1]}",
+                    type = Message.Type.Warning
+                })
+                : new Help();
+        }
 
-                if (Helper.CheckIsProject())
-                {
-                    return new Build();
-                }
-                else
-                {
-                    return new Help(new Message { message = "Provide a path to a Dagger project or move to project before calling build.", type = Message.Type.Error });
-                }
-            }
-            else if (_args[0].ToLower() == "new") // dagger new - create new project
+        private static Routine PipelineBuild(List<string> args)
+        {
+            // First argument was build. Did they pass in a path?
+            if (args.Count > MaxBuildArgs)
             {
-                if (!Helper.CheckIsProject())
-                {
-                    return new New();
-                }
-                else
-                {
-                    return new Help(new Message { message = "A project has already been initialized in this directory.", type = Message.Type.Error });
-                }
+                Help.TooManyArguments("Build");
             }
-            else
+            
+            return args.Count == 1 ? new Build() : PipelineBuildPath(args);
+        }
+
+        private static Routine PipelineBuildPath(List<string> args)
+        {
+            // First argument is 'build' so the second should be a valid path to a Dagger project.
+            try
             {
-                return new Help(new Message { message = "Command not recognized.", type = Message.Type.Error });
+                Directory.SetCurrentDirectory(args[1]);
             }
+            catch (IOException)
+            {
+                return new Help(new Message { message = $"'{args[1]}' is not a valid path.", type = Message.Type.Error });
+            }
+
+            return Helper.CheckIsProject() ? new Build() : new Help(new Message
+            {
+                message = "Provide a path to a Dagger project or move to project before calling build.", 
+                type = Message.Type.Error
+            });
+        }
+        
+        private static Routine PipelineNew(List<string> args)
+        {
+            // We only support creating a project in the current directory right now, so we should only have one argument.
+            return args.Count > 1 ? Help.TooManyArguments("New") : new New();
         }
     }
 }

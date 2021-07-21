@@ -9,7 +9,7 @@ namespace Dagger.Services
     /// </summary>
     public static class Helper
     {
-        private static string _headerSeparator { get; } = "------------------------------";
+        private static string HeaderSeparator { get; } = "------------------------------";
 
         /*
         Return true if the path is a Dagger project as indicated by the prescence 
@@ -36,7 +36,7 @@ namespace Dagger.Services
                 Colorize(ConsoleColor.Blue, "dagger");
             }
 
-            Colorize(ConsoleColor.DarkGray, _headerSeparator); // Display visible separator before the routine is executed.
+            Colorize(ConsoleColor.DarkGray, HeaderSeparator); // Display visible separator before the routine is executed.
         }
 
         // Synchronize two directories, recursive functionality is optional.

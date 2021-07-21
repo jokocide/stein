@@ -12,16 +12,15 @@ namespace Dagger.App
     {
         static void Main(string[] args)
         {
-            Dispatch argumentsHandler = new Dispatch(args);
-            
-            /*
-            * If arguments were received, call ArgumentsHandler and receive a new type of Routine.
-            * Help is the 'default' routine and is called when dagger is invoked with no arguments.
-            */
-            Routine instructions = args.Length > 0 ? argumentsHandler.Evaluate() : new Help();
+            // If given arguments, receive a new instance of Routine from argumentsHandler.
+            Routine instructions = args.Length > 0 ? Dispatch.Evaluate(args) : new Help();
 
+            // Header is printed out, routine is executed.
             Helper.PrintArguments(args);
+            
             instructions.Execute();
+            
+            // New line for clarity!
             Console.WriteLine();
         }
     }
