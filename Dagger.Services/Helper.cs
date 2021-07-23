@@ -25,17 +25,12 @@ namespace Dagger.Services
         public static void PrintArguments(string[] args = null)
         {
             Console.WriteLine(); // Display empty line for clarity.
+            
             Colorize(ConsoleColor.Cyan, HeaderSeparator); // Display visible separator before the routine is executed.
+            Colorize(ConsoleColor.Cyan, "Dagger ", false);
 
-            if (args.Length > 0)
-            {
-                Colorize(ConsoleColor.Cyan, "Dagger ", false);
+            if (args != null)
                 Colorize(ConsoleColor.Gray, String.Join(' ', args));
-            }
-            else
-            {
-                Colorize(ConsoleColor.Blue, "dagger");
-            }
 
             Colorize(ConsoleColor.Cyan, HeaderSeparator); // Display visible separator before the routine is executed.
         }
