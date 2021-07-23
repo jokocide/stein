@@ -1,15 +1,16 @@
 using System.Collections.Generic;
-using Dagger.Data.Models;
+
 using Dagger.Services.Pipelines;
 using Dagger.Services.Routines;
 
 namespace Dagger.Services
 {
     /// <summary>
-    /// Examine the received arguments and respond with some Routine-typed object.
+    /// Examine the received arguments and feed them through different pipelines to determine which Routine class
+    /// we need to instantiate and execute in Program.cs.
     /// </summary>
     /// <returns>
-    /// A class instance that derives from the Routine abstract class.
+    /// A Routine-typed object.
     /// </returns>
     public static class Dispatch
     {
@@ -17,18 +18,19 @@ namespace Dagger.Services
 
         public static Routine Evaluate(string[] arguments)
         {
+            // todo: Better documentation. Why are the arguments placed in a List<string> instead of keeping them in string[]?
             List<string> args = new List<string>(arguments);
             
             // We can return right away if too many arguments are passed in.
-            if (args.Count > MaxTotalArgs)
-                return new Help(new Message
-                {
-                    message = "Too many arguments were received.",
-                    type = Message.Type.Error
-                });
+            if (args.Count > MaxTotalArgs) 
+                return Help.TooManyArguments();
 
-            // foreach is not allowed when assigning to iterator.
-            for (int count = 0; count < args.Count; count++) args[count] = args[count].ToLower();
+            /*
+             * Make sure all of the arguments are lowercase,
+             * foreach is not allowed when assigning to iterator so we use a for loop here.
+             */
+            for (int count = 0; count < args.Count; count++) 
+                args[count] = args[count].ToLower();
 
             switch (args[0])
             {

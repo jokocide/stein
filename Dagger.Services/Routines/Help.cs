@@ -39,12 +39,13 @@ namespace Dagger.Services.Routines
             Console.WriteLine("Creates a new Dagger project in the current directory.");
         }
 
-        public static Routine TooManyArguments(string routineName)
+        public static Routine TooManyArguments(string routineName = null)
         {
-            // Helper method to return a common version of Help.
+            string start = routineName == null ? "Dagger " : $"{routineName} routine ";
+            
             return new Help(new Message()
             {
-                message = $"{routineName} routine received too many arguments.",
+                message = start + "received too many arguments.",
                 type = Message.Type.Error
             });
         }
