@@ -5,7 +5,7 @@ namespace Dagger.Data.Models
 {
     public class Writable
     {
-        public string ResourcePath { get; }
+        private string ResourcePath { get; }
         public string SitePath { get; }
         public string Body { get; }
 
@@ -13,39 +13,42 @@ namespace Dagger.Data.Models
         {
             ResourcePath = resourcePath;
             Body = body;
-            
-            // SitePath is based on resourcePath.
-            SitePath = GenerateSitePath(resourcePath);
+            SitePath = MakeSitePath(resourcePath);
         }
 
-        public string GenerateSitePath(string path)
+        private string MakeSitePath(string path)
         {
-            string fileName = Path.GetFileNameWithoutExtension(path); // gpg
+            string fileName = Path.GetFileNameWithoutExtension(path);
             string directoryName = Path.GetDirectoryName(path);
-            string sitePath; // To be returned later!
-            
-            if (fileName != "index") // post object
-            {
-                Directory.CreateDirectory(Path.Join("site", directoryName));
-                sitePath = Path.Join("site", directoryName, fileName, "index.html");
-            }
-            else if (fileName == "index") // page object
-            {
-                Directory.CreateDirectory(Path.Join("site", directoryName));
-                sitePath = Path.Join("site", directoryName, "index.html");
-            }
-            else
-            {
-                throw new ArgumentException($"Received a bad path: {path}");
-            }
+            string parentOfDirectoryName = Path.GetDirectoryName(directoryName);
 
-            Console.WriteLine($"Returned path: {sitePath}");
-            return MakeHTML(sitePath);
+            if (directoryName == "pages" && parentOfDirectoryName != "collections")
+                switch (fileName)
+                {
+                    case "index":
+                        return Path.Join(Directory.GetCurrentDirectory(), "site", fileName + ".html");
+                    default:
+                        return MakeNonIndexPagePath(fileName);
+                }
+            
+            if (parentOfDirectoryName != "collections")
+                throw new Exception($"Unable to generate writable path for: {path}");
+
+            return MakeCollectionPath(fileName, directoryName);
         }
 
-        private string MakeHTML(string path)
+        private string MakeNonIndexPagePath(string fileName) 
         {
-            return Path.ChangeExtension(path, ".html");
+            string newDirectory = Path.Join(Directory.GetCurrentDirectory(), "site", fileName);
+            Directory.CreateDirectory(newDirectory);
+            return Path.Join(newDirectory, "index.html");
+        }
+
+        private string MakeCollectionPath(string fileName, string directoryName)
+        {
+            string newDirectory = Path.Join(Directory.GetCurrentDirectory(), "site", directoryName, fileName);
+            Directory.CreateDirectory(newDirectory);
+            return Path.Join(newDirectory, "index.html");
         }
     }
 }

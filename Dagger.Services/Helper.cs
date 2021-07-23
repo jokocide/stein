@@ -25,10 +25,11 @@ namespace Dagger.Services
         public static void PrintArguments(string[] args = null)
         {
             Console.WriteLine(); // Display empty line for clarity.
+            Colorize(ConsoleColor.Cyan, HeaderSeparator); // Display visible separator before the routine is executed.
 
             if (args.Length > 0)
             {
-                Colorize(ConsoleColor.Blue, "dagger ", false);
+                Colorize(ConsoleColor.Cyan, "Dagger ", false);
                 Colorize(ConsoleColor.Gray, String.Join(' ', args));
             }
             else
@@ -36,7 +37,7 @@ namespace Dagger.Services
                 Colorize(ConsoleColor.Blue, "dagger");
             }
 
-            Colorize(ConsoleColor.DarkGray, HeaderSeparator); // Display visible separator before the routine is executed.
+            Colorize(ConsoleColor.Cyan, HeaderSeparator); // Display visible separator before the routine is executed.
         }
 
         // Synchronize two directories, recursive functionality is optional.

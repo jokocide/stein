@@ -35,19 +35,24 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="example\site" />
+    <Folder Include="example\resources\collections" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="example\resources\collections\posts\gpg.md" />
+    <Content Include="example\resources\collections\posts\jackolert.md" />
+    <Content Include="example\resources\collections\posts\microscripts.md" />
     <Content Include="example\resources\pages\index.hbs" />
-    <Content Include="example\resources\posts\gpg.md" />
-    <Content Include="example\resources\posts\jackolert.md" />
-    <Content Include="example\resources\posts\microscripts.md" />
     <Content Include="example\resources\public\css\main.css" />
     <Content Include="example\resources\templates\partials\footer.hbs" />
     <Content Include="example\resources\templates\partials\header.hbs" />
     <Content Include="example\resources\templates\partials\nav.hbs" />
     <Content Include="example\resources\templates\post.hbs" />
+    <Content Include="example\site\collections\posts\gpg\index.html" />
+    <Content Include="example\site\collections\posts\jackolert\index.html" />
+    <Content Include="example\site\collections\posts\microscripts\index.html" />
+    <Content Include="example\site\index.html" />
+    <Content Include="example\site\public\css\main.css" />
   </ItemGroup>
 
 </Project>

@@ -44,9 +44,28 @@ namespace Dagger.Services.Routines
             // Helper method to return a common version of Help.
             return new Help(new Message()
             {
-                message = $"{routineName} command received too many arguments.",
+                message = $"{routineName} routine received too many arguments.",
                 type = Message.Type.Error
             });
+        }
+
+        public static Routine ProvidedPathIsNotProject(string routineName)
+        {
+            return new Help(new Message()
+            {
+                message =
+                    $"{routineName} routine received a path, but the path doesn't appear to represent a Dagger project. (missing .dagger file?)",
+                type = Message.Type.Error
+            });
+        }
+
+        public static Routine NotInDaggerProject(string routineName, bool routineAcceptsPaths)
+        {
+            string text = routineAcceptsPaths
+                ? $"{routineName} was called, but you are not in a valid Dagger project directory and did not provide a valid path argument."
+                : $"{routineName} was called, but you are not in a valid Dagger project directory.";
+            
+            return new Help(new Message() { message = text, type = Message.Type.Error });
         }
     }
 }

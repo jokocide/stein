@@ -32,10 +32,21 @@ namespace Dagger.Services.Routines
                 Handlebars.RegisterTemplate(name, content);
             }
 
-            string postsDirectory = Path.Join(Directory.GetCurrentDirectory(), "resources", "posts");
-            string[] postsFiles = Directory.GetFiles(postsDirectory, "*.md");
+            // Store collection files as they are discovered.
+            List<string> collectionFiles = new List<string>();
+            
+            string collectionsDirectory = Path.Join(Directory.GetCurrentDirectory(), "resources", "collections");
+            string[] directoriesInCollections = Directory.GetDirectories(collectionsDirectory);
 
-            foreach (string path in postsFiles)
+            foreach (string directory in directoriesInCollections)
+            {
+                string[] files = Directory.GetFiles(directory, "*.md");
+                
+                foreach(string file in files) 
+                    collectionFiles.Add(file);
+            }
+
+            foreach (string path in collectionFiles)
             {
                 // File is loaded into memory.
                 string content = File.ReadAllText(path);
@@ -87,7 +98,6 @@ namespace Dagger.Services.Routines
 
                 // Add new writable to Store.
                 string relative = Path.GetRelativePath("./resources", path);
-                Console.WriteLine($"Relative path being passed to writable constructor by a post file: {relative}");
                 store.Writable.Add(new Writable(relative, renderedTemplate));
             }
             
@@ -105,7 +115,6 @@ namespace Dagger.Services.Routines
                 // Create writable
                 string compiledContent = template(store.Posts);
                 string relative = Path.GetRelativePath("./resources", path);
-                Console.WriteLine($"Relative path being passed to writable constructor by a page file: {relative}");
                 store.Writable.Add(new Writable(relative, compiledContent));
             }
             

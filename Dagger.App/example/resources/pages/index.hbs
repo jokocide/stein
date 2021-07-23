@@ -8,7 +8,9 @@
             {{#each this}}
                 <div onclick={{ relative }} style="cursor: pointer;" class="post">
                     <ul class="title-container">
-                        <li class="title">{{ title }}</li>
+                        <a href={{ relative }}>
+                            <li class="title">{{ title }}</li>
+                        </a>
                     </ul>
                     <div class="description-container">
                         <p class="description">{{ description }}</p>
