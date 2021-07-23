@@ -1,4 +1,5 @@
 using System;
+
 using Dagger.Data.Models;
 
 namespace Dagger.Services.Routines
@@ -8,27 +9,27 @@ namespace Dagger.Services.Routines
     /// </summary>
     public class Help : Routine
     {
-        private Message _message { get; }
+        private Message Message { get; }
 
         public Help(Message message = null)
         {
-            _message = message;
+            Message = message;
         }   
              
         public override void Execute()
         {
-            if (_message != null)
+            if (Message != null)
             {
-                if (_message.type == Message.Type.Error)
+                if (Message.type == Message.Type.Error)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                 }
-                else if (_message.type == Message.Type.Warning)
+                else if (Message.type == Message.Type.Warning)
                 {
                     Console.ForegroundColor = ConsoleColor.Yellow;
                 }
 
-                Console.WriteLine(_message.message);
+                Console.WriteLine(Message.message);
                 Console.ResetColor();
                 Console.WriteLine();
             }

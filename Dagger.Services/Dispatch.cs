@@ -6,12 +6,9 @@ using Dagger.Services.Routines;
 namespace Dagger.Services
 {
     /// <summary>
-    /// Examine the received arguments and feed them through different pipelines to determine which Routine class
-    /// we need to instantiate and execute in Program.cs.
+    /// Capable of examining a string[] of arguments and calling on different pipelines to determine which
+    /// routine we should execute.
     /// </summary>
-    /// <returns>
-    /// A Routine-typed object.
-    /// </returns>
     public static class Dispatch
     {
         private static int MaxTotalArgs { get; } = 3;
