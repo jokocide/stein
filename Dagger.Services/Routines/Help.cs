@@ -31,13 +31,18 @@ namespace Dagger.Services.Routines
 
                 Console.WriteLine(Message.message);
                 Console.ResetColor();
-                Console.WriteLine();
             }
 
-            Console.WriteLine("- build [PATH]");
-            Console.WriteLine("Builds the site that exists at the given path, or builds the current directory if no target is given.");
-            Console.WriteLine("- new");
-            Console.WriteLine("Creates a new Dagger project in the current directory.");
+            Console.WriteLine("Optional arguments: ()");
+            Console.WriteLine();
+            Helper.Colorize(ConsoleColor.Cyan, "|> ", false);
+            Helper.Colorize(ConsoleColor.Gray, "build ([path])");
+            Helper.Colorize(ConsoleColor.DarkGray,
+                "Build Dagger project at the given path, or build the Dagger project in the current directory when no path is given.");
+            Console.WriteLine();
+            Helper.Colorize(ConsoleColor.Cyan, "|> ", false);
+            Helper.Colorize(ConsoleColor.Gray, "new");
+            Helper.Colorize(ConsoleColor.DarkGray, "Create a new Dagger project in the current directory.");
         }
 
         public static Routine TooManyArguments(string routineName = null)
@@ -61,11 +66,11 @@ namespace Dagger.Services.Routines
             });
         }
 
-        public static Routine NotInDaggerProject(string routineName, bool routineAcceptsPaths)
+        public static Routine NotInDaggerProject(bool routineAcceptsPaths)
         {
             string text = routineAcceptsPaths
-                ? $"{routineName} was called, but you are not in a valid Dagger project directory and did not provide a valid path argument."
-                : $"{routineName} was called, but you are not in a valid Dagger project directory.";
+                ? $"Move to a Dagger project directory or provide a path."
+                : $"Move to a Dagger project directory.";
             
             return new Help(new Message() { message = text, type = Message.Type.Error });
         }

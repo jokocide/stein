@@ -9,36 +9,41 @@ namespace Dagger.Services
     /// </summary>
     public static class Helper
     {
-        private static string HeaderSeparator { get; } = "------------------------------";
+        private static string Separator { get; } = "----->";
 
-        /*
-        Return true if the path is a Dagger project as indicated by the prescence 
-        of a .dagger file. Defaults to the current directory with no given path.
-        */
+        /// <summary>
+        /// Return true if the given path is a Dagger project. Looks in the given path for a .dagger file, defaults
+        /// to the current directory with no given path.
+        /// </summary>
         public static bool CheckIsProject(string path = null)
         {
             if (path == null) path = Directory.GetCurrentDirectory();
             return File.Exists(Path.Join(path, ".dagger"));
         }
 
-        // Prints out the command that was called.
+        /// <summary>
+        /// Prints out Dagger's 'header' and any received arguments for clarity.
+        /// </summary>
         public static void PrintArguments(string[] args = null)
         {
             Console.WriteLine(); // Display empty line for clarity.
             
-            Colorize(ConsoleColor.Cyan, HeaderSeparator); // Display visible separator before the routine is executed.
             Colorize(ConsoleColor.Cyan, "Dagger ", false);
 
             if (args != null)
                 Colorize(ConsoleColor.Gray, String.Join(' ', args));
 
-            Colorize(ConsoleColor.Cyan, HeaderSeparator); // Display visible separator before the routine is executed.
+            Colorize(ConsoleColor.Cyan, Separator); // Display visible separator before the routine is executed.
+
+            Console.WriteLine();
         }
 
-        // Synchronize two directories, recursive functionality is optional.
+        /// <summary>
+        /// Synchronize two directories by copying all files from sourceDirName to destDirName. Will also copy directories
+        /// if copySubDirs is true.
+        /// </summary>
         public static void Synchronize(string sourceDirName, string destDirName, bool copySubDirs)
         {
-            // Get the subdirectories for the specified directory.
             DirectoryInfo dir = new DirectoryInfo(sourceDirName);
 
             if (!dir.Exists)
@@ -49,11 +54,8 @@ namespace Dagger.Services
             }
 
             DirectoryInfo[] dirs = dir.GetDirectories();
-        
-            // If the destination directory doesn't exist, create it.       
             Directory.CreateDirectory(destDirName);        
 
-            // Get the files in the directory and copy them to the new location.
             FileInfo[] files = dir.GetFiles();
             foreach (FileInfo file in files)
             {
@@ -61,7 +63,6 @@ namespace Dagger.Services
                 file.CopyTo(tempPath, false);
             }
 
-            // If copying subdirectories, copy them and their contents to new location.
             if (copySubDirs)
             {
                 foreach (DirectoryInfo subdir in dirs)
@@ -72,11 +73,11 @@ namespace Dagger.Services
             }
         }
 
-        /* 
-        Allows text to be printed in a color before resetting the color back to default.
-        Prints on a newline with Console.WriteLine() by default.
-        */
-        private static void Colorize(ConsoleColor color, string text, bool newLine = true)
+        /// <summary>
+        /// Print a given text string with the foreground set to the given ConsoleColor. Resets the color of the
+        /// text back to default after printing.
+        /// </summary>
+        public static void Colorize(ConsoleColor color, string text, bool newLine = true)
         {
             Console.ForegroundColor = color;
 

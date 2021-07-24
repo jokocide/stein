@@ -10,13 +10,13 @@ namespace Dagger.Services.Routines
         /// </summary>
         public override void Execute()
         {
-            string[] paths = new string[6]
+            string[] paths = 
             {
+                Path.Join("resources", "collections", "posts"),
                 Path.Join("resources", "pages"),
-                Path.Join("resources", "posts"),
                 Path.Join("resources", "public", "css"),
-                Path.Join("resources", "templates"),
-                Path.Join("site", "posts"),
+                Path.Join("resources", "templates", "partials"),
+                Path.Join("site", "collections", "posts"),
                 Path.Join("site", "public", "css")
             };
 
@@ -28,7 +28,7 @@ namespace Dagger.Services.Routines
             File.Create(".dagger");
             File.SetAttributes(".dagger", FileAttributes.Hidden);
             
-            Console.WriteLine("Project created.");
+            Console.WriteLine($"Created Dagger project at: {Directory.GetCurrentDirectory()}");
         }
     }
 }
