@@ -51,6 +51,12 @@ namespace Dagger.Services.Routines
                 // File is loaded into memory.
                 string content = File.ReadAllText(path);
                 
+                // We need to directory and file names to create metadata objects.
+                // string directoryName = Path.GetDirectoryName(path);
+                // string fileName = Path.GetFileNameWithoutExtension(path);
+
+                DirectoryInfo info = new DirectoryInfo(path);
+                
                 // Looking for metadata indicator, "---" in YAML.
                 int firstIndicatorEndIndex = content.IndexOf("---", 0) + 3;
                 int secondIndicatorStartIndex = content.IndexOf("---", firstIndicatorEndIndex);
@@ -65,6 +71,7 @@ namespace Dagger.Services.Routines
                 // Convert each line of the metadata into actual MetaData objects.
                 Dictionary<string, string> newMetaData = new Dictionary<string, string>();
                 
+                // Adding metadata from the file itself.
                 foreach (string line in splitMetadata)
                 {
                     string[] splitLines = line.Split(":", 2);
@@ -74,6 +81,9 @@ namespace Dagger.Services.Routines
 
                     newMetaData.Add(key, value);
                 }
+
+                // Inject a 'path' that can be used for navigation. todo: fix
+                newMetaData.Add("path", Path.Join("collections", info.Parent.Name, Path.GetFileNameWithoutExtension(info.Name), "index.html")); 
                 
                 // Add to store.
                 store.Posts.Add(newMetaData);
