@@ -60,6 +60,8 @@ namespace Dagger.Services.Routines
                 response.ContentLength64 = buffer.Length;
                 System.IO.Stream output = response.OutputStream;
                 output.Write(buffer, 0, buffer.Length);
+
+                output.Close();
             }
         }
     }
