@@ -15,8 +15,7 @@ namespace Dagger.Services.Routines
                 listener.Prefixes.Add(prefix);
 
             listener.Start();
-            Console.WriteLine("Dagger is listening on http://localhost:8000");
-            Console.WriteLine();
+            Console.WriteLine("Serving project on: http://localhost:8000");
             
             while (true)
             {

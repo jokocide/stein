@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+
 using Dagger.Data.Models;
 
 namespace Dagger.Services
 {
     /// <summary>
-    /// Methods for writing objects to disk after processing by a routine.
+    /// Methods for commiting Writable objects to disk.
     /// </summary>
     public class Author
     {
@@ -23,9 +24,15 @@ namespace Dagger.Services
             {
                 string path = Path.GetDirectoryName(obj.SitePath);
                 if (path != null) Directory.CreateDirectory(path);
-                Console.WriteLine($"Writing to: {obj.SitePath}");
                 File.WriteAllText(obj.SitePath, obj.Body);
+                Console.ForegroundColor = ConsoleColor.DarkGray;
+                Console.Write($"({DateTime.Now.ToString("t")}) ");
+                Console.ResetColor();
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine(obj.SitePath);
+                Console.ResetColor();
             }
+
         }
     }
 }

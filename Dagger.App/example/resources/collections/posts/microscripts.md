@@ -9,7 +9,7 @@ date: 2020-07-14
 
 Clone the [repository.](https://github.com/jokocide/microscripts.git) Review the files and remove the directories that are not relevant to you. (ie 'pwsh' on unix systems)
 
-The bash and pwsh directories include a <span class="refer-code">.bashrc</span> and <span class="refer-code">profile.ps1</span> respectively, but the functions have their own individual files as well. I sometimes like to keep them in a separate directory, add it to my [path](https://linuxize.com/post/how-to-add-directory-to-path-in-linux/) and call them that way rather than pollute my configuration file with a ton of functions.
+The bash and pwsh directorieds include a <span class="refer-code">.bashrc</span> and <span class="refer-code">profile.ps1</span> respectively, but the functions have their own individual files as well. I sometimes like to keep them in a separate directory, add it to my [path](https://linuxize.com/post/how-to-add-directory-to-path-in-linux/) and call them that way rather than pollute my configuration file with a ton of functions.
 
 ```sh
 git clone https://github.com/jokocide/microscripts.git

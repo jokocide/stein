@@ -56,12 +56,11 @@ namespace Dagger.Services.Routines
             });
         }
 
-        public static Routine ProvidedPathIsNotProject(string routineName)
+        public static Routine ProvidedPathIsNotProject(string path)
         {
             return new Help(new Message()
             {
-                message =
-                    $"{routineName} routine received a path, but the path doesn't appear to represent a Dagger project. (missing .dagger file?)",
+                message = $"{path} doesn't appear to be a Dagger project. Is it missing a .dagger file?",
                 type = Message.Type.Error
             });
         }
@@ -69,7 +68,7 @@ namespace Dagger.Services.Routines
         public static Routine NotInDaggerProject(bool routineAcceptsPaths)
         {
             string text = routineAcceptsPaths
-                ? $"Move to a Dagger project directory or provide a path."
+                ? $"Move to a Dagger project directory, or provide a valid path to one."
                 : $"Move to a Dagger project directory.";
             
             return new Help(new Message() { message = text, type = Message.Type.Error });
