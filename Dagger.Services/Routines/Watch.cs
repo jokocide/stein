@@ -1,11 +1,14 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Timers;
 
 namespace Dagger.Services.Routines
 {
     public class Watch : Routine
     {
         private Build Builder { get; }
+        private List<String> ChangedFiles { get; } = new List<string>();
 
         public Watch()
         {
@@ -14,17 +17,14 @@ namespace Dagger.Services.Routines
 
         public override void Execute()
         {
-            string cwd = Directory.GetCurrentDirectory();
+            string resources = Path.Join(Directory.GetCurrentDirectory(), "resources");
 
-            FileSystemWatcher watcher = new FileSystemWatcher(cwd)
+            FileSystemWatcher watcher = new FileSystemWatcher(resources)
             {
                 NotifyFilter = NotifyFilters.Attributes
-                               | NotifyFilters.CreationTime
                                | NotifyFilters.DirectoryName
                                | NotifyFilters.FileName
                                | NotifyFilters.LastWrite
-                               | NotifyFilters.Security
-                               | NotifyFilters.Size
             };
             
             watcher.Changed += OnChanged;
@@ -41,13 +41,9 @@ namespace Dagger.Services.Routines
             watcher.IncludeSubdirectories = true;
 
             // todo: debugging
-            // watcher.EnableRaisingEvents = true;
-            Console.WriteLine($"Watching: {Directory.GetCurrentDirectory()}");
-
-            while (true)
-            {
-                watcher.WaitForChanged(WatcherChangeTypes.Changed);
-            }
+            watcher.EnableRaisingEvents = true;
+            Console.WriteLine($"Watching: {resources}");
+            Console.ReadLine();
         }
         
         private void OnChanged(object sender, FileSystemEventArgs e)
@@ -56,13 +52,29 @@ namespace Dagger.Services.Routines
             {
                 return;
             }
-            Console.ForegroundColor = ConsoleColor.DarkGray;
-            Console.Write($"({DateTime.Now.ToString("t")}) ");
-            Console.ResetColor();
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.WriteLine("Changed was detected.");
-            Console.ResetColor();
-            Builder.Execute();
+
+            if (!ChangedFiles.Contains(e.FullPath))
+            {
+                ChangedFiles.Add(e.FullPath);
+                Console.ForegroundColor = ConsoleColor.DarkGray;
+                Console.Write($"({DateTime.Now.ToString("t")}) ");
+                Console.ResetColor();
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine("Rebuilding");
+                Console.ResetColor();
+                Builder.Execute();
+            }
+
+            Timer timer = new Timer(100) {AutoReset = false};
+            timer.Elapsed += (timerElapsedSender, timerElapsedArgs) =>
+            {
+                lock (ChangedFiles)
+                {
+                    ChangedFiles.Remove(e.FullPath);
+                }
+            };
+            
+            timer.Start();
         }
 
         private void OnCreated(object sender, FileSystemEventArgs e)
