@@ -1,16 +1,15 @@
-using System.Collections.Generic;
 using Dagger.Services.Routines;
 
 namespace Dagger.Services.Pipelines
 {
     /// <summary>
-    /// Abstract class for other piplines to derive from.
+    /// Abstract base class for other Pipeline types to derive from.
     /// </summary>
     public abstract class Pipeline
     {
-        protected List<string> Args { get; }
+        protected string[] Args { get; }
 
-        protected Pipeline(List<string> args)
+        protected Pipeline(string[] args)
         {
             Args = args;
         }

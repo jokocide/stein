@@ -1,33 +1,26 @@
-using System.Collections.Generic;
-
 using Dagger.Services.Pipelines;
 using Dagger.Services.Routines;
 
-namespace Dagger.Services
+namespace Dagger.Services.Arguments
 {
     /// <summary>
-    /// Capable of examining a string[] of arguments and calling on different pipelines to determine which
-    /// routine we should execute.
+    /// Hands the received arguments off to a Pipeline-typed object, which will ultimately return some kind of Routine
+    /// that can be executed in Program.cs.
     /// </summary>
+    /// <returns>
+    /// Returns a Routine-typed object.
+    /// </returns>
     public static class Dispatch
     {
         private static int MaxTotalArgs { get; } = 3;
 
-        public static Routine Evaluate(string[] arguments)
+        public static Routine Evaluate(string[] args)
         {
-            // todo: Better documentation. Why are the arguments placed in a List<string> instead of keeping them in string[]?
-            List<string> args = new List<string>(arguments);
-            
             // We can return right away if too many arguments are passed in.
-            if (args.Count > MaxTotalArgs) 
-                return Help.TooManyArguments();
+            if (args.Length > MaxTotalArgs) return HelpRoutine.TooManyArguments();
 
-            /*
-             * Make sure all of the arguments are lowercase,
-             * foreach is not allowed when assigning to iterator so we use a for loop here.
-             */
-            for (int count = 0; count < args.Count; count++) 
-                args[count] = args[count].ToLower();
+            // Assert arguments are lowercase.
+            for (int count = 0; count < args.Length; count++) args[count] = args[count].ToLower();
 
             switch (args[0])
             {
