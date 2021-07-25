@@ -1,25 +1,22 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-
 using Dagger.Data.Models;
 using HandlebarsDotNet;
 using Markdig;
+using Microsoft.VisualBasic.FileIO;
 
 namespace Dagger.Services.Routines
 {
     /// <summary>
-    /// Attempt to compile the Dagger project that exists in the current directory.
+    /// Compile a Dagger project and write the results to the filesystem by invoking methods from the Author service.
     /// </summary>
     public class Build : Routine
     {
+
         public override void Execute()
         {
-            Store store = new Store();
-            
-            // Find partial files.
-            string partialsDirectory = Path.Join(Directory.GetCurrentDirectory(), "resources", "templates", "partials");
-            string[] partialsFiles = Directory.GetFiles(partialsDirectory, "*.hbs");
+            string[] partialsFiles = GetPartials();
             
             // Register partials with Handlebars.
             foreach (string path in partialsFiles)
@@ -87,7 +84,7 @@ namespace Dagger.Services.Routines
                 newMetaData.Add("path", Path.Join("collections", info.Parent.Name, Path.GetFileNameWithoutExtension(info.Name), "index.html")); 
                 
                 // Add to store.
-                store.Posts.Add(newMetaData);
+                Store.Posts.Add(newMetaData);
 
                 // Body becomes HTML.
                 string htmlBody = Markdown.ToHtml(body);
@@ -109,7 +106,7 @@ namespace Dagger.Services.Routines
 
                 // Add new writable to Store.
                 string relative = Path.GetRelativePath("./resources", path);
-                store.Writable.Add(new Writable(relative, renderedTemplate));
+                Store.Writable.Add(new Writable(relative, renderedTemplate));
             }
             
             string pagesDirectory = Path.Join(Directory.GetCurrentDirectory(), "resources", "pages");
@@ -124,20 +121,35 @@ namespace Dagger.Services.Routines
                 var template = Handlebars.Compile(content);
             
                 // Create writable
-                string compiledContent = template(store.Posts);
+                string compiledContent = template(Store.Posts);
                 string relative = Path.GetRelativePath("./resources", path);
-                store.Writable.Add(new Writable(relative, compiledContent));
+                Store.Writable.Add(new Writable(relative, compiledContent));
             }
             
             // Clean site directory.
             Directory.Delete("./site", true);
 
             // Pass all writable objects to Author service.
-            Author author = new Author(store.Writable);
+            Author author = new Author(Store.Writable);
             author.Write();
             
             // Synchronize public directories.
             Helper.Synchronize(Path.Join("resources", "public"), Path.Join("site", "public"), true);
+        }
+        
+        /// <summary>
+        /// Return all partial files that can be found within the Dagger project at the given path, or at the
+        /// current directory when no path is given.
+        /// </summary>
+        /// <returns>An array of strings that represent absolute file paths to Handlebars partial files.</returns>
+        public string[] GetPartials(string path = null)
+        {
+            string error = "Unable to return partials, invalid directory.";
+            if (path == null) path = Directory.GetCurrentDirectory();
+            if (!Helper.CheckIsProject(path)) throw new InvalidOperationException(error);
+            string partialsDirectory = Path.Join(path, "resources", "templates", "partials");
+            string[] partialsFiles = Directory.GetFiles(partialsDirectory, "*.hbs");
+            return partialsFiles;
         }
     }
 }

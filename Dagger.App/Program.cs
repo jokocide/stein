@@ -14,7 +14,7 @@ namespace Dagger.App
         static void Main(string[] args)
         {
             // If given arguments, receive a new instance of Routine from argumentsHandler.
-            Routine instructions = args.Length > 0 ? Dispatch.Evaluate(args) : new Help();
+            Routine instructions = args.Length > 0 ? Dispatch.Evaluate(args) : new HelpRoutine();
 
             // Console header is displayed before the routine is executed.
             Helper.PrintArguments(args);
