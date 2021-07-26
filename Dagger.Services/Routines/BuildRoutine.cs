@@ -32,18 +32,13 @@ namespace Dagger.Services.Routines
 
             foreach (string path in collectionsMarkdownFilesPaths)
             {
-                // File is loaded into memory.
                 string content = File.ReadAllText(path);
-                
-                // We need to directory and file names to create metadata objects.
-                // string directoryName = Path.GetDirectoryName(path);
-                // string fileName = Path.GetFileNameWithoutExtension(path);
-
-                DirectoryInfo info = new DirectoryInfo(path);
+                // DirectoryInfo info = new DirectoryInfo(path);
+                (int Start, int End) frontmatterIndices = GetYamlFrontmatterIndices(content);
                 
                 // Looking for metadata indicator, "---" in YAML.
-                int firstIndicatorEndIndex = content.IndexOf("---", 0) + 3;
-                int secondIndicatorStartIndex = content.IndexOf("---", firstIndicatorEndIndex);
+                // int firstIndicatorEndIndex = content.IndexOf("---", 0) + 3;
+                // int secondIndicatorStartIndex = content.IndexOf("---", firstIndicatorEndIndex);
                 
                 // Separating metadata and content.
                 string metadata = content.Substring(firstIndicatorEndIndex, secondIndicatorStartIndex - firstIndicatorEndIndex).Trim(); // MetaData object -> Posts list.
@@ -175,6 +170,11 @@ namespace Dagger.Services.Routines
             }
 
             return paths;
+        }
+
+        public (int Start, int End) GetYamlFrontmatterIndices(string text)
+        {
+            
         }
     }
 }
