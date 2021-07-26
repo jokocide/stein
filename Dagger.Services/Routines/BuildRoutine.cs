@@ -14,24 +14,23 @@ namespace Dagger.Services.Routines
     {
         public override void Execute()
         {
-            string[] partials = GetPathsToPartials();
-            RegisterPartials(partials);
-
-            // Store collection files as they are discovered.
-            List<string> collectionFiles = new List<string>();
+            // Pipeline ensures that we are in a Dagger project before returning a Build routine.
+            string projectPath = Directory.GetCurrentDirectory();
             
-            string collectionsDirectory = Path.Join(Directory.GetCurrentDirectory(), "resources", "collections");
-            string[] directoriesInCollections = Directory.GetDirectories(collectionsDirectory);
+            string resourcesPath = Path.Join(projectPath, "resources");
+            string collectionsPath = Path.Join(resourcesPath, "collections");
+            string pagesPath = Path.Join(resourcesPath, "pages");
+            string publicPath = Path.Join(resourcesPath, "public");
+            string templatesPath = Path.Join(resourcesPath, "templates");
+            string siteDirectory = Path.Join(projectPath, "site");
+            
+            string[] partialsPaths = GetHandlebarsPartialsPaths(projectPath);
+            RegisterHandlebarsPartials(partialsPaths);
 
-            foreach (string directory in directoriesInCollections)
-            {
-                string[] files = Directory.GetFiles(directory, "*.md");
-                
-                foreach(string file in files) 
-                    collectionFiles.Add(file);
-            }
+            string[] collectionsDirectoriesPaths = GetCollectionsDirectoriesPaths(projectPath);
+            List<string> collectionsMarkdownFilesPaths = GetCollectionMarkdownPaths(collectionsDirectoriesPaths);
 
-            foreach (string path in collectionFiles)
+            foreach (string path in collectionsMarkdownFilesPaths)
             {
                 // File is loaded into memory.
                 string content = File.ReadAllText(path);
@@ -129,26 +128,53 @@ namespace Dagger.Services.Routines
         /// current directory when no path is given.
         /// </summary>
         /// <returns>An array of strings that represent absolute file paths to Handlebars partial files.</returns>
-        public string[] GetPathsToPartials(string path = null)
+        public string[] GetHandlebarsPartialsPaths(string projectPath)
         {
-            string error = "Unable to return partials, invalid directory.";
-            if (path == null) path = Directory.GetCurrentDirectory();
-            if (!Helper.CheckIsProject(path)) throw new InvalidOperationException(error);
-            string partialsDirectory = Path.Join(path, "resources", "templates", "partials");
+            if (!Helper.CheckIsProject(projectPath))
+                throw new InvalidOperationException("Did not receive a valid project path.");
+            
+            string partialsDirectory = Path.Join(projectPath, "resources", "templates", "partials");
             string[] partialsFiles = Directory.GetFiles(partialsDirectory, "*.hbs");
             return partialsFiles;
         }
 
-        public void RegisterPartials(string path)
+        public void RegisterHandlebarsPartials(string filePath)
         {
-            string template = File.ReadAllText(path);
-            string templateName = Path.GetFileNameWithoutExtension(path);
+            string template = File.ReadAllText(filePath);
+            string templateName = Path.GetFileNameWithoutExtension(filePath);
             Handlebars.RegisterTemplate(templateName, template);
         }
 
-        public void RegisterPartials(string[] paths)
+        public void RegisterHandlebarsPartials(string[] filePaths)
         {
-            foreach(string path in paths) RegisterPartials(path);
+            foreach(string path in filePaths) RegisterHandlebarsPartials(path);
+        }
+        
+        public string[] GetCollectionsDirectoriesPaths(string projectPath)
+        {
+            if (!Helper.CheckIsProject(projectPath))
+                throw new InvalidOperationException("Did not receive a valid project path.");
+            
+            string collectionsDirectory = Path.Join(projectPath, "resources", "collections");
+            return Directory.GetDirectories(collectionsDirectory);
+        }
+
+        public string[] GetCollectionMarkdownPaths(string collectionsDirectoryPath)
+        {
+            return Directory.GetFiles(collectionsDirectoryPath, "*.md");
+        }
+
+        public List<string> GetCollectionMarkdownPaths(string[] collectionsDirectoriesPaths)
+        {
+            List<string> paths = new List<string>();
+            
+            foreach (string path in collectionsDirectoriesPaths)
+            {
+                string[] newPaths = GetCollectionMarkdownPaths(path);
+                foreach (string newPath in newPaths) paths.Add(newPath);
+            }
+
+            return paths;
         }
     }
 }
