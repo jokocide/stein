@@ -4,7 +4,6 @@ using System.IO;
 using Dagger.Data.Models;
 using HandlebarsDotNet;
 using Markdig;
-using Microsoft.VisualBasic.FileIO;
 
 namespace Dagger.Services.Routines
 {
@@ -13,22 +12,10 @@ namespace Dagger.Services.Routines
     /// </summary>
     public class Build : Routine
     {
-
         public override void Execute()
         {
-            string[] partialsFiles = GetPartials();
-            
-            // Register partials with Handlebars.
-            foreach (string path in partialsFiles)
-            {
-                // File is loaded into memory.
-                string content = File.ReadAllText(path);
-                
-                // The partial is registered with the name of the file.
-                string name = Path.GetFileNameWithoutExtension(path);
-                
-                Handlebars.RegisterTemplate(name, content);
-            }
+            string[] partials = GetPathsToPartials();
+            RegisterPartials(partials);
 
             // Store collection files as they are discovered.
             List<string> collectionFiles = new List<string>();
@@ -142,7 +129,7 @@ namespace Dagger.Services.Routines
         /// current directory when no path is given.
         /// </summary>
         /// <returns>An array of strings that represent absolute file paths to Handlebars partial files.</returns>
-        public string[] GetPartials(string path = null)
+        public string[] GetPathsToPartials(string path = null)
         {
             string error = "Unable to return partials, invalid directory.";
             if (path == null) path = Directory.GetCurrentDirectory();
@@ -150,6 +137,18 @@ namespace Dagger.Services.Routines
             string partialsDirectory = Path.Join(path, "resources", "templates", "partials");
             string[] partialsFiles = Directory.GetFiles(partialsDirectory, "*.hbs");
             return partialsFiles;
+        }
+
+        public void RegisterPartials(string path)
+        {
+            string template = File.ReadAllText(path);
+            string templateName = Path.GetFileNameWithoutExtension(path);
+            Handlebars.RegisterTemplate(templateName, template);
+        }
+
+        public void RegisterPartials(string[] paths)
+        {
+            foreach(string path in paths) RegisterPartials(path);
         }
     }
 }
