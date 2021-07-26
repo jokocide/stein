@@ -34,8 +34,6 @@ namespace Dagger.Services
                 Colorize(ConsoleColor.Gray, String.Join(' ', args));
 
             Colorize(ConsoleColor.Cyan, Separator); // Display visible separator before the routine is executed.
-
-            Console.WriteLine();
         }
 
         /// <summary>

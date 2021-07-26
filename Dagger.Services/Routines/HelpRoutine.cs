@@ -28,11 +28,9 @@ namespace Dagger.Services.Routines
                 };
 
                 Helper.Colorize(color, Message.message);
+                Console.WriteLine();
             }
 
-            Console.WriteLine("Optional arguments: ()");
-            Console.WriteLine();
-            
             Helper.Colorize(ConsoleColor.Cyan, "|> ", false);
             Helper.Colorize(ConsoleColor.Gray, "build ([path])");
             Helper.Colorize(ConsoleColor.DarkGray,

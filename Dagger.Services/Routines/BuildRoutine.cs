@@ -30,24 +30,20 @@ namespace Dagger.Services.Routines
             string[] collectionsDirectoriesPaths = GetCollectionsDirectoriesPaths(projectPath);
             List<string> collectionsMarkdownFilesPaths = GetCollectionMarkdownPaths(collectionsDirectoriesPaths);
 
+            // Separate frontmatter from body -- function
+            // Create some kind of 'frontmatter' object -- function
+            // Add object to store
+            // Process markdown to html -- markdig
+            // Create writable object
             foreach (string path in collectionsMarkdownFilesPaths)
             {
-                // File is loaded into memory.
-                string content = File.ReadAllText(path);
-                
-                // We need to directory and file names to create metadata objects.
-                // string directoryName = Path.GetDirectoryName(path);
-                // string fileName = Path.GetFileNameWithoutExtension(path);
-
                 DirectoryInfo info = new DirectoryInfo(path);
-                
-                // Looking for metadata indicator, "---" in YAML.
-                int firstIndicatorEndIndex = content.IndexOf("---", 0) + 3;
-                int secondIndicatorStartIndex = content.IndexOf("---", firstIndicatorEndIndex);
+                string content = File.ReadAllText(path);
+                (int Start, int End) indices = GetYamlFrontmatterIndices(content);
                 
                 // Separating metadata and content.
-                string metadata = content.Substring(firstIndicatorEndIndex, secondIndicatorStartIndex - firstIndicatorEndIndex).Trim(); // MetaData object -> Posts list.
-                string body = content.Substring(secondIndicatorStartIndex + 3).Trim(); // Writable object (need to calculate path)
+                string metadata = content.Substring(indices.Start, indices.End - indices.Start).Trim(); // MetaData object -> Posts list.
+                string body = content.Substring(indices.End + 3).Trim(); // Writable object (need to calculate path)
                 
                 // Split the metadata string up by newline characters.
                 string[] splitMetadata = metadata.Split(Environment.NewLine);
@@ -124,10 +120,9 @@ namespace Dagger.Services.Routines
         }
         
         /// <summary>
-        /// Return all partial files that can be found within the Dagger project at the given path, or at the
-        /// current directory when no path is given.
+        /// Find Handlebars files (*.hbs) that exist in the expected partials directory of a Dagger project.
         /// </summary>
-        /// <returns>An array of strings that represent absolute file paths to Handlebars partial files.</returns>
+        /// <returns>An array of strings representing paths to Handlebars partials.</returns>
         public string[] GetHandlebarsPartialsPaths(string projectPath)
         {
             if (!Helper.CheckIsProject(projectPath))
@@ -138,6 +133,10 @@ namespace Dagger.Services.Routines
             return partialsFiles;
         }
 
+        /// <summary>
+        /// Make Handlebars aware of a given partial. The name of the partial will be equal to the file name.
+        /// </summary>
+        /// <param name="filePath">The path to the Handlebars partial.</param>
         public void RegisterHandlebarsPartials(string filePath)
         {
             string template = File.ReadAllText(filePath);
@@ -145,11 +144,25 @@ namespace Dagger.Services.Routines
             Handlebars.RegisterTemplate(templateName, template);
         }
 
+        /// <summary>
+        /// Make Handlebars aware of all given partials. The name of the partials will be equal to the file names.
+        /// </summary>
+        /// <param name="filePaths">An array of strings that represent paths to Handlebars partials.</param>
         public void RegisterHandlebarsPartials(string[] filePaths)
         {
             foreach(string path in filePaths) RegisterHandlebarsPartials(path);
         }
         
+        /// <summary>
+        /// Find the paths of all subdirectories within a given Dagger project path's expected collections directory.
+        /// </summary>
+        /// <param name="projectPath">The Dagger project to be searched.</param>
+        /// <returns>
+        /// An array of strings representing paths to the present collections within the given project.
+        /// </returns>
+        /// <exception cref="InvalidOperationException">
+        /// Thrown when the given path does not appear to be a Dagger project. (Missing .dagger file?)
+        /// </exception>
         public string[] GetCollectionsDirectoriesPaths(string projectPath)
         {
             if (!Helper.CheckIsProject(projectPath))
@@ -159,11 +172,25 @@ namespace Dagger.Services.Routines
             return Directory.GetDirectories(collectionsDirectory);
         }
 
+        /// <summary>
+        /// Find all Markdown files (*.md) that exist within the given collection directory path.
+        /// </summary>
+        /// <param name="collectionsDirectoryPath">
+        /// A string representing a path to the collection that should be searched.
+        /// </param>
+        /// <returns>A list of strings representing paths to all existing Markdown files.</returns>
         public string[] GetCollectionMarkdownPaths(string collectionsDirectoryPath)
         {
             return Directory.GetFiles(collectionsDirectoryPath, "*.md");
         }
 
+        /// <summary>
+        /// Find all Markdown files (*.md) that exist within all given collection directory paths.
+        /// </summary>
+        /// <param name="collectionsDirectoriesPaths">
+        /// An array of strings representing paths to the the collections that should be searched.
+        /// </param>
+        /// <returns>A list of strings representing paths to all existing Markdown files.</returns>
         public List<string> GetCollectionMarkdownPaths(string[] collectionsDirectoriesPaths)
         {
             List<string> paths = new List<string>();
@@ -175,6 +202,22 @@ namespace Dagger.Services.Routines
             }
 
             return paths;
+        }
+
+        /// <summary>
+        /// Find the indices representing the end of the first YAML frontmatter indicator and the beginning of the
+        /// second YAML frontmatter indicator. all indices between these two numbers represent frontmatter.
+        /// </summary>
+        /// <param name="text">A string containing YAML frontmatter.</param>
+        /// <returns>
+        /// A tuple representing the beginning and ending indices of the frontmatter content
+        /// (without the traditional YAML '---' indicators)
+        /// </returns>
+        public (int Start, int End) GetYamlFrontmatterIndices(string text)
+        {
+            int frontmatterStarts = text.IndexOf("---", 0) + 3;
+            int frontmatterEnds = text.IndexOf("---", frontmatterStarts);
+            return (frontmatterStarts, frontmatterEnds);
         }
     }
 }
