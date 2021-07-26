@@ -40,7 +40,7 @@ namespace Dagger.Services.Routines
                 DirectoryInfo info = new DirectoryInfo(path);
                 string content = File.ReadAllText(path);
                 (int Start, int End) indices = GetYamlFrontmatterIndices(content);
-                
+
                 // Separating metadata and content.
                 string metadata = content.Substring(indices.Start, indices.End - indices.Start).Trim(); // MetaData object -> Posts list.
                 string body = content.Substring(indices.End + 3).Trim(); // Writable object (need to calculate path)
