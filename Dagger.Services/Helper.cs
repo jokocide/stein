@@ -90,5 +90,23 @@ namespace Dagger.Services
 
             Console.ResetColor();
         }
+
+        /// <summary>
+        /// Return a substring of text starting at the first index and ending at, but not including, the second index.
+        /// </summary>
+        /// <param name="startIndex">The starting index.</param>
+        /// <param name="endIndex">The ending index.</param>
+        /// <param name="text">The source text.</param>
+        /// <returns>A string of text between the two given indices.</returns>
+        public static string Slice(int startIndex, int endIndex, string text)
+        {
+            if (endIndex < 0)
+            {
+                endIndex = text.Length + endIndex;
+            }
+
+            int len = endIndex - startIndex;
+            return text.Substring(startIndex, len);
+        }
     }
 }
