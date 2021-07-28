@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using Dagger.Services.Routines;
 
@@ -21,17 +22,29 @@ namespace Dagger.Services.Pipelines
 
         private Routine ServePathPipeline(string[] args)
         {
-            if (!Helper.CheckIsProject(args[1])) return HelpRoutine.ProvidedPathIsNotProject();
-            
-            Directory.SetCurrentDirectory(args[1]);
-
             if (args.Length > 2) return ServePathPortPipeline(args);
             
+            if (!Helper.CheckIsProject(args[1]))
+            {
+                int number;
+                
+                if (Int32.TryParse(args[1], out number))
+                {
+                    return new ServeRoutine(args[1]);
+                }
+
+                return HelpRoutine.ProvidedPathIsNotProject();
+            }
+            
+            Directory.SetCurrentDirectory(args[1]);
             return new ServeRoutine();
         }
 
         private Routine ServePathPortPipeline(string[] args)
         {
+            if (!Helper.CheckIsProject(args[1])) return HelpRoutine.ProvidedPathIsNotProject();
+            
+            Directory.SetCurrentDirectory(args[1]);
             return new ServeRoutine(args[2]);
         }
     }
