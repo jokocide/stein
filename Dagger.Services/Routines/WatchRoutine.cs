@@ -8,14 +8,14 @@ namespace Dagger.Services.Routines
     /// <summary>
     /// Watch a Dagger project for changes to the resources directory, and trigger a Build routine as a result.
     /// </summary>
-    public class Watch : Routine
+    public class WatchRoutine : Routine
     {
-        private Build Builder { get; }
+        private BuildRoutine Builder { get; }
         private List<String> ChangedFiles { get; } = new List<string>();
 
-        public Watch()
+        public WatchRoutine()
         {
-            Builder = new Build();
+            Builder = new BuildRoutine();
         }
 
         public override void Execute()

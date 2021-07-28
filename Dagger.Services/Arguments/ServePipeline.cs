@@ -12,22 +12,25 @@ namespace Dagger.Services.Pipelines
 
         public override Routine Execute()
         {
-            // First argument was serve, did we receive a path?
-            if (Args.Length > 1)
-            {
-                if (Helper.CheckIsProject(Args[1]))
-                {
-                    Directory.SetCurrentDirectory(Args[1]);
-                }
-                else
-                {
-                    return HelpRoutine.ProvidedPathIsNotProject();
-                }
-            }
+            if (Args.Length > 1) ServePathPipeline(Args);
 
             return Helper.CheckIsProject(Directory.GetCurrentDirectory())
-                ? new Serve()
+                ? new ServeRoutine()
                 : HelpRoutine.NotInDaggerProject(true);
+        }
+
+        private Routine ServePathPipeline(string[] args)
+        {
+            if (!Helper.CheckIsProject(args[1])) return HelpRoutine.ProvidedPathIsNotProject();
+            Directory.SetCurrentDirectory(args[1]);
+
+            if (args.Length > 2) ServePathPortPipeline(args);
+            return new ServeRoutine();
+        }
+
+        private Routine ServePathPortPipeline(string[] args)
+        {
+            return new ServeRoutine(args[2]);
         }
     }
 }

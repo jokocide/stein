@@ -6,7 +6,7 @@ namespace Dagger.Services.Routines
     /// <summary>
     /// Create a new Dagger project.
     /// </summary>
-    public class New : Routine
+    public class NewRoutine : Routine
     {
         public override void Execute()
         {

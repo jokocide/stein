@@ -14,17 +14,18 @@ namespace Dagger.Services.Pipelines
 
         public override Routine Execute()
         {
-            if (Args.Length > 1)
-            {
-                if (Helper.CheckIsProject(Args[1])) 
-                    Directory.SetCurrentDirectory(Args[1]);
-                else return HelpRoutine.ProvidedPathIsNotProject();
-            }
-
-            if (Helper.CheckIsProject()) 
-                return new Watch();
+            if (Args.Length > 1) WatchPathPipeline(Args);
+            if (Helper.CheckIsProject()) return new WatchRoutine();
             
             return HelpRoutine.NotInDaggerProject(true);
+        }
+
+        private Routine WatchPathPipeline(string[] args)
+        {
+            if (!Helper.CheckIsProject(args[1])) return HelpRoutine.ProvidedPathIsNotProject();
+            Directory.SetCurrentDirectory(args[1]);
+            
+            return new WatchRoutine();
         }
     }
 }

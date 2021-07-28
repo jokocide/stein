@@ -20,7 +20,7 @@ namespace Dagger.Services.Pipelines
 
             if (Args.Length == 1)
             {
-                if (Helper.CheckIsProject()) return new Build();
+                if (Helper.CheckIsProject()) return new BuildRoutine();
                 return HelpRoutine.NotInDaggerProject(true);
             }
             
@@ -41,7 +41,7 @@ namespace Dagger.Services.Pipelines
                 return HelpRoutine.ProvidedPathIsNotProject();
             }
             
-            return Helper.CheckIsProject() ? new Build() : HelpRoutine.NotInDaggerProject(true);
+            return Helper.CheckIsProject() ? new BuildRoutine() : HelpRoutine.NotInDaggerProject(true);
         }
     }
 }

@@ -5,20 +5,28 @@ using System.Net;
 namespace Dagger.Services.Routines
 {
     /// <summary>
-    /// Make a Dagger project available for testing at the specified port.
+    /// Make a Dagger project available for testing at the specified port, or 8000 if no port is given.
     /// </summary>
-    public class Serve : Routine
+    public class ServeRoutine : Routine
     {
-        private string[] prefixes { get; } = { "http://localhost:8000/" };
+        private string[] Prefixes { get; } = { "http://localhost:" };
+        private string Port { get; }
+        
+        public ServeRoutine(string port = "8000")
+        {
+            Port = port;
+            Prefixes[0] += $"{port}/";
+        }
+        
         public override void Execute()
         {
             HttpListener listener = new HttpListener();
 
-            foreach (string prefix in prefixes)
+            foreach (string prefix in Prefixes)
                 listener.Prefixes.Add(prefix);
 
             listener.Start();
-            Console.WriteLine("Serving project on: http://localhost:8000");
+            Console.WriteLine($"Serving project on: http://localhost:{Port}");
             
             while (true)
             {

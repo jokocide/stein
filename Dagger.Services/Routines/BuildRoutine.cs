@@ -10,7 +10,7 @@ namespace Dagger.Services.Routines
     /// <summary>
     /// Compile a Dagger project.
     /// </summary>
-    public class Build : Routine
+    public class BuildRoutine : Routine
     {
         public override void Execute()
         {

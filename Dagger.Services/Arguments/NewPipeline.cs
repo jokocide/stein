@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using Dagger.Services.Routines;
 
 namespace Dagger.Services.Pipelines
@@ -12,13 +13,33 @@ namespace Dagger.Services.Pipelines
         
         public override Routine Execute()
         {
-            // We only support creating a project in the current directory right now, so we should only have one argument.
-            return Args.Length > 1 ? HelpRoutine.TooManyArguments() : new New();
+            return Args.Length > 1 ? PipelineBuildPath(Args) : new NewRoutine();
         }
 
-        public void PipelineBuildPath(string[] args)
-        { 
-            throw new NotImplementedException();
+        public Routine PipelineBuildPath(string[] args)
+        {
+            if (!Directory.Exists(args[1]))
+            {
+                try
+                {
+                    Directory.CreateDirectory(args[1]);
+                }
+                catch (IOException)
+                {
+                    return HelpRoutine.ProvidedPathIsInvalid();
+                }
+                catch (ArgumentException)
+                {
+                    return HelpRoutine.ProvidedPathIsInvalid();
+                }
+                catch (NotSupportedException)
+                {
+                    return HelpRoutine.ProvidedPathIsInvalid();
+                }
+            }
+            
+            Directory.SetCurrentDirectory(args[1]);
+            return new NewRoutine();
         }
     }
 }

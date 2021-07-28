@@ -127,11 +127,25 @@ namespace Dagger.Services.Routines
         /// <returns>A Routine object.</returns>
         public static Routine CommandNotRecognized()
         {
-            string text = "Command not recognized.";
-
             Message message = new Message
             {
-                Text = text,
+                Text = "Command not recognized.",
+                Type = Message.MessageType.Error
+            };
+
+            return new HelpRoutine(message);
+        }
+
+        /// <summary>
+        /// Return a Help routine that displays text to explain that Dagger received a path argument, but
+        /// the path argument does not appear to be valid. Dagger cannot create or move into the directory.
+        /// </summary>
+        /// <returns>A Routine object.</returns>
+        public static Routine ProvidedPathIsInvalid()
+        {
+            Message message = new Message
+            {
+                Text = "The provided path does not appear to be valid.",
                 Type = Message.MessageType.Error
             };
 
