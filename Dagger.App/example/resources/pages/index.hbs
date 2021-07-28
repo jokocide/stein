@@ -1,10 +1,8 @@
 {{> header }}
-
 <div class="index-container">
     <div class="widget" id="posts">
         <h1 class="section-title">Recent</h1>
         <div id="posts-container">
-
             {{#each posts}}
                 <div onclick={{ path }} style="cursor: pointer;" class="post">
                     <ul class="title-container">
@@ -17,9 +15,7 @@
                     </div>
                 </div>
             {{/each}}
-
         </div>
     </div>
 </div>
-
 {{> footer }}

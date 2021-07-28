@@ -14,102 +14,91 @@ namespace Dagger.Services.Routines
     {
         public override void Execute()
         {
-            // Pipeline ensures that we are in a Dagger project before returning a Build routine.
             string projectPath = Directory.GetCurrentDirectory();
-            
             string resourcesPath = Path.Join(projectPath, "resources");
-            string collectionsPath = Path.Join(resourcesPath, "collections");
-            string pagesPath = Path.Join(resourcesPath, "pages");
-            string publicPath = Path.Join(resourcesPath, "public");
+            string sitePath = Path.Join(projectPath, "site");
+            string resourcesPublicPath = Path.Join(resourcesPath, "public");
+            string sitePublicPath = Path.Join(sitePath, "public");
             string templatesPath = Path.Join(resourcesPath, "templates");
-            string siteDirectory = Path.Join(projectPath, "site");
             
             string[] partialsPaths = GetHandlebarsPartialsPaths(projectPath);
-            RegisterHandlebarsPartials(partialsPaths);
-
             string[] collectionsDirectoriesPaths = GetCollectionsDirectoriesPaths(projectPath);
-            
+            string[] pagesPaths = GetPagesPaths(projectPath);
             List<string> collectionsMarkdownFilesPaths = GetCollectionMarkdownPaths(collectionsDirectoriesPaths);
 
-            foreach (string path in collectionsMarkdownFilesPaths)
+            // Handle partials.
+            RegisterHandlebarsPartials(partialsPaths);
+
+            // Handle collections.
+            foreach (string filePath in collectionsMarkdownFilesPaths)
             {
-                DirectoryInfo info = new DirectoryInfo(path);
-                string fileContent = File.ReadAllText(path);
+                DirectoryInfo directoryInfo = new DirectoryInfo(filePath);
+                string fileContent = File.ReadAllText(filePath);
                 
-                (int FirstStart, int FirstEnd, int SecondStart, int SecondEnd) indices = GetYamlFrontmatterIndices(fileContent);
+                (int FirstStart, int FirstEnd, int SecondStart, int SecondEnd) indices =
+                    GetYamlFrontmatterIndices(fileContent);
                 
-                Dictionary<string, string> metadata = ParseMetadataFromString(
+                Dictionary<string, string> metadata = CreateMetadata(
                     Helper.Slice(indices.FirstEnd, indices.SecondStart, fileContent).Trim()
-                    );
+                );
+
+                if (directoryInfo.Parent?.Name == null) throw new Exception("Received null parent value.");
+                
+                if (!Store.Collections.ContainsKey(directoryInfo.Parent.Name))
+                    Store.Collections.Add(directoryInfo.Parent.Name, new List<Dictionary<string, string>>());
+                
+                Store.Collections[directoryInfo.Parent.Name].Add(metadata);
                 
                 string untransformedBody = fileContent.Substring(indices.SecondEnd).Trim();
+                string transformedBody = Markdown.ToHtml(untransformedBody);
                 
-                
-                
-                
-                
+                metadata.Add("path",
+                    Path.Join("collections", directoryInfo.Parent.Name,
+                        Path.GetFileNameWithoutExtension(directoryInfo.Name), "index.html")); 
+                metadata.Add("body", transformedBody);
 
-                // Inject a 'path' that can be used for navigation. todo: fix
-                // newMetaData.Add("path", Path.Join("collections", info.Parent.Name, Path.GetFileNameWithoutExtension(info.Name), "index.html")); 
+                string template = File.ReadAllText(Path.Join(templatesPath, metadata["template"] + ".hbs"));
+                var compiledTemplate = Handlebars.Compile(template);
+                var renderedTemplate = compiledTemplate(metadata);
 
-                // Add to store.
-                // Store.Posts.Add(newMetaData);
+                string resourcePath = Path.GetRelativePath("./resources", filePath);
+                Writable writable = new Writable(resourcePath, renderedTemplate);
 
-                // Body becomes HTML.
-                // string htmlBody = Markdown.ToHtml(body);
-
-                // Body is added to newMetaData so we can inject the dictionary as a whole into the template.
-                // newMetaData.Add("body", htmlBody);
-
-                // Load the template.
-                // string requestedTemplateName = newMetaData["template"];
-                // string templatesDirectory = Path.Join(Directory.GetCurrentDirectory(), "resources", "templates");
-                // string pathToTemplate = Path.Join(templatesDirectory, requestedTemplateName + ".hbs");
-
-                // Compile template.
-                // string templateContent = File.ReadAllText(pathToTemplate);
-                // var template = Handlebars.Compile(templateContent);
-
-                // Render template.
-                // string renderedTemplate = template(newMetaData);
-
-                // Add new writable to Store.
-                // string relative = Path.GetRelativePath("./resources", path);
-                // Store.Writable.Add(new Writable(relative, renderedTemplate));
+                Store.Writable.Add(writable);
             }
             
-            // string pagesDirectory = Path.Join(Directory.GetCurrentDirectory(), "resources", "pages");
-            // string[] pagesFiles = Directory.GetFiles(pagesDirectory, "*.hbs");
-            //
-            // foreach (string path in pagesFiles)
-            // {
-                // Read file to memory
-                // string content = File.ReadAllText(path);
-                
-                // Run to handlebars
-                // var template = Handlebars.Compile(content);
-            
-                // Create writable
-            //     string compiledContent = template(Store.Posts);
-            //     string relative = Path.GetRelativePath("./resources", path);
-            //     Store.Writable.Add(new Writable(relative, compiledContent));
-            // }
-            
-            // Clean site directory.
-            // Directory.Delete("./site", true);
+            // Handle else, inject the collections.
+            foreach (string filePath in pagesPaths)
+            {
+                DirectoryInfo directoryInfo = new DirectoryInfo(filePath);
+                string fileContent = File.ReadAllText(filePath);
 
-            // Pass all writable objects to Author service.
-            // Author author = new Author(Store.Writable);
-            // author.Write();
+                var compiledTemplate = Handlebars.Compile(fileContent);
+                var renderedTemplate = compiledTemplate(Store.Collections);
+
+                string resourcePath = Path.GetRelativePath("./resources", filePath);
+                Writable writable = new Writable(resourcePath, renderedTemplate);
+                
+                Store.Writable.Add(writable);
+            }
+
+            // Todo: Archiving.
+            // Clear the site directory.
+            if (Directory.Exists(sitePath)) Directory.Delete(sitePath, true);
+            
+            // Invoke Author service to handle the Writable objects.
+            new Author(Store.Writable).Write();
             
             // Synchronize public directories.
-            // Helper.Synchronize(Path.Join("resources", "public"), Path.Join("site", "public"), true);
+            Helper.Synchronize(resourcesPublicPath, sitePublicPath, true);
         }
 
         /// <summary>
         /// Find Handlebars files (*.hbs) that exist in the expected partials directory of a Dagger project.
         /// </summary>
+        /// <param name="projectPath">The Dagger project to be searched.</param>
         /// <returns>An array of strings representing paths to Handlebars partials.</returns>
+        /// <exception cref="InvalidOperationException"></exception>
         private string[] GetHandlebarsPartialsPaths(string projectPath)
         {
             if (!Helper.CheckIsProject(projectPath))
@@ -118,6 +107,22 @@ namespace Dagger.Services.Routines
             string partialsDirectory = Path.Join(projectPath, "resources", "templates", "partials");
             string[] partialsFiles = Directory.GetFiles(partialsDirectory, "*.hbs");
             return partialsFiles;
+        }
+
+        /// <summary>
+        /// Find Handlebars files (*.hbs) that exist in the expected pages directory of a Dagger project.
+        /// </summary>
+        /// <param name="projectPath">The Dagger project to be searched.</param>
+        /// <returns>An array of strings representing paths to Handlebars partials.</returns>
+        /// <exception cref="InvalidOperationException"></exception>
+        private string[] GetPagesPaths(string projectPath)
+        {
+            if (!Helper.CheckIsProject(projectPath))
+                throw new InvalidOperationException("Did not receive a valid project path.");
+
+            string pagesDirectory = Path.Join(projectPath, "resources", "pages");
+            string[] pagesFiles = Directory.GetFiles(pagesDirectory, "*.hbs");
+            return pagesFiles;
         }
 
         /// <summary>
@@ -206,31 +211,28 @@ namespace Dagger.Services.Routines
             int firstEnd = firstStart + 3;
             int secondStart = text.IndexOf("---", firstEnd);
             int secondEnd = secondStart + 3;
-            
             return (firstStart, firstEnd, secondStart, secondEnd);
         }
 
         /// <summary>
-        /// Convert a string into a MetaData object by dividing the lines up by a specified delimiter, or ':' by
+        /// Create a MetaData object by dividing key/value pairs by a specified delimiter, or ':' by
         /// default if no delimiter is given.
         /// </summary>
         /// <param name="text">The source string.</param>
         /// <param name="delimiter">The delimiter that will be used to divide the lines.</param>
         /// <returns>A new MetaData object containing the key/value pairs from the source string.</returns>
-        private Dictionary<string, string> ParseMetadataFromString(string text, string delimiter = ":")
+        private Dictionary<string, string> CreateMetadata(string text, string delimiter = ":")
         {
-            Dictionary<string, string> metadata = new Dictionary<string, string>();
+            var dictionary = new Dictionary<string, string>();
             string[] lines = text.Split(Environment.NewLine);
-            
             foreach (string line in lines)
             {
                 string[] splitLines = line.Split(delimiter, 2);
                 string key = splitLines[0].Trim();
                 string value = splitLines[1].Trim();
-                metadata.Add(key, value);
+                dictionary.Add(key, value);
             }
-
-            return metadata;
+            return dictionary;
         }
     }
 }
