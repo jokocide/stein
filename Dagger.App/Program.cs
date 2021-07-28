@@ -1,5 +1,6 @@
 ﻿using System;
-
+using System.IO;
+using System.Reflection;
 using Dagger.Services;
 using Dagger.Services.Routines;
 using Dagger.Services.Arguments;
@@ -13,6 +14,13 @@ namespace Dagger.App
     {
         static void Main(string[] args)
         {
+
+
+            foreach (string dir in dirs)
+            {
+                Console.WriteLine(dir);
+            }
+            
             Routine instructions = Dispatch.Evaluate(args);
 
             Console.WriteLine();
@@ -20,6 +28,7 @@ namespace Dagger.App
             if (args != null)
                 Helper.Colorize(ConsoleColor.Gray, String.Join(' ', args));
             Helper.Colorize(ConsoleColor.Cyan, "------");
+            
             
             instructions.Execute();
             

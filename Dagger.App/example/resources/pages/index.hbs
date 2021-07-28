@@ -4,16 +4,8 @@
         <h1 class="section-title">Recent</h1>
         <div id="posts-container">
             {{#each posts}}
-                <div onclick={{ path }} style="cursor: pointer;" class="post">
-                    <ul class="title-container">
-                        <a href={{ path }}>
-                            <li class="title">{{ title }}</li>
-                        </a>
-                    </ul>
-                    <div class="description-container">
-                        <p class="description">{{ description }}</p>
-                    </div>
-                </div>
+                <h1>{{ title }}</h1>
+                <p>{{ description }}</p>
             {{/each}}
         </div>
     </div>

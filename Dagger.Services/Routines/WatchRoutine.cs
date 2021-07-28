@@ -40,6 +40,9 @@ namespace Dagger.Services.Routines
             watcher.Filters.Add("*.md");
             watcher.Filters.Add("*.hbs");
             watcher.Filters.Add("*.html");
+            watcher.Filters.Add("*.css");
+            watcher.Filters.Add("*.scss");
+            watcher.Filters.Add("*.sass");
 
             watcher.IncludeSubdirectories = true;
 

@@ -14,6 +14,8 @@ namespace Dagger.Services.Routines
     {
         public override void Execute()
         {
+            Store store = new Store();
+            
             string projectPath = Directory.GetCurrentDirectory();
             string resourcesPath = Path.Join(projectPath, "resources");
             string sitePath = Path.Join(projectPath, "site");
@@ -44,10 +46,10 @@ namespace Dagger.Services.Routines
 
                 if (directoryInfo.Parent?.Name == null) throw new Exception("Received null parent value.");
                 
-                if (!Store.Collections.ContainsKey(directoryInfo.Parent.Name))
-                    Store.Collections.Add(directoryInfo.Parent.Name, new List<Dictionary<string, string>>());
+                if (!store.Collections.ContainsKey(directoryInfo.Parent.Name))
+                    store.Collections.Add(directoryInfo.Parent.Name, new List<Dictionary<string, string>>());
                 
-                Store.Collections[directoryInfo.Parent.Name].Add(metadata);
+                store.Collections[directoryInfo.Parent.Name].Add(metadata);
                 
                 string untransformedBody = fileContent.Substring(indices.SecondEnd).Trim();
                 string transformedBody = Markdown.ToHtml(untransformedBody);
@@ -64,7 +66,7 @@ namespace Dagger.Services.Routines
                 string resourcePath = Path.GetRelativePath("./resources", filePath);
                 Writable writable = new Writable(resourcePath, renderedTemplate);
 
-                Store.Writable.Add(writable);
+                store.Writable.Add(writable);
             }
             
             // Handle else, inject the collections.
@@ -74,12 +76,12 @@ namespace Dagger.Services.Routines
                 string fileContent = File.ReadAllText(filePath);
 
                 var compiledTemplate = Handlebars.Compile(fileContent);
-                var renderedTemplate = compiledTemplate(Store.Collections);
+                var renderedTemplate = compiledTemplate(store.Collections);
 
                 string resourcePath = Path.GetRelativePath("./resources", filePath);
                 Writable writable = new Writable(resourcePath, renderedTemplate);
                 
-                Store.Writable.Add(writable);
+                store.Writable.Add(writable);
             }
 
             // Todo: Archiving.
@@ -87,7 +89,7 @@ namespace Dagger.Services.Routines
             if (Directory.Exists(sitePath)) Directory.Delete(sitePath, true);
             
             // Invoke Author service to handle the Writable objects.
-            new Author(Store.Writable).Write();
+            new Author(store.Writable).Write();
             
             // Synchronize public directories.
             Helper.Synchronize(resourcesPublicPath, sitePublicPath, true);

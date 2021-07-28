@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Reflection;
 
 namespace Dagger.Services.Routines
 {
@@ -10,6 +11,14 @@ namespace Dagger.Services.Routines
     {
         public override void Execute()
         {
+            DirectoryInfo assembly = new DirectoryInfo(Path.GetDirectoryName(Assembly.GetCallingAssembly().Location));
+            DirectoryInfo netVersion = new DirectoryInfo(assembly.Parent.ToString());
+            DirectoryInfo tools = new DirectoryInfo(netVersion.Parent.ToString());
+            DirectoryInfo version = new DirectoryInfo(tools.Parent.ToString());
+            DirectoryInfo content = new DirectoryInfo(Path.Join(version.ToString(), "content"));
+            DirectoryInfo example = new DirectoryInfo(Path.Join(content.ToString(), "example"));
+            string[] dirs = Directory.GetDirectories(example.FullName);
+            
             string[] paths = 
             {
                 Path.Join("resources", "collections", "posts"),
