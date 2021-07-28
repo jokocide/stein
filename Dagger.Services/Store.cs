@@ -1,9 +1,10 @@
 using System.Collections.Generic;
+using Dagger.Data.Models;
 
-namespace Dagger.Data.Models
+namespace Dagger.Services
 {
     /// <summary>
-    /// A data model that is used in the Build routine to keep track of collectable and writable files.
+    /// Keep track of certain object types as they are created and disposed during a Build Routine.
     /// </summary>
     public static class Store
     {

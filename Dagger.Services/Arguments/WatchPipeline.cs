@@ -5,6 +5,9 @@ using Dagger.Services.Routines;
 
 namespace Dagger.Services.Pipelines
 {
+    /// <summary>
+    /// A Pipeline to handle the Watch command.
+    /// </summary>
     public class WatchPipeline : Pipeline
     {
         public WatchPipeline(string[] args) : base(args) {}

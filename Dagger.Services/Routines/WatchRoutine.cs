@@ -5,6 +5,9 @@ using System.Timers;
 
 namespace Dagger.Services.Routines
 {
+    /// <summary>
+    /// Watch a Dagger project for changes to the resources directory, and trigger a Build routine as a result.
+    /// </summary>
     public class Watch : Routine
     {
         private Build Builder { get; }

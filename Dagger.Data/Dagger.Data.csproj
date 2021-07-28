@@ -7,15 +7,11 @@
 
   <ItemGroup>
     <None Include="../LICENSE" Pack="true" PackagePath="" />
-    <None Remove="Models\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Models\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Remove="Models\**" />
+    <Compile Include="Models\Message.cs" />
+    <Compile Include="Models\Writable.cs" />
   </ItemGroup>
 
 </Project>

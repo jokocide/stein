@@ -13,16 +13,16 @@ namespace Dagger.App
     {
         static void Main(string[] args)
         {
-            // If given arguments, receive a new instance of Routine from argumentsHandler.
-            Routine instructions = args.Length > 0 ? Dispatch.Evaluate(args) : new HelpRoutine();
+            Routine instructions = Dispatch.Evaluate(args);
 
-            // Console header is displayed before the routine is executed.
-            Helper.PrintArguments(args);
+            Console.WriteLine();
+            Helper.Colorize(ConsoleColor.Cyan, "Dagger ", false);
+            if (args != null)
+                Helper.Colorize(ConsoleColor.Gray, String.Join(' ', args));
+            Helper.Colorize(ConsoleColor.Cyan, "------");
             
-            // Routine is executed, giving the user some feedback.
             instructions.Execute();
             
-            // New line is printed for clarity.
             Console.WriteLine();
         }
     }

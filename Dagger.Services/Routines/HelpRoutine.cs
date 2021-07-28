@@ -4,7 +4,7 @@ using Dagger.Data.Models;
 namespace Dagger.Services.Routines
 {
     /// <summary>
-    /// A routine that will display a list of all available commands and arguments that Dagger can handle.
+    /// Display help documentation for the CLI.
     /// </summary>
     public class HelpRoutine : Routine
     {
@@ -20,14 +20,14 @@ namespace Dagger.Services.Routines
         {
             if (Message != null)
             {
-                ConsoleColor color = Message.type switch
+                ConsoleColor color = Message.Type switch
                 {
-                    Message.Type.Error => ConsoleColor.Red,
-                    Message.Type.Warning => ConsoleColor.Yellow,
+                    Message.MessageType.Error => ConsoleColor.Red,
+                    Message.MessageType.Warning => ConsoleColor.Yellow,
                     _ => Console.ForegroundColor
                 };
 
-                Helper.Colorize(color, Message.message);
+                Helper.Colorize(color, Message.Text);
                 Console.WriteLine();
             }
 
@@ -71,8 +71,8 @@ namespace Dagger.Services.Routines
         {
             Message message = new Message
             {
-                message = "Received more than the maximum number of allowed arguments.",
-                type = Message.Type.Error
+                Text = "Received more than the maximum number of allowed arguments.",
+                Type = Message.MessageType.Error
             };
 
             return new HelpRoutine(message);
@@ -87,8 +87,8 @@ namespace Dagger.Services.Routines
         {
             Message message = new Message
             {
-                message = "The provided path does not appear to be a Dagger project. (Missing a .dagger file?)",
-                type = Message.Type.Error
+                Text = "The provided path does not appear to be a Dagger project. (Missing a .dagger file?)",
+                Type = Message.MessageType.Error
             };
 
             return new HelpRoutine(message);
@@ -107,8 +107,8 @@ namespace Dagger.Services.Routines
 
             Message message = new Message
             {
-                message = text,
-                type = Message.Type.Error
+                Text = text,
+                Type = Message.MessageType.Error
             };
             
             return new HelpRoutine(message);

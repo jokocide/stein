@@ -3,11 +3,11 @@ using System.IO;
 
 namespace Dagger.Services.Routines
 {
+    /// <summary>
+    /// Create a new Dagger project.
+    /// </summary>
     public class New : Routine
     {
-        /// <summary>
-        /// Create a new Dagger project.
-        /// </summary>
         public override void Execute()
         {
             string[] paths = 
@@ -20,10 +20,7 @@ namespace Dagger.Services.Routines
                 Path.Join("site", "public", "css")
             };
 
-            foreach (string path in paths)
-            {
-                Directory.CreateDirectory(path);
-            }
+            foreach (string path in paths) Directory.CreateDirectory(path);
 
             File.Create(".dagger");
             File.SetAttributes(".dagger", FileAttributes.Hidden);

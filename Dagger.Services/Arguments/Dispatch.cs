@@ -4,11 +4,10 @@ using Dagger.Services.Routines;
 namespace Dagger.Services.Arguments
 {
     /// <summary>
-    /// Hands the received arguments off to a Pipeline-typed object, which will ultimately return some kind of Routine
-    /// that can be executed in Program.cs.
+    /// Pass the received arguments through a Pipeline to determine which Routine should be returned.
     /// </summary>
     /// <returns>
-    /// Returns a Routine-typed object.
+    /// A Routine object.
     /// </returns>
     public static class Dispatch
     {
@@ -16,6 +15,9 @@ namespace Dagger.Services.Arguments
 
         public static Routine Evaluate(string[] args)
         {
+            // Default action will be to return a Help routine.
+            if (args.Length == 0) return new HelpRoutine();
+            
             // We can return right away if too many arguments are passed in.
             if (args.Length > MaxTotalArgs) return HelpRoutine.TooManyArguments();
 

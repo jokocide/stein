@@ -7,7 +7,7 @@ using Dagger.Data.Models;
 namespace Dagger.Services
 {
     /// <summary>
-    /// Methods for commiting Writable objects to disk.
+    /// Commit Writable objects to disk.
     /// </summary>
     public class Author
     {

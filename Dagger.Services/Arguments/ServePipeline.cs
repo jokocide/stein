@@ -3,6 +3,9 @@ using Dagger.Services.Routines;
 
 namespace Dagger.Services.Pipelines
 {
+    /// <summary>
+    /// A Pipeline to handle the Serve command.
+    /// </summary>
     public class ServePipeline : Pipeline
     {
         public ServePipeline(string[] args) : base(args) { }

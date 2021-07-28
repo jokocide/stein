@@ -4,9 +4,7 @@ using Dagger.Services.Routines;
 
 namespace Dagger.Services.Pipelines
 {
-    /// <summary>
-    /// A Pipeline to handle the build command.
-    /// </summary>
+    /// <summary>A Pipeline to handle the build command.</summary>
     public class BuildPipeline : Pipeline
     {
         // The maximum expected arguments for a build command.
@@ -14,12 +12,8 @@ namespace Dagger.Services.Pipelines
         
         public BuildPipeline(string[] args) : base(args) { }
         
-        /// <summary>
-        /// Returns a Help Routine for invalid commands, or a Build Routine is the command is valid.
-        /// </summary>
-        /// <returns>
-        /// A Routine-typed object.
-        /// </returns>
+        /// <summary>Return a Build Routine, or a Help Routine if the command is invalid.</summary>
+        /// <returns>A Routine object.</returns>
         public override Routine Execute()
         {
             if (Args.Length > MaxBuildArgs) return HelpRoutine.TooManyArguments();
@@ -33,15 +27,9 @@ namespace Dagger.Services.Pipelines
             return PipelineBuildPath(Args);
         }
 
-        /// <summary>
-        /// Handle build commands that have received a path argument.
-        /// </summary>
-        /// <param name="args">
-        /// The string[] arguments received from the command line.
-        /// </param>
-        /// <returns>
-        /// A Routine-typed object.
-        /// </returns>
+        /// <summary>Handle build commands that have received a path argument.</summary>
+        /// <param name="args">The arguments received from the command line.</param>
+        /// <returns>A Routine-typed object.</returns>
         private static Routine PipelineBuildPath(string[] args)
         {
             try
@@ -52,12 +40,8 @@ namespace Dagger.Services.Pipelines
             {
                 return HelpRoutine.ProvidedPathIsNotProject();
             }
-
-            return Helper.CheckIsProject() ? new Build() : new HelpRoutine(new Message
-            {
-                message = "Provide a path to a Dagger project or move to project before calling build.", 
-                type = Message.Type.Error
-            });
+            
+            return Helper.CheckIsProject() ? new Build() : HelpRoutine.NotInDaggerProject(true);
         }
     }
 }

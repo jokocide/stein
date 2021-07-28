@@ -4,6 +4,9 @@ using System.Net;
 
 namespace Dagger.Services.Routines
 {
+    /// <summary>
+    /// Make a Dagger project available for testing at the specified port.
+    /// </summary>
     public class Serve : Routine
     {
         private string[] prefixes { get; } = { "http://localhost:8000/" };

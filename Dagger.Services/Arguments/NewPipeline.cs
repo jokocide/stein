@@ -2,6 +2,9 @@ using Dagger.Services.Routines;
 
 namespace Dagger.Services.Pipelines
 {
+    /// <summary>
+    /// A Pipeline to handle the New command.
+    /// </summary>
     public class NewPipeline : Pipeline
     {
         public NewPipeline(string[] args) : base(args) { }

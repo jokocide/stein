@@ -8,7 +8,7 @@ using Markdig;
 namespace Dagger.Services.Routines
 {
     /// <summary>
-    /// Compile a Dagger project and write the results to the filesystem by invoking methods from the Author service.
+    /// Compile a Dagger project.
     /// </summary>
     public class Build : Routine
     {
