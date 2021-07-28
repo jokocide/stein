@@ -1,3 +1,4 @@
+using System;
 using Dagger.Services.Routines;
 
 namespace Dagger.Services.Pipelines
@@ -13,6 +14,11 @@ namespace Dagger.Services.Pipelines
         {
             // We only support creating a project in the current directory right now, so we should only have one argument.
             return Args.Length > 1 ? HelpRoutine.TooManyArguments() : new New();
+        }
+
+        public void PipelineBuildPath(string[] args)
+        { 
+            throw new NotImplementedException();
         }
     }
 }

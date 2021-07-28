@@ -9,9 +9,4 @@
     <None Include="../LICENSE" Pack="true" PackagePath="" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Include="Models\Message.cs" />
-    <Compile Include="Models\Writable.cs" />
-  </ItemGroup>
-
 </Project>
