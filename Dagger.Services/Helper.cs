@@ -74,11 +74,15 @@ namespace Dagger.Services
         public static void Colorize(ConsoleColor color, string text, bool newLine = true)
         {
             Console.ForegroundColor = color;
-            
+
             if (newLine)
+            {
                 Console.WriteLine(text);
+            }
             else
+            {
                 Console.Write(text);
+            }
 
             Console.ResetColor();
         }

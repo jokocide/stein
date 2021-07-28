@@ -53,20 +53,26 @@ namespace Dagger.Services.Routines
                                                    + "project when no arguments are given.");
             Console.WriteLine();
             
-            Helper.Colorize(ConsoleColor.Cyan, "|>", false);
+            Helper.Colorize(ConsoleColor.Cyan, "|> ", false);
             Helper.Colorize(ConsoleColor.Gray, "watch ([path])");
             Helper.Colorize(ConsoleColor.DarkGray, "Watch the Dagger project at the given path for changes, " 
                                                    + "and rebuild the project when a change is detected. Defaults to " 
                                                    + "checking the current directory for a Dagger project when " 
                                                    + "no path is given.");
 
+            Console.WriteLine();
+            Helper.Colorize(ConsoleColor.Cyan, "--------------------------------------------------------------");
+            Console.Write("Submit an issue: ");
+            Helper.Colorize(ConsoleColor.Blue, "https://github.com/jokocide/dagger/issues/new");
+            Console.Write("Send feedback: ");
+            Helper.Colorize(ConsoleColor.Blue, "jokocide@outlook.com");
         }
 
         /// <summary>
         /// Return a Help routine that displays text to explain that Dagger has received more than the maximum
         /// number of allowed arguments.
         /// </summary>
-        /// <returns>A Routine-typed object.</returns>
+        /// <returns>A Routine object.</returns>
         public static Routine TooManyArguments()
         {
             Message message = new Message
@@ -82,7 +88,7 @@ namespace Dagger.Services.Routines
         /// Return a Help routine that displays text to explain that Dagger has received a path argument which does
         /// not lead to a Dagger project as indicated by the presence of a hidden .dagger file.
         /// </summary>
-        /// <returns>A Routine-typed object.</returns>
+        /// <returns>A Routine object.</returns>
         public static Routine ProvidedPathIsNotProject()
         {
             Message message = new Message
@@ -98,7 +104,7 @@ namespace Dagger.Services.Routines
         /// Return a Help routine that displays text to explain that Dagger has received a command but cannot proceed
         /// because a path was not provided, and was also not called from the directory of a Dagger project.
         /// </summary>
-        /// <returns>A Routine-typed object.</returns>
+        /// <returns>A Routine object.</returns>
         public static Routine NotInDaggerProject(bool routineAcceptsPaths)
         {
             string text = routineAcceptsPaths
@@ -111,6 +117,24 @@ namespace Dagger.Services.Routines
                 Type = Message.MessageType.Error
             };
             
+            return new HelpRoutine(message);
+        }
+
+        /// <summary>
+        /// Return a Help routine that displays text to explain that Dagger has received arguments but does not
+        /// understand how to respond to them.
+        /// </summary>
+        /// <returns>A Routine object.</returns>
+        public static Routine CommandNotRecognized()
+        {
+            string text = "Command not recognized.";
+
+            Message message = new Message
+            {
+                Text = text,
+                Type = Message.MessageType.Error
+            };
+
             return new HelpRoutine(message);
         }
     }
