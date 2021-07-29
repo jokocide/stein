@@ -1,7 +1,8 @@
 # 🗡 Dagger
 Dagger is a static site generator built on .NET.
 
-> This project is currently under construction, but look for Dagger on [NuGet](https://www.nuget.org/) soon!
+~~> This project is currently under construction, but look for Dagger on [NuGet](https://www.nuget.org/) soon!~~
+> Dagger has been released and is in a functional state, but improvements are coming soon. https://www.nuget.org/packages/Jokocide.Dagger/
 
 To start using Dagger, you'll need to have the [**.NET SDK**](https://dotnet.microsoft.com/download) installed.
 
