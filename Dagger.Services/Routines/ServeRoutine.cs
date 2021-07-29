@@ -95,7 +95,7 @@ namespace Dagger.Services.Routines
                     _ => response.ContentType
                 };
 
-                if (extension != ".html" || extension != ".css" && requestedFileExists)
+                if (extension != ".html" || extension != ".css" || extension != ".js" && requestedFileExists)
                 {
                     buffer = File.ReadAllBytes(Path.Join(site, requestedFile));
                 }

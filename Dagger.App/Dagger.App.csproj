@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <PackageId>Jokocide.Dagger</PackageId>
-    <Version>0.0.1</Version>
+    <Version>1.0.0</Version>
     <Authors>Jonathan Koenig</Authors>
     <Description>A global tool for static site generation.</Description>
     <OutputType>Exe</OutputType>
@@ -19,40 +19,24 @@
 
   <ItemGroup>
       <None Include="../LICENSE" Pack="true" PackagePath="" />
-      <None Remove="example\.dagger" />
-      <None Remove="jokocide\**" />
-      <None Remove="example\**" />
   </ItemGroup>
-
+  
   <ItemGroup>
-    <Compile Remove="jokocide\**" />
-    <Compile Remove="example\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Remove="jokocide\**" />
-    <EmbeddedResource Remove="example\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="example\resources\collections" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="example\resources\collections\posts\gpg.md" />
-    <Content Include="example\resources\collections\posts\jackolert.md" />
-    <Content Include="example\resources\collections\posts\microscripts.md" />
+    <Content Include="example\resources\collections\posts\hello.md" />
     <Content Include="example\resources\pages\index.hbs" />
     <Content Include="example\resources\public\css\main.css" />
+    <Content Include="example\resources\public\images\dagger.png" />
+    <Content Include="example\resources\public\js\main.js" />
+    <Content Include="example\resources\templates\partials\banner.hbs" />
     <Content Include="example\resources\templates\partials\footer.hbs" />
     <Content Include="example\resources\templates\partials\header.hbs" />
     <Content Include="example\resources\templates\partials\nav.hbs" />
     <Content Include="example\resources\templates\post.hbs" />
-    <Content Include="example\site\collections\posts\gpg\index.html" />
-    <Content Include="example\site\collections\posts\jackolert\index.html" />
-    <Content Include="example\site\collections\posts\microscripts\index.html" />
     <Content Include="example\site\index.html" />
-    <Content Include="example\site\public\css\main.css" />
+    <Content Include="example\site\public\css\" />
+    <Content Include="example\site\public\js\" />
+    <Content Include="example\site\public\images\" />
+    <Content Include="example\site\collections\" />
   </ItemGroup>
 
 </Project>

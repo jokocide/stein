@@ -5,8 +5,9 @@
     --dark: #212529;
     --light: #FFFFFF;
     --light-gray: #DEE2E6;
-    --dark-gray: #9B9B9B;
-    --cyan: #61D6D6;
+    --gray: #9B9B9B;
+    --dark-gray: #474747;
+    --blue: #4054a5;
 }
 
 body {
@@ -15,66 +16,122 @@ body {
     padding: 0;
 }
 
+.bar {
+    display: flex;
+    align-items: center;
+    padding: 5px;
+    height: 44px;
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+a {
+    color: var(--blue);
+}
+
 /* 
 nav.hbs 
 */
 #nav {
-    display: flex;
-    justify-content: center;
-    align-items: center;
     background: var(--dark);
-    padding: 5px;
-    height: 44px;
-    margin: 0;
-    box-shadow: 0px 5px 5px var(--light-gray);
 }
 
-#nav > div {
+#nav-branding-container {
+    background: #141718;
+    box-shadow: 0px 1px 5px var(--dark-gray);
+    transition: .1s all ease-in-out;
+    color: var(--light-gray);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    padding: 8px;
+    height: 70px;
+    width: 130px;
+    position: absolute;
+    top: 11px;
+    left: 13px;
+    cursor: pointer;
+}
+
+#nav-branding-container:hover {
+    background: #1e1e20; 
+}
+
+#nav-branding-container > * {
+    padding-left: 4px;
+}
+
+#nav-branding-text {
+    flex: 1;
+}
+
+#nav-branding-container img {
+    height: 40px;
+    width: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#nav-link-container {
     flex: 1;
     display: flex;
     align-items: center;
-}
-
-#nav img {
-    height: 40px;
-    width: 40px;
-    cursor: pointer;
-    transform: rotate(-45deg);
-}
-
-#nav img:hover {
+    justify-content: flex-start;
+    padding: 0 11rem;
 }
 
 #nav * {
     text-decoration: none;
 }
 
-.nav-link {
-    color: var(--dark-gray);
+#nav .nav-link {
+    color: var(--gray);
     text-decoration: none;
     transition: all .2s ease-in-out;
 }
 
-.nav-link:hover {
+#nav .nav-link:hover {
     color: var(--light-gray);
 }
 
-#nav-title {
+#nav #nav-title {
     color: var(--light);
 }
 
-#nav-left > * {
-    margin: 0 6px;
+#nav #nav-left > * {
+    margin: 0 9px;
 }
 /* 
 /nav.hbs 
 */
 
 /*
+banner.hbs
+ */
+#banner {
+    background: var(--light-gray);
+    box-shadow: 0px 5px 5px var(--gray);
+    justify-content: center;
+    color: var(--dark-gray);
+}
+/*
+/banner.hbs
+ */
+
+/*
 index.hbs
  */
 #base-container {
-    padding: 8px;
+    padding: 16px 8px;
+}
+
+#posts-container {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
 }
 /*
 /index.hbs
