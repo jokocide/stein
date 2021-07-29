@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Net;
+using System.Text;
 
 namespace Dagger.Services.Routines
 {
@@ -36,17 +37,18 @@ namespace Dagger.Services.Routines
                 // Request/response established.
                 HttpListenerRequest request = context.Request;
                 HttpListenerResponse response = context.Response;
+                
+                // Byte array to be returned.
+                byte[] buffer = new byte[] { };
+                
+                // True if file exists on disk, else false.
+                bool requestedFileExists = true;
 
                 // Shorthand to refer to the project's site directory.
                 string site = Path.Join(Directory.GetCurrentDirectory(), "site");
                 
                 // Contains the requested file.
                 string requestedFile;
-                
-                // To contain the string that will be appended to our HttpListenerResponse object before returning.
-                string responseString = null;
-                
-                // Contains other junk
                 
                 // Logging incoming requests to the console.
                 Console.ForegroundColor = ConsoleColor.DarkGray;
@@ -56,7 +58,8 @@ namespace Dagger.Services.Routines
                 Console.WriteLine($" {request.RawUrl}");
                 Console.ResetColor();
 
-                if (request.RawUrl == "/")
+                // Request.RawUrl is normalized and stored in requestedFile.
+                if (request.RawUrl == "/" || request.RawUrl == "/index")
                 {
                     requestedFile = "index.html";
                 }
@@ -65,58 +68,52 @@ namespace Dagger.Services.Routines
                     requestedFile = request.RawUrl;
                 }
 
+                // Return a 404 for files that don't exist.
                 if (!File.Exists(Path.Join(site, requestedFile)))
                 {
                     response.StatusCode = 404;
+                    requestedFileExists = false;
+                    string responseString = "<HTML><BODY>404</BODY></HTML>";
+                    buffer = Encoding.UTF8.GetBytes(responseString);
                 }
 
-                if (Path.GetExtension(requestedFile) == ".png")
+                // The requested extension is used to set an appropriate content type.
+                string extension = Path.GetExtension(requestedFile);
+                
+                // Image content types.
+                response.ContentType = extension switch
                 {
-                    response.ContentType = "image/png";
-                    byte[] responseBytes =
-                        File.ReadAllBytes(Path.Join(Directory.GetCurrentDirectory(), "site", requestedFile));
-                    test(responseBytes, response);
-                }
-                else
+                    ".png" => "image/png",
+                    ".bmp" => "image/bmp",
+                    ".gif" => "image/gif",
+                    ".jpeg" => "image/jpeg",
+                    ".jpg" => "image/jpeg",
+                    ".svg" => "image/svg+xml",
+                    ".tif" => "image/tiff",
+                    ".tiff" => "image/tiff",
+                    ".webp" => "image/webp",
+                    _ => response.ContentType
+                };
+
+                if (extension != ".html" || extension != ".css" && requestedFileExists)
                 {
-                    responseString =
-                        File.ReadAllText(Path.Join(Directory.GetCurrentDirectory(), "site", requestedFile));
+                    buffer = File.ReadAllBytes(Path.Join(site, requestedFile));
                 }
-
-                // switch (request.RawUrl)
-                // {
-                //     case "/":
-                //     case "/index":
-                //         // responseString = File.Exists(Path.Join(site, "index.html"))
-                //         //     ? File.ReadAllText(Path.Join(site, "index.html"))
-                //         //     : "<HTML><BODY> 404 </BODY></HTML>"; // todo: Create a 404 or something?
-                //         break;
-                //     default:
-                //         responseString = File.Exists(Path.Join(Directory.GetCurrentDirectory(), "site", request.RawUrl))
-                //             ? File.ReadAllText(Path.Join(Directory.GetCurrentDirectory(), "site", request.RawUrl))
-                //             : "<HTML><BODY> 404 </BODY></HTML>"; // todo: Create a 404 or something?
-                //         // Wtf(response, request.RawUrl);
-                //         break;
-                // }
-
-                if (responseString != null)
+                else if (requestedFileExists)
                 {
-                    byte[] buffer = System.Text.Encoding.UTF8.GetBytes(responseString);
-                    response.ContentLength64 = buffer.Length;
-                    Stream output = response.OutputStream;
-                    output.Write(buffer, 0, buffer.Length);
-                    output.Close();
-                }
+                    string responseString = File.ReadAllText(Path.Join(site, requestedFile));
+                    buffer = Encoding.UTF8.GetBytes(responseString);
 
-                // output.Close();
+                }
+                
+                // Set an appropriate content length.
+                response.ContentLength64 = buffer.Length;
+                
+                // Return the byte array via response.outputStream.
+                Stream output = response.OutputStream;
+                output.Write(buffer);
+                output.Close();
             }
-        }
-
-        private void test(byte[] cockass, HttpListenerResponse res)
-        {
-            Stream output = res.OutputStream;
-            output.Write(cockass);
-            output.Close();
         }
     }
 }

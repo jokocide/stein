@@ -1,5 +1,5 @@
 @charset "UTF-8";
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
 
 :root {
     --dark: #212529;
@@ -23,8 +23,7 @@ nav.hbs
     justify-content: center;
     align-items: center;
     background: var(--dark);
-    padding: 8px;
-    font-size: 1.25rem;
+    padding: 5px;
     height: 44px;
     margin: 0;
     box-shadow: 0px 5px 5px var(--light-gray);
@@ -32,6 +31,18 @@ nav.hbs
 
 #nav > div {
     flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+#nav img {
+    height: 40px;
+    width: 40px;
+    cursor: pointer;
+    transform: rotate(-45deg);
+}
+
+#nav img:hover {
 }
 
 #nav * {
@@ -53,7 +64,7 @@ nav.hbs
 }
 
 #nav-left > * {
-    margin-right: 12px;
+    margin: 0 6px;
 }
 /* 
 /nav.hbs 
