@@ -14,13 +14,6 @@ namespace Dagger.App
     {
         static void Main(string[] args)
         {
-
-
-            foreach (string dir in dirs)
-            {
-                Console.WriteLine(dir);
-            }
-            
             Routine instructions = Dispatch.Evaluate(args);
 
             Console.WriteLine();

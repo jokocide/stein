@@ -24,8 +24,10 @@ nav.hbs
     align-items: center;
     background: var(--dark);
     padding: 8px;
+    font-size: 1.25rem;
     height: 44px;
     margin: 0;
+    box-shadow: 0px 5px 5px var(--light-gray);
 }
 
 #nav > div {
@@ -37,13 +39,32 @@ nav.hbs
 }
 
 .nav-link {
-    color: var(--light-gray);
+    color: var(--dark-gray);
     text-decoration: none;
+    transition: all .2s ease-in-out;
+}
+
+.nav-link:hover {
+    color: var(--light-gray);
 }
 
 #nav-title {
     color: var(--light);
 }
+
+#nav-left > * {
+    margin-right: 12px;
+}
 /* 
 /nav.hbs 
 */
+
+/*
+index.hbs
+ */
+#base-container {
+    padding: 8px;
+}
+/*
+/index.hbs
+ */

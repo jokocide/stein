@@ -40,8 +40,13 @@ namespace Dagger.Services.Routines
                 // Shorthand to refer to the project's site directory.
                 string site = Path.Join(Directory.GetCurrentDirectory(), "site");
                 
+                // Contains the requested file.
+                string requestedFile;
+                
                 // To contain the string that will be appended to our HttpListenerResponse object before returning.
-                string responseString;
+                string responseString = null;
+                
+                // Contains other junk
                 
                 // Logging incoming requests to the console.
                 Console.ForegroundColor = ConsoleColor.DarkGray;
@@ -51,28 +56,67 @@ namespace Dagger.Services.Routines
                 Console.WriteLine($" {request.RawUrl}");
                 Console.ResetColor();
 
-                switch (request.RawUrl)
+                if (request.RawUrl == "/")
                 {
-                    case "/":
-                    case "/index":
-                        responseString = File.Exists(Path.Join(site, "index.html"))
-                            ? File.ReadAllText(Path.Join(site, "index.html"))
-                            : "<HTML><BODY> 404 </BODY></HTML>"; // todo: Create a 404 or something?
-                        break;
-                    default:
-                        responseString = File.Exists(Path.Join(Directory.GetCurrentDirectory(), "site", request.RawUrl))
-                            ? File.ReadAllText(Path.Join(Directory.GetCurrentDirectory(), "site", request.RawUrl))
-                            : "<HTML><BODY> 404 </BODY></HTML>"; // todo: Create a 404 or something?
-                        break;
+                    requestedFile = "index.html";
                 }
-                
-                byte[] buffer = System.Text.Encoding.UTF8.GetBytes(responseString);
-                response.ContentLength64 = buffer.Length;
-                System.IO.Stream output = response.OutputStream;
-                output.Write(buffer, 0, buffer.Length);
+                else
+                {
+                    requestedFile = request.RawUrl;
+                }
 
-                output.Close();
+                if (!File.Exists(Path.Join(site, requestedFile)))
+                {
+                    response.StatusCode = 404;
+                }
+
+                if (Path.GetExtension(requestedFile) == ".png")
+                {
+                    response.ContentType = "image/png";
+                    byte[] responseBytes =
+                        File.ReadAllBytes(Path.Join(Directory.GetCurrentDirectory(), "site", requestedFile));
+                    test(responseBytes, response);
+                }
+                else
+                {
+                    responseString =
+                        File.ReadAllText(Path.Join(Directory.GetCurrentDirectory(), "site", requestedFile));
+                }
+
+                // switch (request.RawUrl)
+                // {
+                //     case "/":
+                //     case "/index":
+                //         // responseString = File.Exists(Path.Join(site, "index.html"))
+                //         //     ? File.ReadAllText(Path.Join(site, "index.html"))
+                //         //     : "<HTML><BODY> 404 </BODY></HTML>"; // todo: Create a 404 or something?
+                //         break;
+                //     default:
+                //         responseString = File.Exists(Path.Join(Directory.GetCurrentDirectory(), "site", request.RawUrl))
+                //             ? File.ReadAllText(Path.Join(Directory.GetCurrentDirectory(), "site", request.RawUrl))
+                //             : "<HTML><BODY> 404 </BODY></HTML>"; // todo: Create a 404 or something?
+                //         // Wtf(response, request.RawUrl);
+                //         break;
+                // }
+
+                if (responseString != null)
+                {
+                    byte[] buffer = System.Text.Encoding.UTF8.GetBytes(responseString);
+                    response.ContentLength64 = buffer.Length;
+                    Stream output = response.OutputStream;
+                    output.Write(buffer, 0, buffer.Length);
+                    output.Close();
+                }
+
+                // output.Close();
             }
+        }
+
+        private void test(byte[] cockass, HttpListenerResponse res)
+        {
+            Stream output = res.OutputStream;
+            output.Write(cockass);
+            output.Close();
         }
     }
 }
