@@ -3,8 +3,10 @@
     <div class="widget" id="posts">
         <div id="posts-container">
             {{#each posts}}
-                <a href="{{ path }}">{{ title }}</a>
-                <p>{{ description }}</p>
+                <div class="post">
+                    <a href="{{ path }}">{{ title }}</a>
+                    <p>{{ description }}</p>
+                </div>
             {{/each}}
         </div>
     </div>
