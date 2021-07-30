@@ -40,17 +40,18 @@ nav.hbs
 }
 
 #nav-branding-container {
-    top: 24px;
-    left: 13px;
+    top: 10px;
+    left: 10px;
     padding: 8px;
-    height: 40px;
-    width: 119px;
+    height: 70px;
+    width: 120px;
     position: absolute;
     transition: .2s all ease-in-out;
     color: var(--light-gray);
     background: #1f1f1f;
     border-radius: var(--radius);
     border: 3px solid var(--dark-gray);
+    box-shadow: var(--shadow);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -84,7 +85,7 @@ nav.hbs
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    padding: 0 11rem;
+    padding: 0 10rem;
 }
 
 #nav * {
