@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using Dagger.Data.Models;
 using HandlebarsDotNet;
 using Markdig;
@@ -35,7 +36,18 @@ namespace Dagger.Services.Routines
             foreach (string filePath in collectionsMarkdownFilesPaths)
             {
                 DirectoryInfo directoryInfo = new DirectoryInfo(filePath);
-                string fileContent = File.ReadAllText(filePath);
+                string fileContent;
+                
+                try
+                {
+                    fileContent = File.ReadAllText(filePath);
+                }
+                catch (IOException)
+                {
+                    // File is in use. Wait and try again.
+                    Thread.Sleep(200);
+                    fileContent = File.ReadAllText(filePath);
+                }
                 
                 (int FirstStart, int FirstEnd, int SecondStart, int SecondEnd) indices =
                     GetYamlFrontmatterIndices(fileContent);

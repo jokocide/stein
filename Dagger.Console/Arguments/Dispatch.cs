@@ -34,8 +34,6 @@ namespace Dagger.Services.Arguments
                     return new NewPipeline(args).Execute();
                 case "serve":
                     return new ServePipeline(args).Execute();
-                case "watch":
-                    return new WatchPipeline(args).Execute();
                 default:
                     return HelpRoutine.CommandNotRecognized();
             }

@@ -36,15 +36,11 @@ namespace Dagger.Services.Routines
             Helper.Colorize(ConsoleColor.DarkGray,
                 "Build Dagger project at the provided path, or build the " 
                 + "Dagger project in the current directory if no path is provided.");
-            Console.WriteLine();
-            
             Helper.Colorize(ConsoleColor.Cyan, "|> ", false);
             Helper.Colorize(ConsoleColor.Gray, "new ([path])");
             Helper.Colorize(ConsoleColor.DarkGray,
                 "Create a new Dagger project " 
                 + "at the given path, or in the current directory if no path is provided.");
-            Console.WriteLine();
-            
             Helper.Colorize(ConsoleColor.Cyan, "|> ", false);
             Helper.Colorize(ConsoleColor.Gray, "serve ([path]) ([port])");
             Helper.Colorize(ConsoleColor.DarkGray, "Create a local web server with the given [port] and host " 
@@ -53,15 +49,6 @@ namespace Dagger.Services.Routines
                                                    + "project when no arguments are given.");
             Console.WriteLine();
             
-            Helper.Colorize(ConsoleColor.Cyan, "|> ", false);
-            Helper.Colorize(ConsoleColor.Gray, "watch ([path])");
-            Helper.Colorize(ConsoleColor.DarkGray, "Watch the Dagger project at the given path for changes, " 
-                                                   + "and rebuild the project when a change is detected. Defaults to " 
-                                                   + "checking the current directory for a Dagger project when " 
-                                                   + "no path is given.");
-
-            Console.WriteLine();
-            Helper.Colorize(ConsoleColor.Cyan, "--------------------------------------------------------------");
             Console.Write("Submit an issue: ");
             Helper.Colorize(ConsoleColor.Blue, "https://github.com/jokocide/dagger/issues/new");
             Console.Write("Send feedback: ");

@@ -23,7 +23,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <Content Include="example\resources\collections\posts\hello.md" />
+    <Content Include="example\resources\collections\posts\collections.md" />
     <Content Include="example\resources\pages\index.hbs" />
     <Content Include="example\resources\public\css\main.css" />
     <Content Include="example\resources\public\images\dagger.png" />

@@ -9,6 +9,7 @@
     --dark-gray: #474747;
     --blue: #4054a5;
     --radius: 8px;
+    --bar-height: 40px;
     --shadow: 0 0 transparent, 0 0 transparent, 0 20px 30px -16px rgba(9,9,16,0.2);
 }
 
@@ -22,7 +23,7 @@ body {
     display: flex;
     align-items: center;
     padding: 5px;
-    height: 44px;
+    height: var(--bar-height);
     font-size: 1.1rem;
     margin: 0;
 }
@@ -43,7 +44,7 @@ nav.hbs
     top: 10px;
     left: 10px;
     padding: 8px;
-    height: 70px;
+    height: 60px;
     width: 120px;
     position: absolute;
     transition: .2s all ease-in-out;
