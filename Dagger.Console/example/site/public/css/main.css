@@ -6,9 +6,9 @@
     --light: #FFFFFF;
     --light-gray: #DEE2E6;
     --gray: #9B9B9B;
-    --dark-gray: #474747;
-    --blue: #4054a5;
-    --radius: 8px;
+    --dark-gray: rgba(45, 42, 42, 0.89);
+    --blue: #4f70c2;
+    --radius: 4px;
     --bar-height: 40px;
     --shadow: 0 0 transparent, 0 0 transparent, 0 20px 30px -16px rgba(9,9,16,0.2);
 }
@@ -37,21 +37,27 @@ nav.hbs
 */
 #nav {
     background: var(--dark);
-    border-bottom: 3px solid var(--dark-gray);
+}
+
+#nav * {
+    text-decoration: none;
+}
+
+#nav #nav-left > * {
+    margin: 0 9px;
 }
 
 #nav-branding-container {
-    top: 10px;
+    top: 9px;
     left: 10px;
     padding: 8px;
-    height: 60px;
-    width: 120px;
+    height: 65px;
+    width: 155px;
     position: absolute;
     transition: .2s all ease-in-out;
     color: var(--light-gray);
-    background: #1f1f1f;
+    background: #111111;
     border-radius: var(--radius);
-    border: 3px solid var(--dark-gray);
     box-shadow: var(--shadow);
     display: flex;
     align-items: center;
@@ -62,7 +68,6 @@ nav.hbs
 #nav-branding-container:hover {
     background: white;
     color: var(--dark-gray);
-    border: 3px solid var(--light-gray);
 }
 
 #nav-branding-container > * {
@@ -71,6 +76,8 @@ nav.hbs
 
 #nav-branding-text {
     flex: 1;
+    letter-spacing: 3px;
+    text-transform: uppercase;
 }
 
 #nav-branding-container img {
@@ -81,44 +88,37 @@ nav.hbs
     justify-content: center;
 }
 
+#nav-title {
+    color: var(--light);
+}
+
 #nav-link-container {
     flex: 1;
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    padding: 0 10rem;
+    padding: 0 13rem;
 }
 
-#nav * {
-    text-decoration: none;
-}
-
-#nav .nav-link {
+.nav-link {
     color: var(--gray);
+    margin-right: 14px;
     text-decoration: none;
     transition: all .2s ease-in-out;
 }
 
-#nav .nav-link:hover {
+.nav-link:hover {
     color: var(--light-gray);
-}
-
-#nav #nav-title {
-    color: var(--light);
-}
-
-#nav #nav-left > * {
-    margin: 0 9px;
 }
 
 /*
 banner.hbs
  */
 #banner {
-    background: var(--light-gray);
+    background: var(--dark-gray);
+    color: var(--light-gray);
     box-shadow: var(--shadow);
     justify-content: center;
-    color: var(--dark-gray);
 }
 
 /*
@@ -139,7 +139,7 @@ index.hbs
 
 .post {
     width: 100%;
-    height: 200px;
+    height: 120px;
     padding: 22px;
     box-shadow: var(--shadow);
 }
