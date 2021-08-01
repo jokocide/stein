@@ -1,5 +1,5 @@
 ---
-template: post
+template: guides
 title: Collections
 description: Collections are groups of Markdown pages (JSON will be supported soon!) that you can refer to in templates.
 date: 2020-12-04

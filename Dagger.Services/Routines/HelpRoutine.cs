@@ -49,10 +49,7 @@ namespace Dagger.Services.Routines
                                                    + "project when no arguments are given.");
             Console.WriteLine();
             
-            Console.Write("Submit an issue: ");
-            Helper.Colorize(ConsoleColor.Blue, "https://github.com/jokocide/dagger/issues/new");
-            Console.Write("Send feedback: ");
-            Helper.Colorize(ConsoleColor.Blue, "jokocide@outlook.com");
+            Environment.Exit(0);
         }
 
         /// <summary>

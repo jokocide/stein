@@ -3,4 +3,4 @@ function sendToRoot() {
     window.location.href = "/";
 }
 
-document.getElementById('nav-branding-container').addEventListener('click', sendToRoot);
+document.getElementById('branding').addEventListener('click', sendToRoot);

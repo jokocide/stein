@@ -71,7 +71,25 @@ namespace Dagger.Services.Routines
                         Path.GetFileNameWithoutExtension(directoryInfo.Name), "index.html")); 
                 metadata.Add("body", transformedBody);
 
-                string template = File.ReadAllText(Path.Join(templatesPath, metadata["template"] + ".hbs"));
+                string template = null;
+
+                try
+                {
+                    template = File.ReadAllText(Path.Join(templatesPath, metadata["template"] + ".hbs"));
+                }
+                catch (FileNotFoundException e)
+                {
+                    Message message = new Message()
+                    {
+                        Text = $"Unable to locate the template '{Path.GetFileName(e.FileName)}' while processing " 
+                               + $"the '{directoryInfo.Name}' collection item.",
+                        Type = Message.MessageType.Error
+                    };
+                    
+                    HelpRoutine help = new HelpRoutine(message);
+                    help.Execute();
+                }
+
                 var compiledTemplate = Handlebars.Compile(template);
                 var renderedTemplate = compiledTemplate(metadata);
 

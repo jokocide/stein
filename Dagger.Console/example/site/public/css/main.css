@@ -2,10 +2,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
 
 :root {
-    --dark: #06050C;
-    --light: #FFFFFF;
-    --light-gray: #DEE2E6;
-    --gray: #9B9B9B;
+    --dark: rgb(6, 5, 12);
+    --light: rgb(255, 255, 255);
+    --light-gray: rgb(222, 226, 230);
+    --gray: rgb(155, 155, 155);
     --dark-gray: rgba(45, 42, 42, 0.95);
     --blue: #4f70c2;
     --radius: 4px;
@@ -20,12 +20,13 @@ body {
     padding: 0;
 }
 
+/* Shared class for the two 'bars' in the navigation. */
 .bar {
     display: flex;
     align-items: center;
     padding: 5px;
     height: var(--bar-height);
-    font-size: 1.1rem;
+    font-size: 1rem;
     margin: 0;
 }
 
@@ -41,19 +42,15 @@ nav.hbs
 }
 
 #nav * {
-    text-decoration: none;
-}
-
-#nav > * {
     margin: 0 9px;
 }
 
-#nav-branding-container {
+#branding {
     top: 9px;
     left: 10px;
     padding: 8px;
     height: 65px;
-    width: 155px;
+    width: 180px;
     position: absolute;
     transition: var(--smooth);
     color: var(--light-gray);
@@ -66,26 +63,26 @@ nav.hbs
     cursor: pointer;
 }
 
-#nav-branding-container:hover #nav-branding-text {
+#branding:hover #branding-text {
     color: var(--light);
 }
 
-#nav-branding-container > * {
+#branding * {
     padding-left: 4px;
 }
 
-#nav-branding-text {
-    flex: 1;
+#branding-text {
     color: var(--gray);
     letter-spacing: 2px;
     text-transform: uppercase;
     transition: var(--smooth);
 }
 
-#nav-branding-container img {
-    height: 40px;
-    width: 40px;
+#branding img {
+    height: 37px;
+    width: 37px;
     display: flex;
+    margin-right: 0;
     align-items: center;
     justify-content: center;
 }
@@ -94,15 +91,13 @@ nav.hbs
     color: var(--light);
 }
 
-#nav-link-container {
-    flex: 1;
+#links {
     display: flex;
     align-items: center;
-    justify-content: flex-start;
-    padding: 0 13rem;
+    padding: 0 14rem;
 }
 
-.nav-link {
+.link {
     color: var(--gray);
     margin-right: 14px;
     text-decoration: none;
@@ -111,7 +106,7 @@ nav.hbs
     text-transform: uppercase;
 }
 
-.nav-link:hover {
+.link:hover {
     color: var(--light);
 }
 
@@ -132,7 +127,7 @@ index.hbs
     padding: 16px 8px;
 }
 
-#posts-container {
+#guides {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -140,14 +135,14 @@ index.hbs
     min-width: 300px;
     max-width: 1000px;
     padding: 22px;
+    box-shadow: var(--shadow);
 }
 
-.post {
-    box-shadow: var(--shadow);
+.guide {
     padding: 22px;
     margin: 0 0 2rem 0;
 }
 
-.post:last-of-type {
+.guide:last-of-type {
     margin: 0;
 }
