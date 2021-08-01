@@ -48,9 +48,24 @@ namespace Dagger.Services.Routines
                     Thread.Sleep(200);
                     fileContent = File.ReadAllText(filePath);
                 }
-                
-                (int FirstStart, int FirstEnd, int SecondStart, int SecondEnd) indices =
-                    GetYamlFrontmatterIndices(fileContent);
+
+                (int FirstStart, int FirstEnd, int SecondStart, int SecondEnd) indices = new();
+
+                try
+                {
+                    indices = GetYamlFrontmatterIndices(fileContent);
+                }
+                catch (ArgumentOutOfRangeException)
+                {
+                    Message message = new Message()
+                    {
+                        Text = $"Collection item {directoryInfo.Name} appears to have invalid YAML frontmatter.",
+                        Type = Message.MessageType.Error
+                    };
+                    
+                    HelpRoutine help = new HelpRoutine(message);
+                    help.Execute();
+                }
                 
                 Dictionary<string, string> metadata = CreateMetadata(
                     Helper.Slice(indices.FirstEnd, indices.SecondStart, fileContent).Trim()

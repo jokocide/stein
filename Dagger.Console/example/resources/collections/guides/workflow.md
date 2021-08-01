@@ -1,7 +1,6 @@
 ﻿---
 template: guides
-title: Workflow
-description: How can I effectively use this tool to create simple websites?
-date: 2020-12-04
+title: Static Files
+description: Where do static files like JavaScript and images go?
+date: 2021-08-01
 ---
-throw new notimplementedexception :)

@@ -1,12 +1,12 @@
 @charset "UTF-8";
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;800&display=swap');
 
 :root {
     --dark: rgb(6, 5, 12);
     --light: rgb(255, 255, 255);
     --light-gray: rgb(222, 226, 230);
     --gray: rgb(155, 155, 155);
-    --dark-gray: rgba(45, 42, 42, 0.95);
+    --dark-gray: rgba(28, 28, 28, 0.95);
     --blue: #4f70c2;
     --radius: 4px;
     --bar-height: 40px;
@@ -116,15 +116,39 @@ banner.hbs
 #banner {
     background: var(--dark-gray);
     color: var(--light-gray);
-    box-shadow: var(--shadow);
     justify-content: center;
 }
 
 /*
 index.hbs
  */
-#base-container {
-    padding: 16px 8px;
+.section-title {
+    text-align: center;
+    margin-bottom: 0;
+}
+
+.section-subtitle {
+    margin-top: 4px;
+    text-align: center;
+}
+
+#welcome {
+    border-radius: var(--radius);
+    display: flex;
+    height: 300px;
+    padding: 3rem;
+    align-items: center;
+    flex-direction: column;
+}
+
+#welcome h1 {
+    margin: 0;
+    font-size: 52px;
+}
+
+#welcome img {
+    height: 110px;
+    width: 110px;
 }
 
 #guides {
@@ -133,14 +157,13 @@ index.hbs
     justify-content: center;
     margin: auto;
     min-width: 300px;
-    max-width: 1000px;
+    max-width: 1100px;
     padding: 22px;
     box-shadow: var(--shadow);
 }
 
 .guide {
     padding: 22px;
-    margin: 0 0 2rem 0;
 }
 
 .guide:last-of-type {
