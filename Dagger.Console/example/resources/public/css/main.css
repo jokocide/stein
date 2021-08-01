@@ -143,7 +143,13 @@ index.hbs
 
 #welcome h1 {
     margin: 0;
+    font-weight: 400;
+    letter-spacing: 2px;
     font-size: 52px;
+}
+
+#welcome h2 {
+    font-weight: 400;
 }
 
 #welcome img {
