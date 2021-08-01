@@ -20,6 +20,10 @@ body {
     padding: 0;
 }
 
+#base-container {
+    margin-bottom: 3rem;
+}
+
 /* Shared class for the two 'bars' in the navigation. */
 .bar {
     display: flex;
