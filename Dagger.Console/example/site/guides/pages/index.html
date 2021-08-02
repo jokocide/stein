@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/160/microsoft/209/dagger-knife_1f5e1.png" />
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="/public/css/main.css" />
+    
+    <!-- Font Awesome -->
+    <script src="https://kit.fontawesome.com/477d5dc120.js" crossorigin="anonymous"></script>
+    
+    <!-- Meta -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8" />
+
+    <title>Dagger</title>
+</head>
+<body>
+
+    <div class="nav-container">
+<nav id="nav" class="bar">
+    <div id="branding">
+        <img src="/public/images/dagger.png" alt="Dagger logo.">
+        <p id="branding-text">Dagger</p>
+    </div>
+    <div id="links">
+        <a class="link" href="https://github.com/jokocide/dagger" target="_blank">
+            Github
+        </a>
+        <a class="link" href="https://www.nuget.org/packages/Jokocide.Dagger/" target="_blank">
+            NuGet
+        </a>
+    </div>
+</nav>
+<div id="banner" class="bar">
+    <p>Submit issues and improvements over <a href="https://github.com/jokocide/dagger/issues/new" target="_blank">here!</a></p>
+</div>    </div>
+
+    <div id="base-container">
+<div class='detail'>
+    <h2>Pages</h2>
+    <h4>2021-08-01</h4>
+    <p>A page is a document that isn't generated from Markdown or JSON, but exists on its own and is written in plain HTML. These pages often make up areas of a site 
+that are written once and used to host more dynamic content, such as blog posts. For example, the <a href="/">index</a> of this site is considered a page and is generated 
+from the document located at resources/pages/index.hbs.</p>
+<p>When dagger examines a file that it finds within resources/pages it will eventually place the processed file in a directory similar to where it was found
+in resources, but it will be placed in a directory named after the file, with the file itself now being called index.html. This makes it possible to navigate
+to the new page by typing its name. For** example, a page like resources/pages/about.hbs will end up at site/about/index.html.</p>
+
+</div>
+
+    </div>
+
+    <script src="/public/js/main.js"></script>
+</body>
+</html>

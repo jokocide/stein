@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/160/microsoft/209/dagger-knife_1f5e1.png" />
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="/public/css/main.css" />
+    
+    <!-- Font Awesome -->
+    <script src="https://kit.fontawesome.com/477d5dc120.js" crossorigin="anonymous"></script>
+    
+    <!-- Meta -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8" />
+
+    <title>Dagger</title>
+</head>
+<body>
+
+    <div class="nav-container">
+<nav id="nav" class="bar">
+    <div id="branding">
+        <img src="/public/images/dagger.png" alt="Dagger logo.">
+        <p id="branding-text">Dagger</p>
+    </div>
+    <div id="links">
+        <a class="link" href="https://github.com/jokocide/dagger" target="_blank">
+            Github
+        </a>
+        <a class="link" href="https://www.nuget.org/packages/Jokocide.Dagger/" target="_blank">
+            NuGet
+        </a>
+    </div>
+</nav>
+<div id="banner" class="bar">
+    <p>Submit issues and improvements over <a href="https://github.com/jokocide/dagger/issues/new" target="_blank">here!</a></p>
+</div>    </div>
+
+    <div id="base-container">
+<div class='detail'>
+    <h2>Collections</h2>
+    <h4>2021-08-01</h4>
+    <p>A collection is a logical grouping of Markdown content. Collections are located within a project's resources/collections directory. Dagger interprets each folder here 
+as an individual collection and all files within that collection are made available by iterating over the collection within a template. Apart from the frontmatter of 
+these collection files being made available for use within a template, they are compiled and written out to the file system just like your 
+<a href="/collections/guides/pages/index.html">page</a> files.</p>
+<p>A collection file located at 'resources/collections/guides/pages.md' will end up at 'site/collections/guides/pages.html' and you can link to that page with an absolute 
+path like '/collections/guides/pages.html'.</p>
+<p>If you look at this Markdown file as an example (resources/collections/guides/collections.md) you will notice the very first frontmatter item is a 'template' 
+key -- this is essential because it tells Dagger which template file that this document should be injected into. Do not include a file extension when specifying a 
+template name.</p>
+<p>You can refer to the contents of a collection by the name of the folder that contains the collection files. For example, refer to the resources/collections directory
+of this site. It contains a 'guides' collection with three files. The template file located at resources/pages/index.hbs iterates over all of these items, and in doing 
+so gains access to each file's frontmatter. The template file takes advantage of that to generate a 'list' of guides, which is what you are seeing now.</p>
+<p>As mentioned earlier, iterating over the contents of a collection gets you access to all frontmatter established at the top of each file, but Dagger also includes one 
+other 'path' key that you can use to generate links to your content.</p>
+
+</div>
+
+    </div>
+
+    <script src="/public/js/main.js"></script>
+</body>
+</html>
