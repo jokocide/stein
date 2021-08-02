@@ -6,11 +6,14 @@
     --light: rgb(255, 255, 255);
     --light-gray: rgb(162, 163, 165);
     --gray: rgb(155, 155, 155);
-    --dark-gray: rgba(28, 28, 28, 0.95);
-    --blue: #4f70c2;
+    --dark-gray: rgba(28, 28, 28, 0.85);
+    --blue: rgb(79, 112, 194);
+    --code-cyan: rgb(97, 214, 214);
+    --code-yellow: rgb(249, 241, 165);
+    --code-gray: rgb(96, 96, 96);
     --radius: 4px;
     --bar-height: 40px;
-    --shadow: 0 0 transparent, 0 0 transparent, 0 20px 30px -16px rgba(9,9,16,0.2);
+    --shadow: 0 0 transparent, 0 0 transparent, 0 2px 62px -16px rgba(9,9,16,0.2);
     --smooth: .2s all ease-in-out;
 }
 
@@ -32,13 +35,23 @@ pre {
     background: var(--dark);
     color: var(--light);
     display: flex;
-    justify-content: center;
     font-size: 1rem;
-    max-width: 900px;
-    padding: 6px 11px 19px 11px;
+    padding: 0 11px 15px 11px;
     border-radius: var(--radius);
     margin: auto;
     white-space: pre-line;
+}
+
+.code-yellow {
+    color: var(--code-yellow);
+}
+
+.code-cyan {
+    color: var(--code-cyan);
+}
+
+.code-gray {
+    color: var(--code-gray);
 }
 
 /* Shared class for the two 'bars' in the navigation. */
@@ -148,7 +161,7 @@ section {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    margin: 0 auto 8rem auto;
+    margin: 0 auto 2rem auto;
     min-width: 300px;
     max-width: 1400px;
     padding: 22px;
@@ -180,8 +193,8 @@ section {
 }
 
 #welcome img {
-    height: 110px;
-    width: 110px;
+    height: 90px;
+    width: 90px;
 }
 
 .guide {

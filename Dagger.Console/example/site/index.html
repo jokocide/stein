@@ -46,7 +46,35 @@
     </div>
     <section>
         <div id="introduction">
-            <p>Create a Dagger project</p>
+            <h2 class="section-title">Quickstart</h2>
+            <p class="section-subtitle">Installation, creating and serving an example site.</p>
+            <p>1. Install the <a href="https://dotnet.microsoft.com/download">.NET SDK</a></p>
+            <p>2. Install Dagger</p>
+            <pre>
+                <code>
+                    <span class="code-yellow">> dotnet</span> tool install --global Jokocide.Dagger
+                </code>
+            </pre>
+            <p>3. Create a Dagger project</p>
+            <pre>
+                <code>
+                    <span class="code-yellow">> dagger</span> new mysite
+                    
+                    <span class="code-cyan">Dagger</span> new mysite
+                    <span class="code-cyan">------</span>
+                    <span class="code-cyan">Created Dagger project at</span> <span class="dark-gray">C:\Users\jkoen\mysite</span>
+                </code>
+            </pre>
+            <p>4. Serve</p>
+            <pre>
+                <code>
+                    <span class="code-yellow">> dagger</span> serve mysite
+                    
+                    <span class="code-cyan">Dagger</span> serve mysite
+                    <span class="code-cyan">------</span>
+                    <span class="code-cyan">Serving project on</span> <span class="dark-gray">http://localhost:8000</span>
+                </code>
+            </pre>
         </div>
     </section>
     <section>
@@ -64,22 +92,21 @@
                     <p>Creating new pages and utilizing your collections.</p>
                 </div>
                 <div class="guide">
-                    <a href="guides\static\index.html">Static Files</a>
+                    <a href="guides\static\index.html">Public</a>
                     <p>Where do static files like JavaScript and images go?</p>
+                </div>
+                <div class="guide">
+                    <a href="guides\templates\index.html">Templates</a>
+                    <p>An introduction to the templating system and a few words on future goals.</p>
                 </div>
         </div>
     </section>
-    <section>
-        <div id="in-depth">
-            <h2 class="section-title">Technical Manuals</h2>
-            <p class="section-subtitle">More detailed information for those interested in contributing to or forking Dagger for themselves!</p>
-            <pre>
-                <code>
-                    throw new NotImplementedException("Dagger isn't totally stable yet. Coming soon!");
-                </code>
-            </pre>
-        </div>
-    </section>
+<!--    <section>-->
+<!--        <div id="in-depth">-->
+<!--            <h2 class="section-title">Technical Manuals</h2>-->
+<!--            <p class="section-subtitle">More detailed information for those interested in contributing to or forking Dagger for themselves!</p>-->
+<!--        </div>-->
+<!--    </section>-->
 </div>
 
     </div>
