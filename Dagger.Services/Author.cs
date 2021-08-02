@@ -11,7 +11,7 @@ namespace Dagger.Services
     /// </summary>
     public class Author
     {
-        public List<Writable> Pending { get; }
+        private List<Writable> Pending { get; }
 
         public Author(List<Writable> pending)
         {
@@ -25,12 +25,6 @@ namespace Dagger.Services
                 string path = Path.GetDirectoryName(obj.SitePath);
                 if (path != null) Directory.CreateDirectory(path);
                 File.WriteAllText(obj.SitePath, obj.Body);
-                Console.ForegroundColor = ConsoleColor.DarkGray;
-                Console.Write($"({DateTime.Now.ToString("t")}) ");
-                Console.ResetColor();
-                Console.ForegroundColor = ConsoleColor.Cyan;
-                Console.WriteLine(obj.SitePath);
-                Console.ResetColor();
             }
 
         }
