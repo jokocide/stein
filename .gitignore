@@ -5,6 +5,8 @@
 
 dagger-flow.txt
 jokocide
+**/example/.gitignore
+**/example/LICENSE
 
 # User-specific files
 *.rsuser
