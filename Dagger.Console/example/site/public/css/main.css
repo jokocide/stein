@@ -4,7 +4,7 @@
 :root {
     --dark: rgb(6, 5, 12);
     --light: rgb(255, 255, 255);
-    --light-gray: rgb(222, 226, 230);
+    --light-gray: rgb(162, 163, 165);
     --gray: rgb(155, 155, 155);
     --dark-gray: rgba(28, 28, 28, 0.95);
     --blue: #4f70c2;
@@ -22,6 +22,23 @@ body {
 
 #base-container {
     margin-bottom: 3rem;
+}
+
+h1, h2, h3, h4 {
+    font-weight: 400;
+}
+
+pre {
+    background: var(--dark);
+    color: var(--light);
+    display: flex;
+    justify-content: center;
+    font-size: 1rem;
+    max-width: 900px;
+    padding: 6px 11px 19px 11px;
+    border-radius: var(--radius);
+    margin: auto;
+    white-space: pre-line;
 }
 
 /* Shared class for the two 'bars' in the navigation. */
@@ -126,6 +143,17 @@ banner.hbs
 /*
 index.hbs
  */
+section {
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: 0 auto 8rem auto;
+    min-width: 300px;
+    max-width: 1400px;
+    padding: 22px;
+}
+
 .section-title {
     text-align: center;
     margin-bottom: 0;
@@ -147,13 +175,8 @@ index.hbs
 
 #welcome h1 {
     margin: 0;
-    font-weight: 400;
     letter-spacing: 2px;
     font-size: 52px;
-}
-
-#welcome h2 {
-    font-weight: 400;
 }
 
 #welcome img {
@@ -161,21 +184,28 @@ index.hbs
     width: 110px;
 }
 
-#guides {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    margin: auto;
-    min-width: 300px;
-    max-width: 1100px;
-    padding: 22px;
-    box-shadow: var(--shadow);
-}
-
 .guide {
-    padding: 22px;
+    padding: 14px;
 }
 
 .guide:last-of-type {
     margin: 0;
+}
+
+/*
+detail.hbs
+ */
+.detail {
+    width: 80%;
+    max-width: 1000px;
+    margin: auto;
+}
+
+.detail h2 {
+    margin: 42px 0 2px 0;
+}
+
+.detail h4 {
+    margin-top: 2px;
+    color: var(--light-gray);
 }
