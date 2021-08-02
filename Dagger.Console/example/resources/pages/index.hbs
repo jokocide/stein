@@ -3,9 +3,14 @@
 <div class="index-container">
     <div id="welcome">
         <h1>Dagger</h1>
-        <h2>Static Site Generator</h2>
+        <h2>Straightforward site generation for C#/.NET</h2>
         <img src="/public/images/dagger.png" alt="Dagger logo">
     </div>
+    <section>
+        <div id="introduction">
+            <p>Create a Dagger project</p>
+        </div>
+    </section>
     <section>
         <div id="guides">
             <div class="section-header">
@@ -15,7 +20,6 @@
             {{#each guides}}
                 <div class="guide">
                     <a href="{{ path }}">{{ title }}</a>
-                    <p>{{path}}</p>
                     <p>{{ description }}</p>
                 </div>
             {{/each}}
