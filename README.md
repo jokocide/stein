@@ -20,6 +20,6 @@ With the .NET SDK installed, go ahead and install Dagger:
 
 `dotnet tool install Jokocide.Dagger -g`
 
-Dagger will now be available. Call it from anywhere with the `dagger` command.
+Dagger can be invoked with the `dagger` command from your terminal.
 
-If you're ready to start building with DAgger, proceed to the [quickstart!](https://dagger.jokoci.de)
+To start building, proceed to [quickstart!](https://dagger.jokoci.de)
