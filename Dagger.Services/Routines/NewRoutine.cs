@@ -24,7 +24,8 @@ namespace Dagger.Services.Routines
             
             Helper.Synchronize(example.ToString(), projectDirectory, true);
             
-            Console.WriteLine($"Created Dagger project at: {Directory.GetCurrentDirectory()}");
+            Helper.Colorize(ConsoleColor.Cyan, "Created Dagger project at ", false);
+            Helper.Colorize(ConsoleColor.DarkGray, Directory.GetCurrentDirectory());
         }
     }
 }

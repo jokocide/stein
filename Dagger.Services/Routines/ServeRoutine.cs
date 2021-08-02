@@ -65,7 +65,10 @@ namespace Dagger.Services.Routines
             
             listener.Start();
             
-            Console.WriteLine($"Serving project on: http://localhost:{ServerPort}");
+            Helper.Colorize(ConsoleColor.Cyan, "Serving project on ", false);
+            Helper.Colorize(ConsoleColor.DarkGray, $"http://localhost:{ServerPort}");
+            Console.WriteLine();
+            Helper.Colorize(ConsoleColor.DarkGray, "Logging requests:");
 
             while (ServerIsActive)
             {

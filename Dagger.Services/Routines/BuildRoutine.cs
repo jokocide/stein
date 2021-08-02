@@ -15,6 +15,11 @@ namespace Dagger.Services.Routines
     {
         public override void Execute()
         {
+            DirectoryInfo projectDirectoryInfo = new DirectoryInfo(Directory.GetCurrentDirectory());
+            
+            Helper.Colorize(ConsoleColor.Cyan, $"Building project ", false);
+            Helper.Colorize(ConsoleColor.DarkGray, $"'{projectDirectoryInfo.Name}'");
+            
             Store store = new Store();
             
             string projectPath = Directory.GetCurrentDirectory();
@@ -32,7 +37,7 @@ namespace Dagger.Services.Routines
             // Handle partials.
             RegisterHandlebarsPartials(partialsPaths);
 
-            // Handle collections.
+            // Handle collection files.
             foreach (string filePath in collectionsMarkdownFilesPaths)
             {
                 DirectoryInfo directoryInfo = new DirectoryInfo(filePath);
@@ -51,6 +56,7 @@ namespace Dagger.Services.Routines
 
                 (int FirstStart, int FirstEnd, int SecondStart, int SecondEnd) indices = new();
 
+                // Try to establish indices, but return an error if the frontmatter is abnormal.
                 try
                 {
                     indices = GetYamlFrontmatterIndices(fileContent);
@@ -81,9 +87,20 @@ namespace Dagger.Services.Routines
                 string untransformedBody = fileContent.Substring(indices.SecondEnd).Trim();
                 string transformedBody = Markdown.ToHtml(untransformedBody);
                 
+                /*
+                 * Add the 'path' key to make iteration with links possible.
+                 *
+                 * Caution: This changes where the files thinks it is located in the file system, not where it actually
+                 * is located. If you want to change where files are actually written out you should adjust the Writable
+                 * constructor. (Dagger.Data/Models/Writable.cs)
+                 */
                 metadata.Add("path",
-                    Path.Join("collections", directoryInfo.Parent.Name,
-                        Path.GetFileNameWithoutExtension(directoryInfo.Name), "index.html")); 
+                    Path.Join(
+                        directoryInfo.Parent.Name,
+                        Path.GetFileNameWithoutExtension(directoryInfo.Name), 
+                        "index.html"));
+                
+                // Add the 'body' key so that we can inject the contents of the file into a template.
                 metadata.Add("body", transformedBody);
 
                 string template = null;
@@ -114,7 +131,7 @@ namespace Dagger.Services.Routines
                 store.Writable.Add(writable);
             }
             
-            // Handle else, inject the collections.
+            // Handle page files.
             foreach (string filePath in pagesPaths)
             {
                 DirectoryInfo directoryInfo = new DirectoryInfo(filePath);
@@ -129,13 +146,13 @@ namespace Dagger.Services.Routines
                 store.Writable.Add(writable);
             }
 
-            // Todo: Archiving.
+            // Todo: Maybe we should archive old versions of sites instead of deleting them, or provide the option.
             // Clear the site directory.
             if (Directory.Exists(sitePath)) Directory.Delete(sitePath, true);
             
             // Invoke Author service to handle the Writable objects.
             new Author(store.Writable).Write();
-            
+                
             // Synchronize public directories.
             Helper.Synchronize(resourcesPublicPath, sitePublicPath, true);
         }
