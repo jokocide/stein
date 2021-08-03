@@ -16,7 +16,7 @@ namespace Dagger.Services
         /// <returns>A boolean. True if the path contains a .dagger file, else false.</returns>
         public static bool CheckIsProject(string projectPath = null)
         {
-            if (projectPath == null) projectPath = Directory.GetCurrentDirectory();
+            projectPath ??= Directory.GetCurrentDirectory();
             return File.Exists(Path.Join(projectPath, ".dagger"));
         }
 
@@ -37,9 +37,8 @@ namespace Dagger.Services
 
             if (!dir.Exists)
             {
-                throw new DirectoryNotFoundException(
-                    "Source directory does not exist or could not be found: "
-                    + sourceDirName);
+                throw new DirectoryNotFoundException("Source directory does not exist or could not be found: "
+                                                     + sourceDirName);
             }
 
             DirectoryInfo[] dirs = dir.GetDirectories();
@@ -52,13 +51,12 @@ namespace Dagger.Services
                 file.CopyTo(tempPath, false);
             }
 
-            if (recursive)
+            if (!recursive) return;
+            
+            foreach (DirectoryInfo subDirectory in dirs)
             {
-                foreach (DirectoryInfo subdir in dirs)
-                {
-                    string tempPath = Path.Combine(destDirName, subdir.Name);
-                    Synchronize(subdir.FullName, tempPath, recursive);
-                }
+                string tempPath = Path.Combine(destDirName, subDirectory.Name);
+                Synchronize(subDirectory.FullName, tempPath, true);
             }
         }
 

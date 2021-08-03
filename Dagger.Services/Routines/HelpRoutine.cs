@@ -49,6 +49,11 @@ namespace Dagger.Services.Routines
                                                    + "project when no arguments are given.");
             Console.WriteLine();
             
+            /*
+             * It is possible that another called routine will instantiate and call this Execute method,
+             * and for that reason we need to explicitly exit the program here so that we don't continue
+             * execution in the previous context.
+             */
             Environment.Exit(0);
         }
 
