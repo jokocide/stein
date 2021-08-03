@@ -24,6 +24,9 @@
   
   <ItemGroup>
     <Content Include="example\resources\collections\guides\collections.md" />
+    <Content Include="example\resources\collections\guides\pages.md" />
+    <Content Include="example\resources\collections\guides\static.md" />
+    <Content Include="example\resources\collections\guides\templates.md" />
     <Content Include="example\resources\pages\index.hbs" />
     <Content Include="example\resources\public\css\main.css" />
     <Content Include="example\resources\public\images\dagger.png" />
@@ -34,10 +37,13 @@
     <Content Include="example\resources\templates\partials\nav.hbs" />
     <Content Include="example\resources\templates\detail.hbs" />
     <Content Include="example\site\index.html" />
-    <Content Include="example\site\public\css\" />
-    <Content Include="example\site\public\js\" />
-    <Content Include="example\site\public\images\" />
-    <Content Include="example\site\guides\" />
+    <Content Include="example\site\public\css\main.css" />
+    <Content Include="example\site\public\js\main.js" />
+    <Content Include="example\site\public\images\dagger.png" />
+    <Content Include="example\site\guides\collections\index.html" />
+    <Content Include="example\site\guides\pages\index.html" />
+    <Content Include="example\site\guides\static\index.html" />
+    <Content Include="example\site\guides\templates\index.html" />
   </ItemGroup>
 
 </Project>
