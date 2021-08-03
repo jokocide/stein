@@ -8,24 +8,22 @@ using Dagger.Services.Arguments;
 namespace Dagger.App
 {
     /// <summary>
-    /// Represents the entry point. Coordinates the execution of routines and services.
+    /// Dagger entry point. Coordinates the execution of services.
     /// </summary>
     class Program
     {
         static void Main(string[] args)
         {
+            // Get some type of Routine back from Dispatch.
             Routine instructions = Dispatch.Evaluate(args);
 
-            Console.WriteLine();
+            // Print header and arguments.
             Helper.Colorize(ConsoleColor.Cyan, "Dagger ", false);
-            if (args != null)
-                Helper.Colorize(ConsoleColor.Gray, String.Join(' ', args));
+            if (args != null) Helper.Colorize(ConsoleColor.Gray, string.Join(' ', args));
             Helper.Colorize(ConsoleColor.Cyan, "------");
             
-            
+            // Execute routine.
             instructions.Execute();
-            
-            Console.WriteLine();
         }
     }
 }

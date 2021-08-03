@@ -8,14 +8,7 @@ namespace Dagger.Services
     /// </summary>
     public class Store
     {
-        // Collections should not be implemented this way, but I'm just testing things out for now! :)
-        public Dictionary<string, List<Dictionary<string, string>>> Collections { get; }
-        
-        public List<Writable> Writable { get; } = new List<Writable>();
-
-        public Store()
-        {
-            Collections = new Dictionary<string, List<Dictionary<string, string>>>();
-        }
+        public Dictionary<string, List<Dictionary<string, string>>> Collections { get; } = new();
+        public List<Writable> Writable { get; } = new();
     }
 }

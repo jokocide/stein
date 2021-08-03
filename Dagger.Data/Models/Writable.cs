@@ -3,6 +3,9 @@ using System.IO;
 
 namespace Dagger.Data.Models
 {
+    /// <summary>
+    /// Represents a fully processed item that is ready to be written to the file system.
+    /// </summary>
     public class Writable
     {
         public string SitePath { get; }
@@ -14,6 +17,12 @@ namespace Dagger.Data.Models
             SitePath = MakeSitePath(resourcePath);
         }
 
+        /// <summary>
+        /// Return a string path suitable for writing this object out to the file system.
+        /// The path returned depends on the current location of the file in the file system.
+        /// </summary>
+        /// <param name="path">A string representing the current location of the file.</param>
+        /// <returns>A string representing the eventual write location of the file.</returns>
         private string MakeSitePath(string path)
         {
             DirectoryInfo directoryInfo = new DirectoryInfo(path);
@@ -21,7 +30,6 @@ namespace Dagger.Data.Models
             string fileName = Path.GetFileNameWithoutExtension(directoryInfo.Name);
             string directoryName = directoryInfo.Parent?.Name;
 
-            // Todo: This switch track needs more error handling, and we probably shouldn't default to collection file.
             return directoryName switch
             {
                 // Resolving an index page file.
