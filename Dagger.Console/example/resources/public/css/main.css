@@ -8,6 +8,7 @@
     --gray: rgb(155, 155, 155);
     --dark-gray: rgba(28, 28, 28, 0.85);
     --blue: rgb(79, 112, 194);
+    --red: rgb(180, 79, 65);
     --code-green: rgb(165, 194, 97);
     --code-cyan: rgb(97, 214, 214);
     --code-yellow: rgb(249, 241, 165);
@@ -37,10 +38,17 @@ pre {
     color: var(--light);
     display: flex;
     font-size: 1rem;
-    padding: 0 11px 15px 11px;
+    padding: 0 11px 16px 11px;
     border-radius: var(--radius);
     margin: auto;
     white-space: pre-line;
+}
+
+.hl {
+    background: rgba(162, 163, 165, 0.4);
+    border-radius: var(--radius);
+    color: var(--blue);
+    padding: 1px 5px;
 }
 
 .code-yellow {
@@ -165,7 +173,7 @@ section {
     justify-content: center;
     margin: 0 auto 2rem auto;
     min-width: 300px;
-    max-width: 1400px;
+    max-width: 1240px;
     padding: 22px;
 }
 
@@ -199,7 +207,7 @@ section {
 }
 
 .guide {
-    padding: 8px;
+    padding: 2px;
 }
 
 .guide:last-of-type {
