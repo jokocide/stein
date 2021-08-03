@@ -26,7 +26,7 @@ comments within Handlebars templates, so they are acceptable in a Dagger project
 If you are familiar with Jinja2 from Python you might be looking for a block layouts feature, but Handlebars
 supports no such thing. What it does support is the concept of [partials](https://handlebarsjs.com/guide/#partials). 
 To see an example of partials being used in a Dagger project, refer to the document located
-at <span class="hl">project/resources/pages/index.hbs</span> within the Dagger example project.
+at <span class="hl">project/resources/pages/index.hbs</span>.
 
 The <span class="hl">{{> header }}</span> and <span class="hl">{{> footer }}</span> tags at the top and bottom refer to partials that exist within the
 <span class="hl">project/resources/templates/partials</span> directory. When building a site, Dagger is made aware of any existing partial files 
