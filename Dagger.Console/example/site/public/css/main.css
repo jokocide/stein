@@ -8,6 +8,7 @@
     --gray: rgb(155, 155, 155);
     --dark-gray: rgba(28, 28, 28, 0.85);
     --blue: rgb(79, 112, 194);
+    --code-green: rgb(165, 194, 97);
     --code-cyan: rgb(97, 214, 214);
     --code-yellow: rgb(249, 241, 165);
     --code-gray: rgb(96, 96, 96);
@@ -149,6 +150,7 @@ banner.hbs
  */
 #banner {
     background: var(--dark-gray);
+    box-shadow: var(--shadow);
     color: var(--light-gray);
     justify-content: center;
 }
@@ -178,9 +180,9 @@ section {
 }
 
 #welcome {
-    border-radius: var(--radius);
     display: flex;
-    height: 300px;
+    justify-content: center;
+    height: 500px;
     padding: 3rem;
     align-items: center;
     flex-direction: column;
@@ -198,7 +200,7 @@ section {
 }
 
 .guide {
-    padding: 14px;
+    padding: 8px;
 }
 
 .guide:last-of-type {

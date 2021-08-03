@@ -4,11 +4,10 @@ title: Pages
 description: Creating new pages and utilizing your collections.
 date: 2021-08-01
 ---
-A page is a document that isn't generated from Markdown, but exists on its own and is written in plain HTML. These pages often make up areas of a site 
-that are written once and used to host more dynamic content, such as blog posts. For example, the [index](/) of this site is considered a page and is generated 
-from the document located at 'project/resources/pages/index.hbs'.
+A page is a document written in plain HTML and is most often used to host other more dynamic content, such as posts in the context of a blog. 
+For example, the [index](/) of this site is considered a page and is generated from the document located at 'project/resources/pages/index.hbs'.
 
-When dagger examines a file that it finds within 'project/resources/pages' it will eventually place the processed file in a directory similar to where it was found, 
+When Dagger examines a file that it finds within 'project/resources/pages' it will eventually place the processed file in a directory similar to where it was found, 
 with just a couple of small changes. The name of the file will become the name of a new directory within 'project/site' and the file itself will now be titled index.html
 and placed within that new directory.
 
