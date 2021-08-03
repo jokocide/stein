@@ -182,7 +182,6 @@ section {
 #welcome {
     display: flex;
     justify-content: center;
-    height: 500px;
     padding: 3rem;
     align-items: center;
     flex-direction: column;
