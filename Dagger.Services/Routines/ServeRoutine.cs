@@ -13,10 +13,11 @@ namespace Dagger.Services.Routines
     public class ServeRoutine : Routine
     {
         private string ServerPort { get; }
-        private bool ServerIsActive { get; set; } = true;
+        
         private string[] ServerPrefixes { get; } = { "http://localhost:" };
-        private BuildRoutine Build { get; } = new();
-        private List<string> ChangedFiles { get; } = new();
+        
+        // Updated file paths are added and removed to this list to prevent multiple rebuilds.
+        private List<string> ServerCache { get; } = new();
 
         public ServeRoutine(string port = "8000")
         {
@@ -31,24 +32,20 @@ namespace Dagger.Services.Routines
             
             // Server initialization.
             HttpListener listener = new HttpListener();
-            byte[] buffer = Array.Empty<byte>();
-            bool requestedFileExists = true;
+            foreach (string prefix in ServerPrefixes) listener.Prefixes.Add(prefix);
 
-            foreach (string prefix in ServerPrefixes)
-                listener.Prefixes.Add(prefix);
+            // Watcher initialization.
+            FileSystemWatcher watcher = new(resources);
             
-            FileSystemWatcher watcher = new FileSystemWatcher(resources)
-            {
-                NotifyFilter = NotifyFilters.Attributes
-                               | NotifyFilters.DirectoryName
-                               | NotifyFilters.FileName
-                               | NotifyFilters.LastWrite
-            };
+            watcher.NotifyFilter = NotifyFilters.DirectoryName
+                | NotifyFilters.FileName
+                | NotifyFilters.LastWrite
+                | NotifyFilters.Size;
             
-            watcher.Changed += OnChanged;
-            watcher.Created += OnCreated;
-            watcher.Deleted += OnDeleted;
-            watcher.Renamed += OnRenamed;
+            watcher.Changed += OnUpdate;
+            watcher.Created += OnUpdate;
+            watcher.Deleted += OnUpdate;
+            watcher.Renamed += OnUpdate;
             watcher.Error += OnError;
             
             // Default filter will watch all files.
@@ -67,10 +64,9 @@ namespace Dagger.Services.Routines
             
             Helper.Colorize(ConsoleColor.Cyan, "Serving project on ", false);
             Helper.Colorize(ConsoleColor.DarkGray, $"http://localhost:{ServerPort}");
-            Console.WriteLine();
             Helper.Colorize(ConsoleColor.DarkGray, "Logging requests:");
 
-            while (ServerIsActive)
+            while (true)
             {
                 // Wait for a request.
                 HttpListenerContext context = listener.GetContext(); // WARNING: This is not async.
@@ -79,17 +75,18 @@ namespace Dagger.Services.Routines
                 HttpListenerResponse response = context.Response;
                 
                 // Log the requested file.
-                Helper.Colorize(ConsoleColor.DarkGray, $"({DateTime.Now:t})", false);
+                Helper.Colorize(ConsoleColor.DarkGray, $"({DateTime.Now:T})", false);
                 Helper.Colorize(ConsoleColor.Cyan, $" {request.RawUrl}");
 
                 string requestedFileName = Path.GetFileName(request.RawUrl);
                 string requestedFile = !Path.HasExtension(requestedFileName) ? Path.Join(request.RawUrl, "index.html") : request.RawUrl;
 
                 // Return a 404 for files that don't exist.
+                byte[] buffer;
+                
                 if (!File.Exists(Path.Join(site, requestedFile)))
                 {
                     response.StatusCode = 404;
-                    requestedFileExists = false;
                     const string responseString = "<HTML><BODY>404</BODY></HTML>";
                     buffer = Encoding.UTF8.GetBytes(responseString);
                 }
@@ -109,16 +106,8 @@ namespace Dagger.Services.Routines
                     ".webp" => "image/webp",
                     _ => response.ContentType
                 };
-
-                if (extension != ".html" || extension != ".css" || extension != ".js" && requestedFileExists)
-                {
-                    buffer = File.ReadAllBytes(Path.Join(site, requestedFile));
-                }
-                else if (requestedFileExists)
-                {
-                    string responseString = File.ReadAllText(Path.Join(site, requestedFile));
-                    buffer = Encoding.UTF8.GetBytes(responseString);
-                }
+                
+                buffer = File.ReadAllBytes(Path.Join(site, requestedFile));
                 
                 response.ContentLength64 = buffer.Length;
                 Stream output = response.OutputStream;
@@ -127,47 +116,27 @@ namespace Dagger.Services.Routines
             }
         }
         
-        private void OnChanged(object sender, FileSystemEventArgs e)
+        private void OnUpdate(object sender, FileSystemEventArgs e)
         {
-            if (e.ChangeType != WatcherChangeTypes.Changed)
-            {
-                return;
-            }
-
-            if (!ChangedFiles.Contains(e.FullPath))
-            {
-                ChangedFiles.Add(e.FullPath);
-                Rebuild();
-            }
-
+            if (ServerCache.Contains(e.FullPath)) return;
+            ServerCache.Add(e.FullPath);
+            
+            BuildRoutine build = new();
+            build.Execute();
+            
             Timer timer = new Timer(100) {AutoReset = false};
+            
             timer.Elapsed += (timerElapsedSender, timerElapsedArgs) =>
             {
-                lock (ChangedFiles)
+                lock (ServerCache)
                 {
-                    ChangedFiles.Remove(e.FullPath);
+                    ServerCache.Remove(e.FullPath);
                 }
             };
             
             timer.Start();
         }
-
-        private void OnCreated(object sender, FileSystemEventArgs e)
-        {
-            string value = $"Created: {e.FullPath}";
-            Console.WriteLine(value);
-        }
-
-        private void OnDeleted(object sender, FileSystemEventArgs e) =>
-            Console.WriteLine($"Deleted: {e.FullPath}");
-
-        private void OnRenamed(object sender, RenamedEventArgs e)
-        {
-            Console.WriteLine($"Renamed:");
-            Console.WriteLine($"    Old: {e.OldFullPath}");
-            Console.WriteLine($"    New: {e.FullPath}");
-        }
-
+        
         private void OnError(object sender, ErrorEventArgs e) =>
             PrintException(e.GetException());
 
@@ -181,15 +150,6 @@ namespace Dagger.Services.Routines
                 Console.WriteLine();
                 PrintException(ex.InnerException);
             }
-        }
-
-        private void Rebuild()
-        {
-            // ServerIsActive = false;
-            Helper.Colorize(ConsoleColor.DarkGray, $"({DateTime.Now:t}) ", false);
-            Helper.Colorize(ConsoleColor.Cyan, "Rebuilding");
-            Build.Execute();
-            // ServerIsActive = true;
         }
     }
 }
