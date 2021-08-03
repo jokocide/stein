@@ -122,6 +122,7 @@ namespace Dagger.Services.Routines
             ServerCache.Add(e.FullPath);
             
             BuildRoutine build = new();
+            Helper.Colorize(ConsoleColor.DarkGray, $"({DateTime.Now:T}) ", false);
             build.Execute();
             
             Timer timer = new Timer(100) {AutoReset = false};

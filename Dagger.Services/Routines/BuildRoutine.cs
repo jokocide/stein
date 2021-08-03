@@ -17,7 +17,6 @@ namespace Dagger.Services.Routines
         {
             DirectoryInfo projectDirectoryInfo = new DirectoryInfo(Directory.GetCurrentDirectory());
             
-            Helper.Colorize(ConsoleColor.DarkGray, $"({DateTime.Now:T}) ", false);
             Helper.Colorize(ConsoleColor.Cyan, $"Building project ", false);
             Helper.Colorize(ConsoleColor.DarkGray, $"'{projectDirectoryInfo.Name}'");
             
