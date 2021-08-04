@@ -11,6 +11,14 @@ namespace Dagger.Data.Models
         public string SitePath { get; }
         public string Body { get; }
 
+        /// <summary>
+        /// Create a new Writable object.
+        /// </summary>
+        /// <param name="resourcePath">
+        /// A relative path from the resource directory of the project to the file that
+        /// a writable object is being created from.
+        /// </param>
+        /// <param name="body">The string to be written.</param>
         public Writable(string resourcePath, string body)
         {
             Body = body;

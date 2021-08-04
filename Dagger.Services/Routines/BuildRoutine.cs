@@ -41,6 +41,10 @@ namespace Dagger.Services.Routines
             foreach (string filePath in collectionsMarkdownFilesPaths)
             {
                 DirectoryInfo directoryInfo = new DirectoryInfo(filePath);
+                
+                // directoryInfo should always have a parent.
+                if (directoryInfo.Parent?.Name == null) throw new Exception("Received null parent value.");
+                
                 string fileContent;
                 
                 try
@@ -76,35 +80,42 @@ namespace Dagger.Services.Routines
                 Dictionary<string, string> metadata = CreateMetadata(
                     Helper.Slice(indices.FirstEnd, indices.SecondStart, fileContent).Trim()
                 );
-
-                if (directoryInfo.Parent?.Name == null) throw new Exception("Received null parent value.");
                 
+                /*
+                 * Collection files receive a 'path' key to facilitate creating links to collection files while
+                 * iterating in a template. Modify Writable.cs to change the output location of collection files.
+                 */
+                metadata.Add("path",
+                    Path.Join
+                    (
+                        directoryInfo.Parent.Name,
+                        Path.GetFileNameWithoutExtension(directoryInfo.Name), 
+                        "index.html"
+                    )
+                );
+                
+                // Initialize a new collection for this file, if one doesn't already exist.
                 if (!store.Collections.ContainsKey(directoryInfo.Parent.Name))
                     store.Collections.Add(directoryInfo.Parent.Name, new List<Dictionary<string, string>>());
                 
+                /*
+                 * Metadata object is added to the store at this point. Keys added to the dictionary beyond this
+                 * point will still be included because this is a reference type, but this is a logical separation.
+                 */
                 store.Collections[directoryInfo.Parent.Name].Add(metadata);
                 
-                string untransformedBody = fileContent.Substring(indices.SecondEnd).Trim();
+                // Select and convert the body of the file to HTML.
+                string untransformedBody = fileContent[indices.SecondEnd..].Trim();
                 string transformedBody = Markdown.ToHtml(untransformedBody);
                 
-                /*
-                 * Add the 'path' key to make iteration with links possible.
-                 *
-                 * Caution: This changes where the files thinks it is located in the file system, not where it actually
-                 * is located. If you want to change where files are actually written out you should adjust the Writable
-                 * constructor. (Dagger.Data/Models/Writable.cs)
-                 */
-                metadata.Add("path",
-                    Path.Join(
-                        directoryInfo.Parent.Name,
-                        Path.GetFileNameWithoutExtension(directoryInfo.Name), 
-                        "index.html"));
-                
-                // Add the 'body' key so that we can inject the contents of the file into a template.
+                // Add a 'body' key that refers to the newly created HTML body to the metadata object.
                 metadata.Add("body", transformedBody);
 
+                /*
+                 * Markdown collection files should have a 'template' key. Here we attempt to read the
+                 * requested template.
+                 */
                 string template = null;
-
                 try
                 {
                     template = File.ReadAllText(Path.Join(templatesPath, metadata["template"] + ".hbs"));
@@ -122,9 +133,10 @@ namespace Dagger.Services.Routines
                     help.Execute();
                 }
 
-                var compiledTemplate = Handlebars.Compile(template);
-                var renderedTemplate = compiledTemplate(metadata);
+                HandlebarsTemplate<object,object> compiledTemplate = Handlebars.Compile(template);
+                string renderedTemplate = compiledTemplate(metadata);
 
+                // Create a Writable.
                 string resourcePath = Path.GetRelativePath("./resources", filePath);
                 Writable writable = new Writable(resourcePath, renderedTemplate);
 
@@ -140,7 +152,7 @@ namespace Dagger.Services.Routines
                 var compiledTemplate = Handlebars.Compile(fileContent);
                 var renderedTemplate = compiledTemplate(store.Collections);
 
-                string resourcePath = Path.GetRelativePath("./resources", filePath);
+                string resourcePath = Path.GetRelativePath("resources", directoryInfo.FullName);
                 Writable writable = new Writable(resourcePath, renderedTemplate);
                 
                 store.Writable.Add(writable);
@@ -271,9 +283,9 @@ namespace Dagger.Services.Routines
         /// </returns>
         private (int FirstStart, int FirstEnd, int SecondStart, int SecondEnd) GetYamlFrontmatterIndices(string text)
         {
-            int firstStart = text.IndexOf("---");
+            int firstStart = text.IndexOf("---", StringComparison.Ordinal);
             int firstEnd = firstStart + 3;
-            int secondStart = text.IndexOf("---", firstEnd);
+            int secondStart = text.IndexOf("---", firstEnd, StringComparison.Ordinal);
             int secondEnd = secondStart + 3;
             return (firstStart, firstEnd, secondStart, secondEnd);
         }
