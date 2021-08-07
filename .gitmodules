@@ -1,4 +1,3 @@
-[submodule "dagger.jokoci.de"]
-	path = Dagger/Example
+[submodule ".\\Dagger\\Example"]
+	path = .\\Dagger\\Example
 	url = https://github.com/jokocide/dagger.jokoci.de.git
-	branch = main
