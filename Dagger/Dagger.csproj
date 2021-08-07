@@ -1,0 +1,50 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>Jokocide.Dagger</PackageId>
+    <Version>1.1.0</Version>
+    <Authors>Jonathan Koenig</Authors>
+    <Description>A global tool for static site generation.</Description>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>dagger</ToolCommandName>
+    <PackageOutputPath>../Build</PackageOutputPath>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <RootNamespace>Dagger.App</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+      <None Include="../LICENSE" Pack="true" PackagePath="" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Content Include="Example\resources\collections\guides\collections.md" />
+    <Content Include="Example\resources\collections\guides\pages.md" />
+    <Content Include="Example\resources\collections\guides\static.md" />
+    <Content Include="Example\resources\collections\guides\templates.md" />
+    <Content Include="Example\resources\pages\index.hbs" />
+    <Content Include="Example\resources\public\css\main.css" />
+    <Content Include="Example\resources\public\images\dagger.png" />
+    <Content Include="Example\resources\public\js\main.js" />
+    <Content Include="Example\resources\templates\partials\banner.hbs" />
+    <Content Include="Example\resources\templates\partials\footer.hbs" />
+    <Content Include="Example\resources\templates\partials\header.hbs" />
+    <Content Include="Example\resources\templates\partials\nav.hbs" />
+    <Content Include="Example\resources\templates\detail.hbs" />
+    <Content Include="Example\site\index.html" />
+    <Content Include="Example\site\public\css\main.css" />
+    <Content Include="Example\site\public\js\main.js" />
+    <Content Include="Example\site\public\images\dagger.png" />
+    <Content Include="Example\site\guides\collections\index.html" />
+    <Content Include="Example\site\guides\pages\index.html" />
+    <Content Include="Example\site\guides\static\index.html" />
+    <Content Include="Example\site\guides\templates\index.html" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Handlebars.Net" Version="2.0.9" />
+    <PackageReference Include="Markdig" Version="0.25.0" />
+  </ItemGroup>
+
+</Project>
