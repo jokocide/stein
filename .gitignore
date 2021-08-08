@@ -3,10 +3,7 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
-dagger-flow.txt
-jokocide
-**/example/.gitignore
-**/example/LICENSE
+**/Example/
 
 # User-specific files
 *.rsuser
