@@ -4,8 +4,8 @@ using System.IO;
 namespace Dagger.Models
 {
     /// <summary>
-    /// Base class for all Resource types.
-    /// Represents a file within a Dagger project that can be processed and has the potential to become a Writable.
+    /// Base class for all Resource types. A Resource represents a file that has been discovered in a project,
+    /// and provides properties and methods to store and manipulate the data in that file.
     /// </summary>
     public abstract class Resource
     {
@@ -19,7 +19,7 @@ namespace Dagger.Models
         /// A resource may have many public properties to expose key pieces of data conveniently, but the Data
         /// property represents the primary storage for all pieces of data derived from a resource.
         /// </summary>
-        internal abstract Store Data { get; }
+        internal abstract Store Store { get; }
         
         /// <summary>
         /// If an error is encountered during Process() this will be true, indicating something is wrong with the

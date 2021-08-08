@@ -7,10 +7,13 @@ using Dagger.Services;
 namespace Dagger.Routines
 {
     /// <summary>
-    /// Create a new Dagger project.
+    /// Provide a method that can be used to generate a new project.
     /// </summary>
     public sealed class NewRoutine : Routine
     {
+        /// <summary>
+        /// Create a new project.
+        /// </summary>
         public override void Execute()
         {
             string projectDirectory = Directory.GetCurrentDirectory();

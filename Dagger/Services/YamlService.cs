@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace Dagger.Services
 {
+    /// <summary>
+    /// Methods to interact with and change YAML content.
+    /// </summary>
     public static class YamlService
     {
         /// <summary>
@@ -30,7 +33,7 @@ namespace Dagger.Services
         /// <param name="text">The source string.</param>
         /// <param name="delimiter">The delimiter that will be used to divide the lines.</param>
         /// <returns>A new MetaData object containing the key/value pairs from the source string.</returns>
-        public static Dictionary<string, string> CreateMetadata(string text, string delimiter = ":")
+        public static Dictionary<string, string> Deserialize(string text, string delimiter = ":")
         {
             var dictionary = new Dictionary<string, string>();
             string[] lines = text.Split(Environment.NewLine);

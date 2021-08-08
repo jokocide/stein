@@ -10,15 +10,24 @@ using Dagger.Services;
 namespace Dagger.Routines
 {
     /// <summary>
-    /// Watch a Dagger project for changes to the resources directory, and trigger a Build routine as a result.
+    /// Provides file watching and HTTP server capabilities for a project.
     /// </summary>
     public sealed class ServeRoutine : Routine
     {
+        /// <summary>
+        /// The port to run the server on.
+        /// </summary>
         private string ServerPort { get; }
         
+        /// <summary>
+        /// The server address(es).
+        /// </summary>
         private string[] ServerPrefixes { get; } = { "http://localhost:" };
         
-        // Updated file paths are added and removed to this list to prevent multiple rebuilds.
+        /// <summary>
+        /// .NET will emit multiple events when a file is accessed in certain cases, so the file paths are stored here
+        /// and removed shortly after to prevent duplicate rebuilds.
+        /// </summary>
         private List<string> ServerCache { get; } = new();
 
         public ServeRoutine(string port = "8000")
@@ -27,6 +36,10 @@ namespace Dagger.Routines
             ServerPrefixes[0] += $"{port}/";
         }
 
+        /// <summary>
+        /// Watch a project for changes to the resources directory, trigger BuildRoutine.Execute() when
+        /// a change is detected.
+        /// </summary>
         public override void Execute()
         {
             string resources = Path.Join(Directory.GetCurrentDirectory(), "resources");
@@ -118,6 +131,7 @@ namespace Dagger.Routines
             }
         }
         
+        // Todo: Document this!
         private void OnUpdate(object sender, FileSystemEventArgs e)
         {
             if (ServerCache.Contains(e.FullPath)) return;
@@ -140,9 +154,11 @@ namespace Dagger.Routines
             timer.Start();
         }
         
+        // Todo: Document this!
         private void OnError(object sender, ErrorEventArgs e) =>
             PrintException(e.GetException());
 
+        // Todo: Document this!
         private void PrintException(Exception ex)
         {
             if (ex != null)

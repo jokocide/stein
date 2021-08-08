@@ -11,7 +11,7 @@ using Markdig;
 namespace Dagger.Metadata
 {
     /// <summary>
-    /// Represents a Markdown file discovered in a Dagger project.
+    /// Represents a Markdown file.
     /// </summary>
     public sealed class MarkdownResource : Resource
     {
@@ -19,11 +19,11 @@ namespace Dagger.Metadata
         /// Data stores the YAML frontmatter found in a Markdown file. Certain keys like 'date' and 'template'
         /// are stored in top-level properties on Store.
         /// </summary>
-        internal override KeyValueStore Data { get; } = new();
+        internal override KeyValueStore Store { get; } = new();
 
         public MarkdownResource(FileInfo fileInfo) : base(fileInfo)
         {
-            Data.Link = PathService.GetOutputPath(Info);
+            Store.Link = PathService.GetOutputPath(Info);
         }
         
         /// <summary>
@@ -54,33 +54,33 @@ namespace Dagger.Metadata
 
             if (IsInvalid) return;
 
-            Dictionary<string, string> rawMetadata = YamlService.CreateMetadata(
+            Dictionary<string, string> rawPairs = YamlService.Deserialize(
                 StringService.Slice(indices.FirstEnd, indices.SecondStart, rawFile).Trim()
             );
 
-            foreach (var (key, value) in rawMetadata)
+            foreach (var (key, value) in rawPairs)
             {
                 switch (key.ToLower())
                 {
                     case "date":
-                        Data.Date = value;
+                        Store.Date = value;
                         break;
                     case "template":
-                        Data.Template = value;
+                        Store.Template = value;
                         break;
                 }
             }
             
             string untransformedBody = rawFile[indices.SecondEnd..].Trim();
             string transformedBody = Markdown.ToHtml(untransformedBody);
-            Data.Body = transformedBody;
+            Store.Body = transformedBody;
             
-            if (Data.Template == null) return;
+            if (Store.Template == null) return;
 
             string rawTemplate = null;
             try
             {
-                rawTemplate = File.ReadAllText(Path.Join(PathService.TemplatesPath, Data.Template + ".hbs"));
+                rawTemplate = File.ReadAllText(Path.Join(PathService.TemplatesPath, Store.Template + ".hbs"));
             }
             catch (FileNotFoundException)
             {
@@ -90,10 +90,10 @@ namespace Dagger.Metadata
             if (IsInvalid) return;
                 
             HandlebarsTemplate<object, object> compiledTemplate = Handlebars.Compile(rawTemplate);
-            string renderedTemplate = compiledTemplate(Data.Body);
+            string renderedTemplate = compiledTemplate(Store.Body);
 
             Writable writable = new(Info, renderedTemplate);
-            StoreService.Writable.Add(writable);
+            MemoryService.Writable.Add(writable);
         }
     }
 }

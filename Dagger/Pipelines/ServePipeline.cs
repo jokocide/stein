@@ -11,43 +11,57 @@ namespace Dagger.Pipelines
     /// </summary>
     public sealed class ServePipeline : Pipeline
     {
-        public ServePipeline(string[] args) : base(args) { }
+        public ServePipeline(string[] arguments) : base(arguments) { }
 
+        /// <summary>
+        /// Return a ServeRoutine, or a HelpRoutine if the command is invalid.
+        /// </summary>
+        /// <returns>A Routine object.</returns>
         public override Routine Execute()
         {
-            if (Args.Length > 1) return ServePathPipeline(Args);
+            if (Arguments.Length > 1) return ServePathPipeline(Arguments);
 
             return PathService.IsProject(Directory.GetCurrentDirectory())
                 ? new ServeRoutine()
                 : HelpRoutine.NotInDaggerProject(true);
         }
 
-        private Routine ServePathPipeline(string[] args)
+        /// <summary>
+        /// Handle serve commands that have received a path argument.
+        /// </summary>
+        /// <param name="arguments">The arguments received from the command line.</param>
+        /// <returns>A Routine object.</returns>
+        private Routine ServePathPipeline(string[] arguments)
         {
-            if (args.Length > 2) return ServePathPortPipeline(args);
+            if (arguments.Length > 2) return ServePathPortPipeline(arguments);
             
-            if (!PathService.IsProject(args[1]))
+            if (!PathService.IsProject(arguments[1]))
             {
                 int number;
                 
-                if (Int32.TryParse(args[1], out number))
+                if (Int32.TryParse(arguments[1], out number))
                 {
-                    return new ServeRoutine(args[1]);
+                    return new ServeRoutine(arguments[1]);
                 }
 
                 return HelpRoutine.ProvidedPathIsNotProject();
             }
             
-            Directory.SetCurrentDirectory(args[1]);
+            Directory.SetCurrentDirectory(arguments[1]);
             return new ServeRoutine();
         }
 
-        private Routine ServePathPortPipeline(string[] args)
+        /// <summary>
+        /// Handle serve commands that have received a path and port argument.
+        /// </summary>
+        /// <param name="arguments">The arguments received from the command line.</param>
+        /// <returns>A Routine object.</returns>
+        private Routine ServePathPortPipeline(string[] arguments)
         {
-            if (!PathService.IsProject(args[1])) return HelpRoutine.ProvidedPathIsNotProject();
+            if (!PathService.IsProject(arguments[1])) return HelpRoutine.ProvidedPathIsNotProject();
             
-            Directory.SetCurrentDirectory(args[1]);
-            return new ServeRoutine(args[2]);
+            Directory.SetCurrentDirectory(arguments[1]);
+            return new ServeRoutine(arguments[2]);
         }
     }
 }

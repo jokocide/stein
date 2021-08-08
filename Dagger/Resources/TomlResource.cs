@@ -3,13 +3,16 @@ using Dagger.Models;
 
 namespace Dagger.Resources
 {
+    /// <summary>
+    /// Represents a TOML file.
+    /// </summary>
     public sealed class TomlResource : Resource
     {
-        internal override Store Data { get; }
+        internal override Store Store { get; }
 
         public TomlResource(FileInfo fileInfo) : base(fileInfo) { }
 
-        public override void Process()
+        internal override void Process()
         {
             throw new System.NotImplementedException();
         }

@@ -2,6 +2,9 @@
 
 namespace Dagger.Services
 {
+    /// <summary>
+    /// Provide commonly needed actions for strings.
+    /// </summary>
     public static class StringService
     {
         /// <summary>

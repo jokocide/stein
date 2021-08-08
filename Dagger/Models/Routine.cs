@@ -1,7 +1,8 @@
 namespace Dagger.Models
 {
     /// <summary>
-    /// Abstract class for other routines to derive from.
+    /// Base class for all Routine types. A Routine is a set of instructions that are carried out in response
+    /// to the received command line arguments.
     /// </summary>
     public abstract class Routine
     {

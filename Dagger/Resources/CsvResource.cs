@@ -3,13 +3,16 @@ using Dagger.Models;
 
 namespace Dagger.Resources
 {
+    /// <summary>
+    /// Represents a CSV file.
+    /// </summary>
     public sealed class CsvResource : Resource
     {
-        internal override Store Data { get; }
+        internal override Store Store { get; }
         
         public CsvResource(FileInfo fileInfo) : base(fileInfo) { }
 
-        public override void Process()
+        internal override void Process()
         {
             throw new System.NotImplementedException();
         }

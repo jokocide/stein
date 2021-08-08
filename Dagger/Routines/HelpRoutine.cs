@@ -5,18 +5,18 @@ using Dagger.Services;
 namespace Dagger.Routines
 {
     /// <summary>
-    /// Display help documentation for the CLI.
+    /// Provide a method that allows documentation to be displayed.
     /// </summary>
     public sealed class HelpRoutine : Routine
     {
         // Store any received errors or warnings.
         private Message Message { get; }
 
-        public HelpRoutine(Message message = null)
-        {
-            Message = message;
-        }   
-             
+        public HelpRoutine(Message message = null) => Message = message;
+        
+        /// <summary>
+        /// Write documentation to stdout.
+        /// </summary>
         public override void Execute()
         {
             if (Message != null)

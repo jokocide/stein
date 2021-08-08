@@ -2,6 +2,9 @@
 
 namespace Dagger.Services
 {
+    /// <summary>
+    /// Track important paths and provide methods to interact with and change those paths.
+    /// </summary>
     public static class PathService
     {
         public static string ProjectPath { get; } = Directory.GetCurrentDirectory();
@@ -31,8 +34,8 @@ namespace Dagger.Services
 
             if (!dir.Exists)
             {
-                throw new DirectoryNotFoundException("Source directory does not exist or could not be found: "
-                                                     + source);
+                string error = $"Source directory does not exist or could not be found: {source}";
+                throw new DirectoryNotFoundException(error);
             }
 
             DirectoryInfo[] dirs = dir.GetDirectories();

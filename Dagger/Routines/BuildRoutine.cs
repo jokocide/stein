@@ -9,10 +9,13 @@ using HandlebarsDotNet;
 namespace Dagger.Routines
 {
     /// <summary>
-    /// Build a Dagger project.
+    /// Provide a method that can be used to build a project.
     /// </summary>
     public sealed class BuildRoutine : Routine 
     {   
+        /// <summary>
+        /// Build a project.
+        /// </summary>
         public override void Execute()
         {
             DirectoryInfo projectInfo = new DirectoryInfo(Directory.GetCurrentDirectory());
@@ -33,7 +36,7 @@ namespace Dagger.Routines
                 // Registration.
                 DirectoryInfo collectionInfo = new(directoryPath);
                 Collection collection = new(collectionInfo);
-                StoreService.Collections.Add(collection);
+                MemoryService.Collections.Add(collection);
                 
                 // Claiming files.
                 foreach (FileInfo file in collectionInfo.GetFiles())
@@ -57,7 +60,7 @@ namespace Dagger.Routines
             }
             
             // Assemble an Injectable.
-            // Todo: Write code to assemble an Injectable :)
+            // Todo: Use the injectable here.
             
             foreach (string filePath in Directory.GetFiles(PathService.PagesPath, $"*.{templateExtension}"))
             {
@@ -65,10 +68,10 @@ namespace Dagger.Routines
                 string rawFile = File.ReadAllText(pageInfo.FullName);
                 
                 HandlebarsTemplate<object,object> compiledTemplate = Handlebars.Compile(rawFile);
-                var renderedTemplate = compiledTemplate(StoreService.Collections); // Todo: Injectable object goes in here, not Collections.
+                var renderedTemplate = compiledTemplate(MemoryService.Collections); // Todo: Injectable object goes in here, not Collections.
                 
                 Writable writable = new(pageInfo, renderedTemplate);
-                StoreService.Writable.Add(writable);
+                MemoryService.Writable.Add(writable);
             }
             
             // Todo: Automatic archiving of old versions.
@@ -85,7 +88,7 @@ namespace Dagger.Routines
                 );
             
             // Finally, writing everything out to file system.
-            foreach (Writable writable in StoreService.Writable)
+            foreach (Writable writable in MemoryService.Writable)
             {
                 string directory = Path.GetDirectoryName(writable.Target);
                 Directory.CreateDirectory(directory);
@@ -93,7 +96,7 @@ namespace Dagger.Routines
             }
 
             // Make room for the next build.
-            StoreService.Clear();
+            MemoryService.Clear();
         }
 
         /// <summary>
