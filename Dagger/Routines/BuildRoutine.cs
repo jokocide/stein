@@ -14,7 +14,8 @@ namespace Dagger.Routines
     public sealed class BuildRoutine : Routine 
     {   
         /// <summary>
-        /// Build a project.
+        /// Combine all existing and valid collection and page files to produce HTML, and copy public files to
+        /// the site directory. This should produce a functional website at /site.
         /// </summary>
         public override void Execute()
         {

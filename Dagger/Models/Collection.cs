@@ -18,14 +18,6 @@ namespace Dagger.Models
         /// </summary>
         public List<Resource> Items { get; } = new();
         
-        public Collection(string path)
-        {
-            if (Directory.Exists(path)) Info = new DirectoryInfo(path);
-        }
-
-        public Collection(DirectoryInfo directoryInfo)
-        {
-            if (Directory.Exists(directoryInfo.FullName)) Info = directoryInfo;
-        }
+        public Collection(DirectoryInfo directoryInfo) => Info = directoryInfo;
     }
 }

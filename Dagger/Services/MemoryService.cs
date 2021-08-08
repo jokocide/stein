@@ -21,5 +21,9 @@ namespace Dagger.Services
         }
 
         // Todo: Write code to generate an Injectable!
+        // public Dictionary<string, List<Dictionary<string, string>>> GetInjectable()
+        // {
+        //     
+        // }
     }
 }
