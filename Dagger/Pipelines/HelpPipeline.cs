@@ -1,3 +1,4 @@
+using Dagger.Models;
 using Dagger.Routines;
 
 namespace Dagger.Pipelines
@@ -5,7 +6,7 @@ namespace Dagger.Pipelines
     /// <summary>
     /// A Pipeline to handle the Help command.
     /// </summary>
-    public class HelpPipeline : Pipeline
+    public sealed class HelpPipeline : Pipeline
     {
         public HelpPipeline(string[] args) : base(args) { }
         public override Routine Execute()

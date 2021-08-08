@@ -7,7 +7,7 @@ namespace Dagger.Routines
     /// <summary>
     /// Display help documentation for the CLI.
     /// </summary>
-    public class HelpRoutine : Routine
+    public sealed class HelpRoutine : Routine
     {
         // Store any received errors or warnings.
         private Message Message { get; }

@@ -1,11 +1,12 @@
 using System.IO;
+using Dagger.Models;
 using Dagger.Routines;
 using Dagger.Services;
 
 namespace Dagger.Pipelines
 {
     /// <summary>A Pipeline to handle the build command.</summary>
-    public class BuildPipeline : Pipeline
+    public sealed class BuildPipeline : Pipeline
     {
         // The maximum expected arguments for a build command.
         private int MaxBuildArgs => 2;

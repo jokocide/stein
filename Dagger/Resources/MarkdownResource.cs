@@ -4,26 +4,34 @@ using System.IO;
 using System.Threading;
 using Dagger.Models;
 using Dagger.Services;
+using Dagger.Storage;
 using HandlebarsDotNet;
 using Markdig;
 
 namespace Dagger.Metadata
 {
-    public class MarkdownMetadata : Metadata
+    /// <summary>
+    /// Represents a Markdown file discovered in a Dagger project.
+    /// </summary>
+    public sealed class MarkdownResource : Resource
     {
-        private string Body { get; set; }
-        
-        public Dictionary<string, string> Frontmatter { get; }
+        /// <summary>
+        /// Data stores the YAML frontmatter found in a Markdown file. Certain keys like 'date' and 'template'
+        /// are stored in top-level properties on Store.
+        /// </summary>
+        internal override KeyValueStore Data { get; } = new();
 
-        public MarkdownMetadata(FileInfo fileInfo) : base(fileInfo)
+        public MarkdownResource(FileInfo fileInfo) : base(fileInfo)
         {
-            Frontmatter = new Dictionary<string, string> { { "path", ResourcePath } };
+            Data.Link = PathService.GetOutputPath(Info);
         }
-
-        public override void Process()
+        
+        /// <summary>
+        /// Attempt to parse the data in this resource into a MarkdownResource object.
+        /// </summary>
+        internal override void Process()
         {
             string rawFile;
-            
             try
             {
                 rawFile = File.ReadAllText(Info.FullName);
@@ -35,14 +43,13 @@ namespace Dagger.Metadata
             }
                     
             (int FirstStart, int FirstEnd, int SecondStart, int SecondEnd) indices = new();
-                    
             try
             {
                 indices = YamlService.GetIndices(rawFile);
             }
             catch (ArgumentOutOfRangeException)
             {
-                Invalidate(InvalidType.Format);
+                Invalidate(InvalidType.InvalidFormat);
             }
 
             if (IsInvalid) return;
@@ -56,40 +63,34 @@ namespace Dagger.Metadata
                 switch (key.ToLower())
                 {
                     case "date":
-                        Date = value;
+                        Data.Date = value;
                         break;
                     case "template":
-                        Template = value;
+                        Data.Template = value;
                         break;
                 }
-                
-                Frontmatter.Add(key, value);
             }
-            
-            if (Template == null) return;
             
             string untransformedBody = rawFile[indices.SecondEnd..].Trim();
             string transformedBody = Markdown.ToHtml(untransformedBody);
-
-            Body = transformedBody;
-            Frontmatter.Add("body", transformedBody);
+            Data.Body = transformedBody;
+            
+            if (Data.Template == null) return;
 
             string rawTemplate = null;
-                
             try
             {
-                rawTemplate = File.ReadAllText(Path.Join(PathService.TemplatesPath, Template + ".hbs"));
+                rawTemplate = File.ReadAllText(Path.Join(PathService.TemplatesPath, Data.Template + ".hbs"));
             }
             catch (FileNotFoundException)
             {
-                Invalidate(InvalidType.MissingTemplate);
+                Invalidate(InvalidType.TemplateNotFound);
             }
                 
             if (IsInvalid) return;
                 
             HandlebarsTemplate<object, object> compiledTemplate = Handlebars.Compile(rawTemplate);
-                
-            string renderedTemplate = compiledTemplate(Frontmatter);
+            string renderedTemplate = compiledTemplate(Data.Body);
 
             Writable writable = new(Info, renderedTemplate);
             StoreService.Writable.Add(writable);

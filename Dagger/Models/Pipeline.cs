@@ -1,6 +1,4 @@
-using Dagger.Routines;
-
-namespace Dagger.Pipelines
+namespace Dagger.Models
 {
     /// <summary>
     /// Abstract base class for other Pipeline types to derive from.

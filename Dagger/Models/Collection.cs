@@ -10,7 +10,7 @@ namespace Dagger.Models
     {
         public DirectoryInfo Info { get; }
 
-        public List<Metadata.Metadata> Items { get; } = new();
+        public List<Resource> Items { get; } = new();
         
         public Collection(string path)
         {

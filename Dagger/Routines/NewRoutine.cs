@@ -1,7 +1,7 @@
-
 using System;
 using System.IO;
 using System.Reflection;
+using Dagger.Models;
 using Dagger.Services;
 
 namespace Dagger.Routines
@@ -9,7 +9,7 @@ namespace Dagger.Routines
     /// <summary>
     /// Create a new Dagger project.
     /// </summary>
-    public class NewRoutine : Routine
+    public sealed class NewRoutine : Routine
     {
         public override void Execute()
         {

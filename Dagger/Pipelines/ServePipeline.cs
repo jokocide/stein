@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using Dagger.Models;
 using Dagger.Routines;
 using Dagger.Services;
 
@@ -8,7 +9,7 @@ namespace Dagger.Pipelines
     /// <summary>
     /// A Pipeline to handle the Serve command.
     /// </summary>
-    public class ServePipeline : Pipeline
+    public sealed class ServePipeline : Pipeline
     {
         public ServePipeline(string[] args) : base(args) { }
 

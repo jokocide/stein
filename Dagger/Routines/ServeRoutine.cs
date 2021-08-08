@@ -4,6 +4,7 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Timers;
+using Dagger.Models;
 using Dagger.Services;
 
 namespace Dagger.Routines
@@ -11,7 +12,7 @@ namespace Dagger.Routines
     /// <summary>
     /// Watch a Dagger project for changes to the resources directory, and trigger a Build routine as a result.
     /// </summary>
-    public class ServeRoutine : Routine
+    public sealed class ServeRoutine : Routine
     {
         private string ServerPort { get; }
         

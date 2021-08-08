@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using Dagger.Models;
 using Dagger.Routines;
 
 namespace Dagger.Pipelines
@@ -7,7 +8,7 @@ namespace Dagger.Pipelines
     /// <summary>
     /// A Pipeline to handle the New command.
     /// </summary>
-    public class NewPipeline : Pipeline
+    public sealed class NewPipeline : Pipeline
     {
         public NewPipeline(string[] args) : base(args) { }
         

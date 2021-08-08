@@ -1,17 +1,17 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using Dagger.Metadata;
 using Dagger.Models;
+using Dagger.Resources;
 using Dagger.Services;
 using HandlebarsDotNet;
 
 namespace Dagger.Routines
 {
     /// <summary>
-    /// Compile a Dagger project.
-    /// </summary>A
-    public class BuildRoutine : Routine 
+    /// Build a Dagger project.
+    /// </summary>
+    public sealed class BuildRoutine : Routine 
     {   
         public override void Execute()
         {
@@ -20,6 +20,7 @@ namespace Dagger.Routines
             StringService.Colorize(ConsoleColor.Cyan, $"Building project ", false);
             StringService.Colorize(ConsoleColor.DarkGray, $"'{projectInfo.Name}'");
 
+            // This will change later on when I support more templating engines.
             const string templateExtension = "hbs";
             
             // Register partials.
@@ -31,21 +32,19 @@ namespace Dagger.Routines
             {
                 // Registration.
                 DirectoryInfo collectionInfo = new(directoryPath);
-                
                 Collection collection = new(collectionInfo);
-                
                 StoreService.Collections.Add(collection);
                 
                 // Claiming files.
                 foreach (FileInfo file in collectionInfo.GetFiles())
                 {
-                    Metadata.Metadata metadata = file.Extension switch
+                    Resource metadata = file.Extension switch
                     {
-                        ".md" => new MarkdownMetadata(file),
-                        ".csv" => new CsvMetadata(file),
-                        ".json" => new JsonMetadata(file),
-                        ".toml" => new TomlMetadata(file),
-                        ".xml" => new XmlMetadata(file),
+                        ".md" => new MarkdownResource(file),
+                        ".csv" => new CsvResource(file),
+                        ".json" => new JsonResource(file),
+                        ".toml" => new TomlResource(file),
+                        ".xml" => new XmlResource(file),
                         _ => null
                     };
             
@@ -53,18 +52,12 @@ namespace Dagger.Routines
                     if (metadata == null) break;
                     
                     collection.Items.Add(metadata);
-                    
                     metadata.Process();
                 }
             }
             
-            /*
-             * Middleware
-             */
-            
-            // Retrieve an Injectable.
-            Injectable injectable = StoreService.Assemble();
-            
+            // Assemble an Injectable.
+            // Todo: Write code to assemble an Injectable :)
             
             foreach (string filePath in Directory.GetFiles(PathService.PagesPath, $"*.{templateExtension}"))
             {
@@ -72,23 +65,26 @@ namespace Dagger.Routines
                 string rawFile = File.ReadAllText(pageInfo.FullName);
                 
                 HandlebarsTemplate<object,object> compiledTemplate = Handlebars.Compile(rawFile);
-                var renderedTemplate = compiledTemplate(injectable);
+                var renderedTemplate = compiledTemplate(StoreService.Collections); // Todo: Injectable object goes in here, not Collections.
                 
                 Writable writable = new(pageInfo, renderedTemplate);
                 StoreService.Writable.Add(writable);
             }
             
+            // Todo: Automatic archiving of old versions.
             if (Directory.Exists(PathService.SitePath))
             {
                 Directory.Delete(PathService.SitePath, true);
             }
             
+            // Assert public files are up-to-date.
             PathService.Synchronize(
                 PathService.ResourcesPublicPath, 
                 PathService.SitePublicPath, 
                 true
                 );
             
+            // Finally, writing everything out to file system.
             foreach (Writable writable in StoreService.Writable)
             {
                 string directory = Path.GetDirectoryName(writable.Target);
@@ -96,6 +92,7 @@ namespace Dagger.Routines
                 File.WriteAllText(writable.Target, writable.Payload);
             }
 
+            // Make room for the next build.
             StoreService.Clear();
         }
 
@@ -111,7 +108,7 @@ namespace Dagger.Routines
         }
 
         /// <summary>
-        /// Make Handlebars aware of all given partials. The name of the partials will be equal to the file names.
+        /// Make Handlebars aware of all given partials. The names of the partials will be equal to the file names.
         /// </summary>
         /// <param name="filePaths">An array of strings that represent paths to Handlebars partials.</param>
         private void RegisterHandlebarsPartials(string[] filePaths)

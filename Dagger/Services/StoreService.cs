@@ -1,7 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using Dagger.Metadata;
 using Dagger.Models;
 
 namespace Dagger.Services
@@ -29,28 +26,20 @@ namespace Dagger.Services
         /// are currently registered with the store.
         /// </summary>
         /// <returns>A dictionary containing the key value pairs of all metadata items.</returns>
-        public static Injectable Assemble()
-        {
-            Dictionary<string, string> assembly = new();
-
-            foreach (Collection collection in Collections)
-            {
-                if (collection.Items.Count == 0) break;
-
-                // foreach (Metadata.Metadata metadata in collection.Items)
-                // {
-                //     if (metadata is MarkdownMetadata)
-                //     {
-                //         (MarkdownMetadata)metadata.Frontmatter.Add
-                //     }
-                // }
-
-                foreach (var metadata in collection.Items.OfType<MarkdownMetadata>())
-                {
-                    metadata.Frontmatter.
-                }
-            }
-            
-        }
+        // public static Injectable Assemble()
+        // {
+        //     Dictionary<string, string> assembly = new();
+        //
+        //     foreach (Collection collection in Collections)
+        //     {
+        //         if (collection.Items.Count == 0) break;
+        //
+        //         foreach (var metadata in collection.Items.OfType<MarkdownResource>())
+        //         {
+        //             metadata.Frontmatter.
+        //         }
+        //     }
+        //     
+        // }
     }
 }

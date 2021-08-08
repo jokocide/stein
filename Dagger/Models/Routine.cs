@@ -1,4 +1,4 @@
-namespace Dagger.Routines
+namespace Dagger.Models
 {
     /// <summary>
     /// Abstract class for other routines to derive from.
