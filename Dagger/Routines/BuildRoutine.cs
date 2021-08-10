@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using Dagger.Metadata;
 using Dagger.Models;
 using Dagger.Resources;
@@ -37,7 +38,6 @@ namespace Dagger.Routines
                 // Registration.
                 DirectoryInfo collectionInfo = new(directoryPath);
                 Collection collection = new(collectionInfo);
-                StoreService.Collections.Add(collection);
                 
                 // Claiming files.
                 foreach (FileInfo file in collectionInfo.GetFiles())
@@ -55,13 +55,16 @@ namespace Dagger.Routines
                     // Skip unsupported files.
                     if (metadata == null) break;
                     
-                    collection.Items.Add(metadata);
                     metadata.Process();
+                    
+                    collection.Items.Add(metadata);
                 }
+                
+                StoreService.Collections.Add(collection);
             }
-            
+
             // Assemble an Injectable.
-            // Todo: Use the injectable here.
+            var injectable = StoreService.GetInjectables();
             
             foreach (string filePath in Directory.GetFiles(PathService.PagesPath, $"*.{templateExtension}"))
             {
@@ -69,7 +72,7 @@ namespace Dagger.Routines
                 string rawFile = File.ReadAllText(pageInfo.FullName);
                 
                 HandlebarsTemplate<object,object> compiledTemplate = Handlebars.Compile(rawFile);
-                var renderedTemplate = compiledTemplate(StoreService.Collections); // Todo: Injectable object goes in here, not Collections.
+                var renderedTemplate = compiledTemplate(injectable);
                 
                 Writable writable = new(pageInfo, renderedTemplate);
                 StoreService.Writable.Add(writable);

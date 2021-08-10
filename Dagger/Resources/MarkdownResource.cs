@@ -94,6 +94,9 @@ namespace Dagger.Metadata
                     case "template":
                         Template = value;
                         break;
+                    default:
+                        Frontmatter.Add(key, value);
+                        break;
                 }
             }
             

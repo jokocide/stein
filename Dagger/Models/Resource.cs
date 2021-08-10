@@ -52,15 +52,15 @@ namespace Dagger.Models
         internal string Date { get; set; }
         
         /// <summary>
+        /// Provides access to the file that this Resource represents.
+        /// </summary>
+        internal FileInfo Info { get; }
+        
+        /// <summary>
         /// If an error is encountered during Process() this will be true, indicating something is wrong with the
         /// resource. It will not be fully processed or made into a Writable as a consequence. 
         /// </summary>
         protected bool IsInvalid { get; private set; } 
-        
-        /// <summary>
-        /// Provides access to the file that this Resource represents.
-        /// </summary>
-        protected FileInfo Info { get; }
          
         /// <summary>
         /// Issues found during Process() are recorded here.
