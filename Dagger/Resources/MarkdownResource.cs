@@ -4,7 +4,6 @@ using System.IO;
 using System.Threading;
 using Dagger.Models;
 using Dagger.Services;
-using Dagger.Storage;
 using HandlebarsDotNet;
 using Markdig;
 
@@ -15,19 +14,46 @@ namespace Dagger.Metadata
     /// </summary>
     public sealed class MarkdownResource : Resource
     {
+        // internal override KeyValueStore Store { get; } = new();
+
         /// <summary>
-        /// Data stores the YAML frontmatter found in a Markdown file. Certain keys like 'date' and 'template'
-        /// are stored in top-level properties on Store.
+        /// Stores YAML frontmatter.
         /// </summary>
-        internal override KeyValueStore Store { get; } = new();
+        internal Dictionary<string, string> Frontmatter { get; } = new();
+        
+        /// <summary>
+        /// Stores the Markdown body, which is everything in the file except for the YAML frontmatter.
+        /// </summary>
+        internal string Body { get; set; }
 
         public MarkdownResource(FileInfo fileInfo) : base(fileInfo)
         {
-            Store.Link = PathService.GetOutputPath(Info);
+            Link = PathService.GetOutputPath(Info);
         }
         
         /// <summary>
-        /// Attempt to parse the data in this resource into a MarkdownResource object.
+        /// Return all data in a format suitable for template injection.
+        /// </summary>
+        /// <returns></returns>
+        internal override Injectable Serialize()
+        {
+            dynamic injectable = new Injectable();
+            Injectable castedInjectable = (Injectable)injectable;
+            
+            injectable.Link = Link;
+            injectable.Date = Date;
+            injectable.Body = Body;
+
+            foreach (KeyValuePair<string, string> pair in Frontmatter)
+            {
+                castedInjectable.Add(pair.Key, pair.Value);
+            }
+
+            return injectable;
+        }
+        
+        /// <summary>
+        /// Populate the properties of this Resource.
         /// </summary>
         internal override void Process()
         {
@@ -63,24 +89,24 @@ namespace Dagger.Metadata
                 switch (key.ToLower())
                 {
                     case "date":
-                        Store.Date = value;
+                        Date = value;
                         break;
                     case "template":
-                        Store.Template = value;
+                        Template = value;
                         break;
                 }
             }
             
             string untransformedBody = rawFile[indices.SecondEnd..].Trim();
             string transformedBody = Markdown.ToHtml(untransformedBody);
-            Store.Body = transformedBody;
+            Body = transformedBody;
             
-            if (Store.Template == null) return;
+            if (Template == null) return;
 
             string rawTemplate = null;
             try
             {
-                rawTemplate = File.ReadAllText(Path.Join(PathService.TemplatesPath, Store.Template + ".hbs"));
+                rawTemplate = File.ReadAllText(Path.Join(PathService.TemplatesPath, Template + ".hbs"));
             }
             catch (FileNotFoundException)
             {
@@ -90,10 +116,10 @@ namespace Dagger.Metadata
             if (IsInvalid) return;
                 
             HandlebarsTemplate<object, object> compiledTemplate = Handlebars.Compile(rawTemplate);
-            string renderedTemplate = compiledTemplate(Store.Body);
+            string renderedTemplate = compiledTemplate(Body);
 
             Writable writable = new(Info, renderedTemplate);
-            MemoryService.Writable.Add(writable);
+            StoreService.Writable.Add(writable);
         }
     }
 }

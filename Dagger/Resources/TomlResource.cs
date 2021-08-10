@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using Dagger.Models;
 
 namespace Dagger.Resources
@@ -8,13 +9,23 @@ namespace Dagger.Resources
     /// </summary>
     public sealed class TomlResource : Resource
     {
-        internal override Store Store { get; }
-
         public TomlResource(FileInfo fileInfo) : base(fileInfo) { }
 
+        /// <summary>
+        /// Return all data in a format suitable for template injection.
+        /// </summary>
+        /// <returns></returns>
+        internal override Injectable Serialize()
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Populate the properties of this Resource.
+        /// </summary>
         internal override void Process()
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
     }
 }

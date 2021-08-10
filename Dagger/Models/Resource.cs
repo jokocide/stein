@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Dagger.Models
@@ -9,6 +10,8 @@ namespace Dagger.Models
     /// </summary>
     public abstract class Resource
     {
+        private string _template;
+        
         /// <summary>
         /// Classes deriving from Resource are responsible for providing a method to retrieve data from that
         /// type of resource.
@@ -16,10 +19,37 @@ namespace Dagger.Models
         internal abstract void Process();
 
         /// <summary>
-        /// A resource may have many public properties to expose key pieces of data conveniently, but the Data
-        /// property represents the primary storage for all pieces of data derived from a resource.
+        /// Return all data from a resource in a format suitable for template injection.
         /// </summary>
-        internal abstract Store Store { get; }
+        /// <returns></returns>
+        internal abstract Injectable Serialize();
+        
+        /// <summary>
+        /// Stores the name of a requested template file, not including the extension.
+        /// </summary>
+        internal string Template
+        {
+            get => _template;
+            set
+            {
+                if (Path.HasExtension(value))
+                    throw new InvalidOperationException("Received path with extension.");
+
+                _template = value;
+            }
+        }
+
+        /// <summary>
+        /// A string representing the output path for a file, injected to allow for generating links
+        /// during iteration in a template.
+        /// </summary>
+        internal string Link { get; set; }
+        
+        /// <summary>
+        /// User-provided string to represent a date, used during sorting if it can be parsed into a
+        /// DateTime object.
+        /// </summary>
+        internal string Date { get; set; }
         
         /// <summary>
         /// If an error is encountered during Process() this will be true, indicating something is wrong with the
@@ -28,7 +58,7 @@ namespace Dagger.Models
         protected bool IsInvalid { get; private set; } 
         
         /// <summary>
-        /// A FileInfo object for easy access to this resource's name and directory.
+        /// Provides access to the file that this Resource represents.
         /// </summary>
         protected FileInfo Info { get; }
          

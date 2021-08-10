@@ -23,7 +23,7 @@ namespace Dagger.Models
         public string Date { get; set; }
        
         /// <summary>
-        /// Convenience property that stores all content from a MarkdownResource except the frontmatter.
+        /// If a Resource has a 
         /// </summary>
         public string Body { get; set; }
 
