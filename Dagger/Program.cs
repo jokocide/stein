@@ -5,21 +5,23 @@ using Dagger.Services;
 namespace Dagger
 {
     /// <summary>
-    /// Dagger entry point. Coordinates the execution of services.
+    /// Dagger entry point.
     /// </summary>
     class Program
     {
+        /// <summary>
+        /// Make a call to PipelineService which returns a Routine based on the arguments, and
+        /// call the Execute() method defined in that Routine-typed object to perform the desired action.
+        /// </summary>
+        /// <param name="arguments">The arguments received from the user.</param>
         static void Main(string[] arguments)
         {
-            // Get some type of Routine back from Dispatch.
             Routine instructions = PipelineService.Evaluate(arguments);
-
-            // Print header and arguments.
+            
             StringService.Colorize(ConsoleColor.Cyan, "Dagger ", false);
-            if (arguments != null) StringService.Colorize(ConsoleColor.Gray, string.Join(' ', arguments));
+            StringService.Colorize(ConsoleColor.Gray, string.Join(' ', arguments));
             StringService.Colorize(ConsoleColor.Cyan, "------");
             
-            // Execute routine.
             instructions.Execute();
         }
     }
