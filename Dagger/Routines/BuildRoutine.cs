@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using System.Linq;
 using Dagger.Metadata;
 using Dagger.Models;
 using Dagger.Resources;

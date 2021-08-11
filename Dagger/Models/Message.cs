@@ -18,7 +18,8 @@ namespace Dagger.Models
         public enum InfoType
         {
             Warning,
-            Error
+            Error,
+            Critical
         }
     }
 }
