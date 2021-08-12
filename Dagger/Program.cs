@@ -1,5 +1,4 @@
-﻿using System;
-using Dagger.Models;
+﻿using Dagger.Models;
 using Dagger.Services;
 
 namespace Dagger

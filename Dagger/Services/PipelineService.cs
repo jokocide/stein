@@ -29,13 +29,10 @@ namespace Dagger.Services
             // If no arguments are received, serve the current directory.
             if (arguments.Length == 0)
             {
-                if (!PathService.IsProject(Directory.GetCurrentDirectory()))
-                {
-                    MessageService.Log(Message.NotInDaggerProject(false));
-                    MessageService.Print(true);
-                }
-
-                return new ServeRoutine();
+                if (PathService.IsProject(Directory.GetCurrentDirectory())) return new ServeRoutine();
+                
+                MessageService.Log(Message.NotInDaggerProject(false));
+                MessageService.Print(true);
             }
             
             // We can return right away if too many arguments are passed in.
