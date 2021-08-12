@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Dagger.Models;
@@ -36,14 +35,7 @@ namespace Dagger.Services
             {
                 List<Injectable> injectableList = new();
                 injectables.Add(collection.Info.Name, injectableList);
-                // injectableList.AddRange(collection.Items.Select(item => item.Serialize()));
-
-                foreach (Resource resource in collection.Items)
-                {
-                    dynamic injectable = resource.Serialize();
-                    injectableList.Add(injectable);
-                    Console.WriteLine(injectable.Title);
-                }
+                injectableList.AddRange(collection.Items.Select(item => item.Serialize()));
             }
             return injectables;
         }

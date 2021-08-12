@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using Dagger.Models;
 
 namespace Dagger.Services
 {
@@ -7,9 +8,8 @@ namespace Dagger.Services
     /// </summary>
     public static class PathService
     {
-        public static string ProjectPath { get; } = Directory.GetCurrentDirectory();
-        public static string ResourcesPath => Path.Join(ProjectPath, "resources");
-        public static string SitePath => Path.Join(ProjectPath, "site");
+        public static string ResourcesPath => Path.Join(Directory.GetCurrentDirectory(), "resources");
+        public static string SitePath => Path.Join(Directory.GetCurrentDirectory(), "site");
         public static string PagesPath => Path.Join(ResourcesPath, "pages");
         public static string TemplatesPath => Path.Join(ResourcesPath, "templates");
         public static string CollectionsPath => Path.Join(ResourcesPath, "collections");
@@ -34,8 +34,10 @@ namespace Dagger.Services
 
             if (!dir.Exists)
             {
-                string error = $"Source directory does not exist or could not be found: {source}";
-                throw new DirectoryNotFoundException(error);
+                string text = $"Unable to synchronize public files, no directory '{dir.FullName}' exists.";
+                Message message = new(text, Message.InfoType.Error);
+                MessageService.Log(message);
+                return;
             }
 
             DirectoryInfo[] dirs = dir.GetDirectories();
@@ -61,22 +63,32 @@ namespace Dagger.Services
         /// Return true if the given path is a Dagger project, defaults to the current
         /// directory if no path is given.
         /// </summary>
-        /// <param name="path">A path to the directory that will be tested.</param>
-        /// <returns>Return True if the path is a Dagger project.</returns>
+        /// <param name="path">
+        /// A path to the directory that will be tested.
+        /// </param>
+        /// <returns>
+        /// Return True if the path is a Dagger project.
+        /// </returns>
         public static bool IsProject(string path = null)
         {
             path ??= Directory.GetCurrentDirectory();
             return File.Exists(Path.Join(path, ".dagger"));
         }
         
-        /// <summary>Return a path representing a suitable output location for the given file.</summary>
-        /// <param name="file">A string representing the current location of the file.</param>
-        /// <returns>A string that represents a suitable output location.</returns>
+        /// <summary>
+        /// Return a path representing a suitable output location for the given file.
+        /// </summary>
+        /// <param name="file">
+        /// A string representing the current location of the file.
+        /// </param>
+        /// <returns>
+        /// A string that represents a suitable output location.
+        /// </returns>
         public static string GetOutputPath(FileInfo file)
         {
             string fileNameNoExtension = Path.GetFileNameWithoutExtension(file.Name);
             
-            return file.Directory.Name switch
+            return file.Directory?.Name switch
             {
                 "pages" when fileNameNoExtension == "index" => IndexPagePath(),
                 "pages" => NonIndexPagePath(fileNameNoExtension),
@@ -87,15 +99,20 @@ namespace Dagger.Services
         /// <summary>
         /// Return a path suitable for an index page file.
         /// </summary>
-        /// <param name="fileName">The name of the file.</param>
-        /// <returns>A string that represents a suitable output location.</returns>
+        /// <returns>
+        /// A string that represents a suitable output location.
+        /// </returns>
         private static string IndexPagePath() => Path.Join(PathService.SitePath, "index.html");
 
         /// <summary>
         /// Return a path suitable for non-index page files.
         /// </summary>
-        /// <param name="fileName">The name of the file.</param>
-        /// <returns>A string that represents a suitable output location.</returns>
+        /// <param name="fileName">
+        /// The name of the file.
+        /// </param>
+        /// <returns>
+        /// A string that represents a suitable output location.
+        /// </returns>
         private static string NonIndexPagePath(string fileName) 
         {
             string newDirectory = Path.Join(PathService.SitePath, fileName);
@@ -106,9 +123,15 @@ namespace Dagger.Services
         /// <summary>
         /// Return a path suitable for collection files.
         /// </summary>
-        /// <param name="fileName">The name of the file.</param>
-        /// <param name="directoryName">The name of the file's directory.</param>
-        /// <returns>A string that represents a suitable output location.</returns>
+        /// <param name="fileName">
+        /// The name of the file.
+        /// </param>
+        /// <param name="directoryName">
+        /// The name of the file's directory.
+        /// </param>
+        /// <returns>
+        /// A string that represents a suitable output location.
+        /// </returns>
         private static string CollectionPath(string fileName, string directoryName)
         {
             string newDirectory = Path.Join(PathService.SitePath, directoryName, fileName);

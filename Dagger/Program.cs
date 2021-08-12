@@ -17,12 +17,8 @@ namespace Dagger
         static void Main(string[] arguments)
         {
             Routine instructions = PipelineService.Evaluate(arguments);
-            
-            StringService.Colorize(ConsoleColor.Cyan, "Dagger ", false);
-            StringService.Colorize(ConsoleColor.Gray, string.Join(' ', arguments));
-            StringService.Colorize(ConsoleColor.Cyan, "------");
-            
             instructions.Execute();
+            MessageService.Print(true);
         }
     }
 }

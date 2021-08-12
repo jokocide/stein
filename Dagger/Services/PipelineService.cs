@@ -29,22 +29,45 @@ namespace Dagger.Services
             // If no arguments are received, serve the current directory.
             if (arguments.Length == 0)
             {
-                return !PathService.IsProject(Directory.GetCurrentDirectory())
-                    ? HelpRoutine.NotInDaggerProject(false)
-                    : new ServeRoutine();
+                if (!PathService.IsProject(Directory.GetCurrentDirectory()))
+                {
+                    MessageService.Log(Message.NotInDaggerProject(false));
+                    MessageService.Print(true);
+                }
+
+                return new ServeRoutine();
             }
             
             // We can return right away if too many arguments are passed in.
-            if (arguments.Length > MaxTotalArgs) return HelpRoutine.TooManyArguments();
-
-            return arguments[0].ToLower() switch
+            if (arguments.Length > MaxTotalArgs)
             {
-                "help" => new HelpPipeline(arguments).Execute(),
-                "build" => new BuildPipeline(arguments).Execute(),
-                "new" => new NewPipeline(arguments).Execute(),
-                "serve" => new ServePipeline(arguments).Execute(),
-                _ => HelpRoutine.CommandNotRecognized()
-            };
+                MessageService.Log(Message.TooManyArguments());
+                MessageService.Print(true);
+            }
+
+            Routine routine = null;
+
+            switch (arguments[0].ToLower())
+            {
+                case "help":
+                    routine = new HelpPipeline(arguments).Execute();
+                    break;
+                case "build":
+                    routine = new BuildPipeline(arguments).Execute();
+                    break;
+                case "new":
+                    routine = new NewPipeline(arguments).Execute();
+                    break;
+                case "serve":
+                    routine = new ServePipeline(arguments).Execute();
+                    break;
+                default:
+                    MessageService.Log(Message.CommandNotRecognized());
+                    MessageService.Print(true);
+                    break;
+            }
+
+            return routine;
         }
     }
 }
