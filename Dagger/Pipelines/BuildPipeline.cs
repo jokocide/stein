@@ -23,10 +23,21 @@ namespace Dagger.Pipelines
         /// <returns>A Routine object.</returns>
         public override Routine Execute()
         {
-            if (Arguments.Length > MaxBuildArguments) return HelpRoutine.TooManyArguments();
+            if (Arguments.Length > MaxBuildArguments)
+            {
+                MessageService.Log(Message.TooManyArguments());
+                MessageService.Print(true);
+            }
 
-            if (Arguments.Length != 1) return PipelineBuildPath(Arguments);
-            return PathService.IsProject() ? new BuildRoutine() : HelpRoutine.NotInDaggerProject(true);
+            if (Arguments.Length > 1) return PipelineBuildPath(Arguments);
+
+            if (!PathService.IsProject())
+            {
+                MessageService.Log(Message.NotInDaggerProject(true));
+                MessageService.Print(true);
+            }
+
+            return new BuildRoutine();
         }
 
         /// <summary>
@@ -42,10 +53,17 @@ namespace Dagger.Pipelines
             }
             catch (IOException)
             {
-                return HelpRoutine.ProvidedPathIsNotProject();
+                MessageService.Log(Message.ProvidedPathIsNotProject());
+                MessageService.Print(true);
             }
-            
-            return PathService.IsProject() ? new BuildRoutine() : HelpRoutine.NotInDaggerProject(true);
+
+            if (!PathService.IsProject())
+            {
+                MessageService.Log(Message.NotInDaggerProject(true));
+                MessageService.Print(true);
+            }
+
+            return new BuildRoutine();
         }
     }
 }

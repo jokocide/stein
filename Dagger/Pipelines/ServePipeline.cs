@@ -21,9 +21,13 @@ namespace Dagger.Pipelines
         {
             if (Arguments.Length > 1) return ServePathPipeline(Arguments);
 
-            return PathService.IsProject(Directory.GetCurrentDirectory())
-                ? new ServeRoutine()
-                : HelpRoutine.NotInDaggerProject(true);
+            if (!PathService.IsProject())
+            {
+                MessageService.Log(Message.NotInDaggerProject(true));
+                MessageService.Print(true);
+            }
+
+            return new ServeRoutine();
         }
 
         /// <summary>
@@ -44,7 +48,8 @@ namespace Dagger.Pipelines
                     return new ServeRoutine(arguments[1]);
                 }
 
-                return HelpRoutine.ProvidedPathIsNotProject();
+                MessageService.Log(Message.ProvidedPathIsNotProject());
+                MessageService.Print(true);
             }
             
             Directory.SetCurrentDirectory(arguments[1]);
@@ -58,7 +63,11 @@ namespace Dagger.Pipelines
         /// <returns>A Routine object.</returns>
         private Routine ServePathPortPipeline(string[] arguments)
         {
-            if (!PathService.IsProject(arguments[1])) return HelpRoutine.ProvidedPathIsNotProject();
+            if (!PathService.IsProject(arguments[1]))
+            {
+                MessageService.Log(Message.ProvidedPathIsNotProject());
+                MessageService.Print(true);
+            }
             
             Directory.SetCurrentDirectory(arguments[1]);
             return new ServeRoutine(arguments[2]);

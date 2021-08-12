@@ -1,7 +1,7 @@
-using System;
 using System.IO;
 using Dagger.Models;
 using Dagger.Routines;
+using Dagger.Services;
 
 namespace Dagger.Pipelines
 {
@@ -36,18 +36,11 @@ namespace Dagger.Pipelines
                 }
                 catch (IOException)
                 {
-                    return HelpRoutine.ProvidedPathIsInvalid();
-                }
-                catch (ArgumentException)
-                {
-                    return HelpRoutine.ProvidedPathIsInvalid();
-                }
-                catch (NotSupportedException)
-                {
-                    return HelpRoutine.ProvidedPathIsInvalid();
+                    MessageService.Log(Message.ProvidedPathIsInvalid());
+                    MessageService.Print(true);
                 }
             }
-            
+
             Directory.SetCurrentDirectory(arguments[1]);
             return new NewRoutine();
         }
