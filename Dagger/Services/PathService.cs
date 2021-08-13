@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using Dagger.Models;
 
 namespace Dagger.Services
@@ -79,7 +80,7 @@ namespace Dagger.Services
         /// Return a path representing a suitable output location for the given file.
         /// </summary>
         /// <param name="file">
-        /// A string representing the current location of the file.
+        /// A FileInfo object derived from the path of the file.
         /// </param>
         /// <returns>
         /// A string that represents a suitable output location.
@@ -94,6 +95,22 @@ namespace Dagger.Services
                 "pages" => NonIndexPagePath(fileNameNoExtension),
                 _ => CollectionPath(fileNameNoExtension, file.Directory.Name)
             };
+        }
+        
+        /// <summary>
+        /// Return a path suitable for iterating over collection items in a template.
+        /// </summary>
+        /// <param name="file">
+        /// A FileInfo object derived from the path of the file.
+        /// </param>
+        /// <returns>
+        /// A string the represents a relative path from the project's site directory to the
+        /// output location of this file.
+        /// </returns>
+        public static string GetIterablePath(FileInfo file)
+        {
+            string fileName = Path.GetFileNameWithoutExtension(file.Name);
+            return $"/{file.Directory.Name}/{fileName}/index.html";
         }
         
         /// <summary>

@@ -28,7 +28,7 @@ namespace Dagger.Metadata
 
         public MarkdownResource(FileInfo fileInfo) : base(fileInfo)
         {
-            Link = PathService.GetOutputPath(Info);
+            Link = PathService.GetIterablePath(Info);
         }
         
         /// <summary>
@@ -105,6 +105,8 @@ namespace Dagger.Metadata
             Body = transformedBody;
             
             if (Template == null) return;
+            
+            rawPairs.Add("body", transformedBody);
 
             string rawTemplate = null;
             try
@@ -119,7 +121,7 @@ namespace Dagger.Metadata
             if (IsInvalid) return;
                 
             HandlebarsTemplate<object, object> compiledTemplate = Handlebars.Compile(rawTemplate);
-            string renderedTemplate = compiledTemplate(Body);
+            string renderedTemplate = compiledTemplate(rawPairs);
 
             Writable writable = new(Info, renderedTemplate);
             StoreService.Writable.Add(writable);
