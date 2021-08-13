@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Dagger.Models;
@@ -30,13 +31,23 @@ namespace Dagger.Services
         /// </returns>
         public static Dictionary<string, List<Injectable>> GetInjectables()
         {
+            // Assembly
             Dictionary<string, List<Injectable>> injectables = new();
+            
             foreach (Collection collection in Collections)
             {
+                collection.Items.Sort((a, b) =>
+                {
+                    DateTime parsedA = DateTime.Parse(a.Date);
+                    DateTime parsedB = DateTime.Parse(b.Date);
+                    return DateTime.Compare(parsedB, parsedA);
+                });
+                
                 List<Injectable> injectableList = new();
                 injectables.Add(collection.Info.Name, injectableList);
                 injectableList.AddRange(collection.Items.Select(item => item.Serialize()));
             }
+            
             return injectables;
         }
     }

@@ -61,7 +61,7 @@ namespace Dagger.Routines
             }
 
             // Assemble an Injectable.
-            var injectable = StoreService.GetInjectables();
+            var injectables = StoreService.GetInjectables();
             
             foreach (string filePath in Directory.GetFiles(PathService.PagesPath, $"*.{templateExtension}"))
             {
@@ -69,7 +69,7 @@ namespace Dagger.Routines
                 string rawFile = File.ReadAllText(pageInfo.FullName);
                 
                 HandlebarsTemplate<object,object> compiledTemplate = Handlebars.Compile(rawFile);
-                var renderedTemplate = compiledTemplate(injectable);
+                var renderedTemplate = compiledTemplate(injectables);
                 
                 Writable writable = new(pageInfo, renderedTemplate);
                 StoreService.Writable.Add(writable);
