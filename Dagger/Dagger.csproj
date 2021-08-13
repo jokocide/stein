@@ -25,9 +25,6 @@
     <Content Include="Example\resources\collections\guides\templates.md" />
     <Content Include="Example\resources\pages\index.hbs" />
     <Content Include="Example\resources\public\css\main.css" />
-    <Content Include="Example\resources\public\images\dagger.png" />
-    <Content Include="Example\resources\public\js\main.js" />
-    <Content Include="Example\resources\templates\partials\banner.hbs" />
     <Content Include="Example\resources\templates\partials\footer.hbs" />
     <Content Include="Example\resources\templates\partials\header.hbs" />
     <Content Include="Example\resources\templates\partials\nav.hbs" />

@@ -122,6 +122,7 @@ namespace Dagger.Routines
                     _ => response.ContentType
                 };
                 
+                // Todo: try/catch for files removed during project edit.
                 buffer = File.ReadAllBytes(Path.Join(site, requestedFile));
                 
                 response.ContentLength64 = buffer.Length;

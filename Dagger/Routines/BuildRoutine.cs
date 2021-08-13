@@ -109,6 +109,7 @@ namespace Dagger.Routines
         /// <param name="filePath">The path to the Handlebars partial.</param>
         private void RegisterHandlebarsPartials(string filePath)
         {
+            // Todo: try/catch for missing template partials.
             string template = File.ReadAllText(filePath);
             string templateName = Path.GetFileNameWithoutExtension(filePath);
             Handlebars.RegisterTemplate(templateName, template);
