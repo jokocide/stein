@@ -1,4 +1,3 @@
-using System.IO;
 using Dagger.Models;
 using Dagger.Pipelines;
 using Dagger.Routines;
@@ -27,13 +26,7 @@ namespace Dagger.Services
         public static Routine Evaluate(string[] arguments)
         {
             // If no arguments are received, serve the current directory.
-            if (arguments.Length == 0)
-            {
-                if (PathService.IsProject(Directory.GetCurrentDirectory())) return new ServeRoutine();
-                
-                MessageService.Log(Message.NotInDaggerProject(false));
-                MessageService.Print(true);
-            }
+            if (arguments.Length == 0) return new HelpRoutine();
             
             // We can return right away if too many arguments are passed in.
             if (arguments.Length > MaxTotalArgs)

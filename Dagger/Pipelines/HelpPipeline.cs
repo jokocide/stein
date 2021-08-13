@@ -1,5 +1,7 @@
+using System;
 using Dagger.Models;
 using Dagger.Routines;
+using Dagger.Services;
 
 namespace Dagger.Pipelines
 {
@@ -16,8 +18,25 @@ namespace Dagger.Pipelines
         /// <returns>A Routine object.</returns>
         public override Routine Execute()
         {
-            // Todo: More detailed help when a command name is received.
-            return new HelpRoutine();
+            return Arguments.Length > 1 ? PipelineHelpTopic() : new HelpRoutine();
+        }
+
+        private Routine PipelineHelpTopic()
+        {
+            string topic = Arguments[1].ToLower();
+            
+            if (topic != "build" && topic != "new" && topic != "serve")
+            {
+                MessageService.Log(Message.CommandNotRecognized());
+                MessageService.Print(true);
+            }
+
+            return topic switch
+            {
+                "build" => new HelpRoutine(HelpRoutine.HelpTopic.Build),
+                "new" => new HelpRoutine(HelpRoutine.HelpTopic.New),
+                _ => new HelpRoutine(HelpRoutine.HelpTopic.Serve)
+            };
         }
     }
 }
