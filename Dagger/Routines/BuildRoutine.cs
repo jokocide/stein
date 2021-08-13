@@ -21,8 +21,6 @@ namespace Dagger.Routines
         {
             DirectoryInfo projectInfo = new DirectoryInfo(Directory.GetCurrentDirectory());
             
-            StringService.Colorize(ConsoleColor.Cyan, $"Building project ", false);
-            StringService.Colorize(ConsoleColor.DarkGray, $"'{projectInfo.Name}'");
 
             // This will change later on when I support more templating engines.
             const string templateExtension = "hbs";
@@ -100,6 +98,9 @@ namespace Dagger.Routines
 
             // Make room for the next build.
             StoreService.Clear();
+            
+            StringService.Colorize(ConsoleColor.Cyan, $"Built project ", false);
+            StringService.Colorize(ConsoleColor.Gray, $"'{projectInfo.Name}'");
         }
 
         /// <summary>

@@ -78,8 +78,8 @@ namespace Dagger.Routines
             listener.Start();
             
             StringService.Colorize(ConsoleColor.Cyan, "Serving project on ", false);
-            StringService.Colorize(ConsoleColor.DarkGray, $"http://localhost:{ServerPort}");
-            StringService.Colorize(ConsoleColor.DarkGray, "Logging requests:");
+            StringService.Colorize(ConsoleColor.Gray, $"http://localhost:{ServerPort}");
+            StringService.Colorize(ConsoleColor.Gray, "Logging requests:");
 
             while (true)
             {
