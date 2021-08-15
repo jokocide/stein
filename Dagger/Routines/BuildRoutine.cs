@@ -68,6 +68,7 @@ namespace Dagger.Routines
                 FileInfo pageInfo = new(filePath);
                 string rawFile = File.ReadAllText(pageInfo.FullName);
                 
+                // Todo: try/catch to handle templates with asymmetrical tags.
                 HandlebarsTemplate<object,object> compiledTemplate = Handlebars.Compile(rawFile);
                 var renderedTemplate = compiledTemplate(injectables);
                 
