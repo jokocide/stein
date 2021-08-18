@@ -1,6 +1,4 @@
-# Stein
-
-Patchwork static site generator, built on .NET
+# Patchwork static site generator, built on .NET
 
 > This project is under construction and considered unstable. Look for version 1.0 on [NuGet](https://www.nuget.org/packages/stein/) soon!
 
