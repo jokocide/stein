@@ -29,8 +29,8 @@ namespace Stein.Routines
             
             PathService.Synchronize(example.ToString(), projectDirectory, true);
             
-            StringService.Colorize(ConsoleColor.Cyan, "Created Stein project at ", false);
-            StringService.Colorize(ConsoleColor.DarkGray, Directory.GetCurrentDirectory());
+            StringService.Colorize("Created project ", ConsoleColor.Green, false);
+            StringService.Colorize(Directory.GetCurrentDirectory(), ConsoleColor.Gray, true);
         }
     }
 }

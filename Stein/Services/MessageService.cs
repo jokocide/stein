@@ -65,7 +65,7 @@ namespace Stein.Services
                 _ => Console.ForegroundColor
             };
 
-            StringService.Colorize(color, message.Text);
+            StringService.Colorize(message.Text, color, true);
         }
 
         /// <summary>

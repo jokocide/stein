@@ -100,14 +100,16 @@ namespace Stein.Routines
             // Make room for the next build.
             StoreService.Clear();
             
-            StringService.Colorize(ConsoleColor.Cyan, $"Built project ", false);
-            StringService.Colorize(ConsoleColor.Gray, $"'{projectInfo.Name}'");
+            StringService.Colorize($"Built project ", ConsoleColor.Green, false);
+            StringService.Colorize($"'{projectInfo.Name}'", ConsoleColor.Gray, true);
         }
 
         /// <summary>
         /// Make Handlebars aware of a given partial. The name of the partial will be equal to the file name.
         /// </summary>
-        /// <param name="filePath">The path to the Handlebars partial.</param>
+        /// <param name="filePath">
+        /// The path to the Handlebars partial.
+        /// </param>
         private void RegisterHandlebarsPartials(string filePath)
         {
             // Todo: try/catch for missing template partials.
@@ -119,7 +121,9 @@ namespace Stein.Routines
         /// <summary>
         /// Make Handlebars aware of all given partials. The names of the partials will be equal to the file names.
         /// </summary>
-        /// <param name="filePaths">An array of strings that represent paths to Handlebars partials.</param>
+        /// <param name="filePaths">
+        /// An array of strings that represent paths to Handlebars partials.
+        /// </param>
         private void RegisterHandlebarsPartials(string[] filePaths)
         {
             foreach(string path in filePaths) RegisterHandlebarsPartials(path);

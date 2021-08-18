@@ -77,9 +77,8 @@ namespace Stein.Routines
             
             listener.Start();
             
-            StringService.Colorize(ConsoleColor.Cyan, "Serving project on ", false);
-            StringService.Colorize(ConsoleColor.Gray, $"http://localhost:{ServerPort}");
-            StringService.Colorize(ConsoleColor.Gray, "Logging requests:");
+            StringService.Colorize("Serving project on ", ConsoleColor.White, false);
+            StringService.Colorize($"http://localhost:{ServerPort}", ConsoleColor.Gray, true);
 
             while (true)
             {
@@ -90,8 +89,8 @@ namespace Stein.Routines
                 HttpListenerResponse response = context.Response;
                 
                 // Log the requested file.
-                StringService.Colorize(ConsoleColor.DarkGray, $"({DateTime.Now:T})", false);
-                StringService.Colorize(ConsoleColor.Cyan, $" {request.RawUrl}");
+                StringService.Colorize($"({DateTime.Now:T})", ConsoleColor.Gray, false);
+                StringService.Colorize($" {request.RawUrl}", ConsoleColor.White, true);
 
                 string requestedFileName = Path.GetFileName(request.RawUrl);
                 string requestedFile = !Path.HasExtension(requestedFileName) ? Path.Join(request.RawUrl, "index.html") : request.RawUrl;
@@ -139,7 +138,7 @@ namespace Stein.Routines
             ServerCache.Add(e.FullPath);
             
             BuildRoutine build = new();
-            StringService.Colorize(ConsoleColor.DarkGray, $"({DateTime.Now:T}) ", false);
+            StringService.Colorize($"({DateTime.Now:T}) ", ConsoleColor.Gray, false);
             build.Execute();
             
             Timer timer = new Timer(100) {AutoReset = false};

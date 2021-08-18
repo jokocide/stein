@@ -1,7 +1,7 @@
-using System;
+using static System.Console;
+using static System.ConsoleColor;
 using Stein.Models;
 using static Stein.Services.StringService;
-using static System.Console;
 
 namespace Stein.Routines
 {
@@ -22,84 +22,79 @@ namespace Stein.Routines
         /// </summary>
         public override void Execute()
         {
-            ConsoleColor gray = ConsoleColor.Gray;
-            ConsoleColor darkGray = ConsoleColor.DarkGray;
-            ConsoleColor cyan = ConsoleColor.Cyan;
-            
             if (Topic is HelpTopic.Build)
             {
-                Colorize(cyan, "Building a project");
+                Colorize("Building a project", White, true);
                 WriteLine();
-                Colorize(gray, "Synopsis: ");
-                Colorize(cyan, "build ", false);
-                Colorize(gray, "[path]");
+                Colorize("Synopsis: ", Gray, true);
+                Colorize("build ", White, false);
+                Colorize("[path]", Gray, true);
                 WriteLine();
-                Colorize(gray, "Example: ");
-                Colorize(cyan, "stein build ", false);
-                Colorize(gray, "./projects/mysite");
+                Colorize("Example: ", Gray, true);
+                Colorize("stein build ", White, false);
+                Colorize("./projects/mysite", Gray, true);
                 WriteLine();
-                Colorize(gray, "Options:");
+                Colorize("Options:", Gray, true);
                 WriteLine();
-                Colorize(cyan, "[path] ", false);
-                Colorize(darkGray, "(default: current directory)");
-                Colorize(gray, "An absolute or relative path to the project that is being built.");
+                Colorize("[path] ", White, false);
+                Colorize("(default: current directory)", DarkGray, true);
+                Colorize("An absolute or relative path to the project that is being built.", Gray, true);
             }
             else if (Topic is HelpTopic.New)
             {
-                Colorize(cyan, "Creating a new project");
+                Colorize("Creating a new project", White, true);
                 WriteLine();
-                Colorize(gray, "Synopsis: ");
-                Colorize(cyan, "new ", false);
-                Colorize(gray, "[path] ");
+                Colorize("Synopsis: ", Gray, true);
+                Colorize("new ", White, false);
+                Colorize("[path] ", Gray, true);
                 WriteLine();
-                Colorize(gray, "Example: ");
-                Colorize(cyan, "stein new ", false);
-                Colorize(gray, "./projects/newsite");
+                Colorize("Example: ", Gray, true);
+                Colorize("stein new ", White, false);
+                Colorize("./projects/newsite", Gray, true);
                 WriteLine();
-                Colorize(gray, "Options:");
+                Colorize("Options:", Gray, true);
                 WriteLine();
-                Colorize(cyan, "[path] ", false);
-                Colorize(darkGray, "(default: current directory)");
-                Colorize(gray, "An absolute or relative path to the desired location of the new project. " +
-                               "If the directory does not exist, it will be created.");
+                Colorize("[path] ", White,  false);
+                Colorize("(default: current directory)", DarkGray, true);
+                Colorize("An absolute or relative path to the desired location of the new project. " +
+                               "If the directory does not exist, it will be created.", Gray, true);
             }
             
             else if (Topic is HelpTopic.Serve)
             {
-                Colorize(cyan, "Serving a project");
+                Colorize("Serving a project", White, true);
                 WriteLine();
-                Colorize(gray, "Synopsis: ");
-                Colorize(cyan, "serve ", false);
-                Colorize(gray, "[path] ", false);
-                Colorize(gray, "[port]");
+                Colorize("Synopsis: ", Gray, true);
+                Colorize("serve ", White, false);
+                Colorize("[path] ", Gray, false);
+                Colorize("[port]", Gray, true);
                 WriteLine();
-                Colorize(gray, "Example: ");
-                Colorize(cyan, "stein serve ", false);
-                Colorize(gray, "./projects/mysite 8001");
+                Colorize("Example: ", Gray, true);
+                Colorize("stein serve ", White, false);
+                Colorize("./projects/mysite 8001", Gray, true);
                 WriteLine();
-                Colorize(gray, "Options:");
+                Colorize("Options:", Gray, true);
                 WriteLine();
-                Colorize(cyan, "[path] ", false);
-                Colorize(darkGray, "(default: current directory)");
-                Colorize(gray, "An absolute or relative path to the project that is being served.");
+                Colorize("[path] ", White, false);
+                Colorize("(default: current directory)", DarkGray, true);
+                Colorize("An absolute or relative path to the project that is being served.", Gray, true);
                 WriteLine();
-                Colorize(cyan, "[port] ", false);
-                Colorize(darkGray, "(default: 8000)");
-                Colorize(gray, "Represents the desired port on which to make this project viewable.");
+                Colorize("[port] ", White, false);
+                Colorize("(default: 8000)", DarkGray, true);
+                Colorize("Represents the desired port on which to make this project viewable.", Gray, true);
             }
             else if (Topic is HelpTopic.General)
             {
-                Colorize(cyan, "build ", false);
-                Colorize(gray, "[path]");
-                Colorize(cyan, "new ", false);
-                Colorize(gray, "[path]");
-                Colorize(cyan, "serve ", false);
-                Colorize(gray, 
-                    "[path] [port]");
+                Colorize("build ", White, false);
+                Colorize("[path]", Gray, true);
+                Colorize("new ", White, false);
+                Colorize("[path]", Gray, true);
+                Colorize("serve ", White, false);
+                Colorize("[path] [port]", Gray, true);
                 WriteLine();
-                Colorize(gray, "View more information with ", false);
-                Colorize(cyan, "help ", false);
-                Colorize(gray, "<command>");
+                Colorize("View more information with ", Gray, false);
+                Colorize("help ", White, false);
+                Colorize("<command>", Gray, true);
             }
         }
 
