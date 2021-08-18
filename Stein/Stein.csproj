@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>Stein</PackageId>
+    <Version>0.0.1</Version>
+    <Authors>Jonathan Koenig</Authors>
+    <Description>A patchwork static site generator.</Description>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>stein</ToolCommandName>
+    <PackageOutputPath>../Package</PackageOutputPath>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <RootNamespace>Stein</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+      <None Include="../LICENSE" Pack="true" PackagePath="" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Handlebars.Net" Version="2.0.9" />
+    <PackageReference Include="Markdig" Version="0.25.0" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Folder Include="Package" />
+  </ItemGroup>
+
+</Project>
