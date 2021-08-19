@@ -1,6 +1,0 @@
-[submodule ".\\Stein\\Example"]
-	path = .\\Stein\\Example
-	url = https://github.com/jokocide/stein.jokoci.de
-[submodule "stein.jokoci.de"]
-	path = stein.jokoci.de
-	url = https://github.com/jokocide/stein.jokoci.de
