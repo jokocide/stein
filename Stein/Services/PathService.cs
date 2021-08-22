@@ -73,7 +73,7 @@ namespace Stein.Services
         public static bool IsProject(string path = null)
         {
             path ??= Directory.GetCurrentDirectory();
-            return File.Exists(Path.Join(path, ".stein"));
+            return File.Exists(Path.Join(path, "stein.json"));
         }
         
         /// <summary>

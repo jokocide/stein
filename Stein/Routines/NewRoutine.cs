@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using System.Reflection;
 using Stein.Models;
 using Stein.Services;
 
@@ -12,23 +11,23 @@ namespace Stein.Routines
     public sealed class NewRoutine : Routine
     {
         /// <summary>
-        /// Create a new project.
+        /// Assert the the current directory is recognizable as a project. 
         /// </summary>
         public override void Execute()
         {
-            string projectDirectory = Directory.GetCurrentDirectory();
-            DirectoryInfo assembly = new DirectoryInfo(Path.GetDirectoryName(Assembly.GetCallingAssembly().Location));
-            DirectoryInfo netVersion = new DirectoryInfo(assembly.Parent.ToString());
-            DirectoryInfo tools = new DirectoryInfo(netVersion.Parent.ToString());
-            DirectoryInfo version = new DirectoryInfo(tools.Parent.ToString());
-            DirectoryInfo content = new DirectoryInfo(Path.Join(version.ToString(), "content"));
-            DirectoryInfo example = new DirectoryInfo(Path.Join(content.ToString(), "example"));
+            if (File.Exists("stein.json"))
+            {
+                MessageService.Log(new Message("Project has already been initialized, 'stein.json' exists in target directory.", Message.InfoType.Error));
+                MessageService.Print(true);
+            }
 
-            File.Create(".stein");
-            File.SetAttributes(".stein", FileAttributes.Hidden);
-            
-            PathService.Synchronize(example.ToString(), projectDirectory, true);
-            
+            File.Create("stein.json");
+            Directory.CreateDirectory(Path.Join("resources", "pages"));
+            Directory.CreateDirectory(Path.Join("resources", "templates"));
+            Directory.CreateDirectory(Path.Join("resources", "collections"));
+            Directory.CreateDirectory(Path.Join("resources", "public"));
+            Directory.CreateDirectory("site");
+
             StringService.Colorize("Created project ", ConsoleColor.Green, false);
             StringService.Colorize(Directory.GetCurrentDirectory(), ConsoleColor.Gray, true);
         }
