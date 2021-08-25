@@ -1,11 +1,10 @@
-﻿using System;
+﻿using Markdig;
+using Stein.Models;
+using Stein.Services;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
-using HandlebarsDotNet;
-using Markdig;
-using Stein.Models;
-using Stein.Services;
 
 namespace Stein.Metadata
 {
@@ -14,32 +13,32 @@ namespace Stein.Metadata
     /// </summary>
     public sealed class MarkdownResource : Resource
     {
-        // internal override KeyValueStore Store { get; } = new();
-
         /// <summary>
-        /// Stores YAML frontmatter.
+        /// Contains all YAML Frontmatter.
         /// </summary>
         internal Dictionary<string, string> Frontmatter { get; } = new();
-        
+
         /// <summary>
         /// Stores the Markdown body, which is everything in the file except for the YAML frontmatter.
         /// </summary>
-        internal string Body { get; set; }
+        private string Body { get; set; }
 
         public MarkdownResource(FileInfo fileInfo) : base(fileInfo)
         {
             Link = PathService.GetIterablePath(Info);
         }
-        
+
         /// <summary>
         /// Return all data in a format suitable for template injection.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>
+        /// A dynamic object that is ready to be injected into a template.
+        /// </returns>
         internal override Injectable Serialize()
         {
             dynamic injectable = new Injectable();
             Injectable castedInjectable = (Injectable)injectable;
-            
+
             injectable.Link = Link;
             injectable.Date = Date;
             injectable.Body = Body;
@@ -51,38 +50,75 @@ namespace Stein.Metadata
 
             return injectable;
         }
-        
+
         /// <summary>
         /// Populate the properties of this Resource.
         /// </summary>
         internal override void Process()
         {
-            string rawFile;
+            string rawFile = null;
+            
             try
             {
-                rawFile = File.ReadAllText(Info.FullName);
+               rawFile = File.ReadAllText(Info.FullName);
             }
             catch (IOException)
             {
-                Thread.Sleep(200);
-                rawFile = File.ReadAllText(Info.FullName);
+               Thread.Sleep(10);
+               rawFile = File.ReadAllText(Info.FullName);
             }
-                    
-            (int FirstStart, int FirstEnd, int SecondStart, int SecondEnd) indices = new();
+
+            (int FirstStart, int FirstEnd, int SecondStart, int SecondEnd) indices = new(0, 0, 0, 0);
+
+            if (rawFile.Substring(0, 3) == "---")
+            {
+                // First three characters being "---" in a Markdown file indicates YAML frontmatter,
+                // so we call GetIndices to determine where it actually is in the file and make sure
+                // that it appears to be in a valid format. (No missing ':' between key/value pairs, etc)
+                try
+                {
+                    indices = YamlService.GetIndices(rawFile);
+                }
+                catch (ArgumentOutOfRangeException)
+                {
+                    Invalidate(InvalidType.InvalidFormat);
+
+                    string path = Path.Join("collections", Info.DirectoryName, Info.Name);
+                    string error = $"({Info.Name}) Found invalid YAML.";
+                    MessageService.Log(new Message(error, Message.InfoType.Error));
+                }
+            }
+            else
+            {
+                Invalidate(InvalidType.NoFrontmatter);
+            }
+
+            // This should accurately retrieve the body of the Markdown file whether it
+            // has YAML frontmatter or not.
+            string untransformedBody = rawFile[indices.SecondEnd..].Trim();
+            string transformedBody = Markdown.ToHtml(untransformedBody);
+            Body = transformedBody;
+
+            if (Issues.Contains(InvalidType.NoFrontmatter) || Issues.Contains(InvalidType.InvalidFormat)) 
+                return;
+
+            Dictionary<string, string> rawPairs = new();
+
             try
             {
-                indices = YamlService.GetIndices(rawFile);
+                rawPairs = YamlService.Deserialize(
+                    StringService.Slice(indices.FirstEnd, indices.SecondStart, rawFile).Trim()
+                );
             }
-            catch (ArgumentOutOfRangeException)
+            catch (IndexOutOfRangeException)
             {
                 Invalidate(InvalidType.InvalidFormat);
+
+                string error = $"({Info.Name}) YAML contains invalid key/value pair.";
+                MessageService.Log(new Message(error, Message.InfoType.Error));
             }
 
-            if (IsInvalid) return;
-
-            Dictionary<string, string> rawPairs = YamlService.Deserialize(
-                StringService.Slice(indices.FirstEnd, indices.SecondStart, rawFile).Trim()
-            );
+            if (Issues.Contains(InvalidType.InvalidFormat)) return;
 
             foreach (var (key, value) in rawPairs)
             {
@@ -99,32 +135,6 @@ namespace Stein.Metadata
                         break;
                 }
             }
-            
-            string untransformedBody = rawFile[indices.SecondEnd..].Trim();
-            string transformedBody = Markdown.ToHtml(untransformedBody);
-            Body = transformedBody;
-            
-            if (Template == null) return;
-            
-            rawPairs.Add("body", transformedBody);
-
-            string rawTemplate = null;
-            try
-            {
-                rawTemplate = File.ReadAllText(Path.Join(PathService.TemplatesPath, Template + ".hbs"));
-            }
-            catch (FileNotFoundException)
-            {
-                Invalidate(InvalidType.TemplateNotFound);
-            }
-                
-            if (IsInvalid) return;
-                
-            HandlebarsTemplate<object, object> compiledTemplate = Handlebars.Compile(rawTemplate);
-            string renderedTemplate = compiledTemplate(rawPairs);
-
-            Writable writable = new(Info, renderedTemplate);
-            StoreService.Writable.Add(writable);
         }
     }
 }

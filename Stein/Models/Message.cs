@@ -25,7 +25,9 @@ namespace Stein.Models
         /// Return a Help routine that displays text to explain that Stein has received more than the maximum
         /// number of allowed arguments.
         /// </summary>
-        /// <returns>A Routine object.</returns>
+        /// <returns>
+        /// A Routine object.
+        /// </returns>
         public static Message TooManyArguments()
         {
             Message message = new("Received too many arguments.", Message.InfoType.Error);
@@ -36,7 +38,9 @@ namespace Stein.Models
         /// Return a Help routine that displays text to explain that Stein has received a path argument which does
         /// not lead to a Stein project as indicated by the presence of a hidden .stein file.
         /// </summary>
-        /// <returns>A Routine object.</returns>
+        /// <returns>
+        /// A Routine object.
+        /// </returns>
         public static Message ProvidedPathIsNotProject()
         {
             string text = "The provided path does not appear to be a Stein project. (Missing a .stein file?)";
@@ -48,7 +52,9 @@ namespace Stein.Models
         /// Return a Help routine that displays text to explain that Stein has received a command but cannot proceed
         /// because a path was not provided, and was also not called from the directory of a Stein project.
         /// </summary>
-        /// <returns>A Routine object.</returns>
+        /// <returns>
+        /// A Routine object.
+        /// </returns>
         public static Message NotInProject(bool routineAcceptsPaths)
         {
             string text = routineAcceptsPaths

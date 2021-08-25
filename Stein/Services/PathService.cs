@@ -110,7 +110,7 @@ namespace Stein.Services
         public static string GetIterablePath(FileInfo file)
         {
             string fileName = Path.GetFileNameWithoutExtension(file.Name);
-            return $"/{file.Directory.Name}/{fileName}/index.html";
+            return $"/{file.Directory.Name}/{fileName}/";
         }
         
         /// <summary>

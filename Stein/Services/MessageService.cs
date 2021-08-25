@@ -66,6 +66,7 @@ namespace Stein.Services
             };
 
             StringService.Colorize(message.Text, color, true);
+            Messages.Remove(message);
         }
 
         /// <summary>

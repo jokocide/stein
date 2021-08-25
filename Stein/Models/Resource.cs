@@ -21,7 +21,9 @@ namespace Stein.Models
         /// <summary>
         /// Return all data from a resource in a format suitable for template injection.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>
+        /// A representation of this object in a format that is ready to inject into a template.
+        /// </returns>
         internal abstract Injectable Serialize();
         
         /// <summary>
@@ -57,31 +59,34 @@ namespace Stein.Models
         internal FileInfo Info { get; }
         
         /// <summary>
-        /// If an error is encountered during Process() this will be true, indicating something is wrong with the
-        /// resource. It will not be fully processed or made into a Writable as a consequence. 
-        /// </summary>
-        protected bool IsInvalid { get; private set; } 
-         
-        /// <summary>
-        /// Issues found during Process() are recorded here.
-        /// </summary>
-        protected List<InvalidType> Issues { get; } = new();
-
-        protected Resource(FileInfo fileInfo) => Info = fileInfo;
-
-        /// <summary>
         /// Invalidate the Metadata with a given InvalidType.
         /// </summary>
-        /// <param name="type">An InvalidType to describe the cause of invalidation.</param>
-        protected void Invalidate(InvalidType type)
+        /// <param name="type">
+        /// An InvalidType to describe the cause of invalidation.
+        /// </param>
+        internal void Invalidate(InvalidType type)
         {
             if (!IsInvalid) IsInvalid = true;
             Issues.Add(type);
         }
 
-        protected enum InvalidType
+        /// <summary>
+        /// If an error is encountered during Process() this will be true, indicating something is wrong with the
+        /// resource. It will not be fully processed or made into a Writable as a consequence. 
+        /// </summary>
+        internal bool IsInvalid { get; private set; } 
+         
+        /// <summary>
+        /// Issues found during Process() are recorded here.
+        /// </summary>
+        internal List<InvalidType> Issues { get; } = new();
+
+        protected Resource(FileInfo fileInfo) => Info = fileInfo;
+        
+        internal enum InvalidType
         {
             InvalidFormat,
+            NoFrontmatter,
             TemplateNotFound
         }
     }

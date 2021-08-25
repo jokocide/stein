@@ -22,9 +22,5 @@
     <PackageReference Include="Handlebars.Net" Version="2.0.9" />
     <PackageReference Include="Markdig" Version="0.25.0" />
   </ItemGroup>
-  
-  <ItemGroup>
-    <Folder Include="Package" />
-  </ItemGroup>
 
 </Project>

@@ -19,7 +19,6 @@ namespace Stein
         {
             Routine instructions = PipelineService.Evaluate(arguments);
             instructions.Execute();
-            MessageService.Print(true);
         }
     }
 }

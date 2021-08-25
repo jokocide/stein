@@ -19,10 +19,11 @@ namespace Stein.Routines
         /// </summary>
         public override void Execute()
         {
-            DirectoryInfo projectInfo = new DirectoryInfo(Directory.GetCurrentDirectory());
+            Store store = new();
             
+            DirectoryInfo projectInfo = new DirectoryInfo(Directory.GetCurrentDirectory());
 
-            // This will change later on when I support more templating engines.
+            // Todo: Auto-detect templating engine based on file extension.
             const string templateExtension = "hbs";
             
             // Register partials.
@@ -32,11 +33,11 @@ namespace Stein.Routines
             
             foreach (string directoryPath in Directory.GetDirectories(PathService.CollectionsPath))
             {
-                // Registration.
+                // Register the collection.
                 DirectoryInfo collectionInfo = new(directoryPath);
                 Collection collection = new(collectionInfo);
                 
-                // Claiming files.
+                // Claim files.
                 foreach (FileInfo file in collectionInfo.GetFiles())
                 {
                     Resource metadata = file.Extension switch
@@ -49,19 +50,46 @@ namespace Stein.Routines
                         _ => null
                     };
             
-                    // Skip unsupported files.
-                    if (metadata == null) break;
-                    
-                    metadata.Process();
-                    
+                    // Skip unsupported formats.
+                    if (metadata == null) continue;
+
                     collection.Items.Add(metadata);
+
+                    metadata.Process();
+
+                    // If the resource has not defined a template, no further action to develop a Writable is needed.
+                    if (metadata.Template == null) continue;
+
+                    string rawTemplate = null;
+
+                    try
+                    {
+                        rawTemplate =
+                            File.ReadAllText(Path.Join(PathService.TemplatesPath, metadata.Template + ".hbs"));
+                    }
+                    catch (FileNotFoundException)
+                    {
+                        metadata.Invalidate(Resource.InvalidType.TemplateNotFound);
+                        MessageService.Log(new Message($"Skipped collection item with missing template: {metadata.Info.FullName}",
+                                                        Message.InfoType.Warning));
+                    }
+                        
+                    if (metadata.IsInvalid) continue;
+                        
+                    Injectable injectable = metadata.Serialize();
+
+                    var compiledTemplate = Handlebars.Compile(rawTemplate);
+                    string renderedTemplate = compiledTemplate(injectable);
+
+                    Writable writable = new(metadata.Info, renderedTemplate);
+                    store.Writable.Add(writable);
                 }
                 
-                StoreService.Collections.Add(collection);
+                store.Collections.Add(collection);
             }
 
             // Assemble an Injectable.
-            var injectables = StoreService.GetInjectables();
+            var injectables = store.GetInjectables();
             
             foreach (string filePath in Directory.GetFiles(PathService.PagesPath, $"*.{templateExtension}"))
             {
@@ -73,14 +101,12 @@ namespace Stein.Routines
                 var renderedTemplate = compiledTemplate(injectables);
                 
                 Writable writable = new(pageInfo, renderedTemplate);
-                StoreService.Writable.Add(writable);
+                store.Writable.Add(writable);
             }
             
             // Todo: Automatic archiving of old versions.
-            if (Directory.Exists(PathService.SitePath))
-            {
-                Directory.Delete(PathService.SitePath, true);
-            }
+            // Todo: Incremental builds.
+            if (Directory.Exists(PathService.SitePath)) Directory.Delete(PathService.SitePath, true);
             
             // Assert public files are up-to-date.
             PathService.Synchronize(
@@ -90,18 +116,17 @@ namespace Stein.Routines
                 );
             
             // Finally, writing everything out to file system.
-            foreach (Writable writable in StoreService.Writable)
+            foreach (Writable writable in store.Writable)
             {
                 string directory = Path.GetDirectoryName(writable.Target);
                 Directory.CreateDirectory(directory);
                 File.WriteAllText(writable.Target, writable.Payload);
             }
 
-            // Make room for the next build.
-            StoreService.Clear();
-            
             StringService.Colorize($"Built project ", ConsoleColor.Green, false);
             StringService.Colorize($"'{projectInfo.Name}'", ConsoleColor.Gray, true);
+
+            MessageService.Print();
         }
 
         /// <summary>
