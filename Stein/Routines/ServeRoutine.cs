@@ -42,37 +42,36 @@ namespace Stein.Routines
         /// </summary>
         public override void Execute()
         {
-            string resources = Path.Join(Directory.GetCurrentDirectory(), "resources");
-            string site = Path.Join(Directory.GetCurrentDirectory(), "site");
-            
             // Server initialization.
             HttpListener listener = new HttpListener();
             foreach (string prefix in ServerPrefixes) listener.Prefixes.Add(prefix);
 
             // Watcher initialization.
-            FileSystemWatcher watcher = new(resources);
+            FileSystemWatcher watcher = new(PathService.ResourcesPath);
+            watcher.IncludeSubdirectories = true;
             
-            watcher.NotifyFilter = NotifyFilters.DirectoryName
+            watcher.NotifyFilter = 
+                NotifyFilters.DirectoryName
                 | NotifyFilters.FileName
                 | NotifyFilters.LastWrite
                 | NotifyFilters.Size;
             
-            watcher.Changed += OnUpdate;
-            watcher.Created += OnUpdate;
-            watcher.Deleted += OnUpdate;
-            watcher.Renamed += OnUpdate;
+            watcher.Changed += Build;
+            watcher.Created += Build;
+            watcher.Deleted += Build;
+            watcher.Renamed += Build;
             watcher.Error += OnError;
             
             // Default filter will watch all files.
-            watcher.Filters.Add("*.md");
-            watcher.Filters.Add("*.hbs");
-            watcher.Filters.Add("*.html");
-            watcher.Filters.Add("*.js");
-            watcher.Filters.Add("*.css");
-            watcher.Filters.Add("*.scss");
-            watcher.Filters.Add("*.sass");
+            // watcher.Filters.Add("*.md");
+            // watcher.Filters.Add("*.hbs");
+            // watcher.Filters.Add("*.html");
+            // watcher.Filters.Add("*.js");
+            // watcher.Filters.Add("*.css");
+            // watcher.Filters.Add("*.scss");
+            // watcher.Filters.Add("*.sass");
 
-            watcher.IncludeSubdirectories = true;
+            // Watcher is enabled with this property.
             watcher.EnableRaisingEvents = true;
             
             listener.Start();
@@ -98,7 +97,7 @@ namespace Stein.Routines
                 // Return a 404 for files that don't exist.
                 byte[] buffer;
                 
-                if (!File.Exists(Path.Join(site, requestedFile)))
+                if (!File.Exists(Path.Join(PathService.SitePath, requestedFile)))
                 {
                     response.StatusCode = 404;
                     const string responseString = "<HTML><BODY>404</BODY></HTML>";
@@ -122,7 +121,7 @@ namespace Stein.Routines
                 };
                 
                 // Todo: try/catch for files removed during project edit.
-                buffer = File.ReadAllBytes(Path.Join(site, requestedFile));
+                buffer = File.ReadAllBytes(Path.Join(PathService.SitePath, requestedFile));
                 
                 response.ContentLength64 = buffer.Length;
                 Stream output = response.OutputStream;
@@ -132,7 +131,7 @@ namespace Stein.Routines
         }
         
         // Todo: Document this!
-        private void OnUpdate(object sender, FileSystemEventArgs e)
+        private void Build(object sender, FileSystemEventArgs e)
         {
             if (ServerCache.Contains(e.FullPath)) return;
             ServerCache.Add(e.FullPath);
