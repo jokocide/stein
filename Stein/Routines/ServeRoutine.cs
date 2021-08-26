@@ -81,32 +81,44 @@ namespace Stein.Routines
 
             while (true)
             {
-                // Wait for a request.
-                HttpListenerContext context = listener.GetContext(); // WARNING: This is not async.
-                
-                HttpListenerRequest request = context.Request;
-                HttpListenerResponse response = context.Response;
+                // Block while waiting for a request.
+                HttpListenerContext context = listener.GetContext();
                 
                 // Log the requested file.
                 StringService.Colorize($"({DateTime.Now:T})", ConsoleColor.Gray, false);
-                StringService.Colorize($" {request.RawUrl}", ConsoleColor.White, true);
+                StringService.Colorize($" {context.Request.RawUrl}", ConsoleColor.White, true);
 
-                string requestedFileName = Path.GetFileName(request.RawUrl);
-                string requestedFile = !Path.HasExtension(requestedFileName) ? Path.Join(request.RawUrl, "index.html") : request.RawUrl;
+                string requestedFileName = Path.GetFileName(context.Request.RawUrl);
 
-                // Return a 404 for files that don't exist.
+                string requestedFile = !Path.HasExtension(requestedFileName)
+                    ? Path.Join(context.Request.RawUrl, "index.html")
+                    : context.Request.RawUrl;
+
                 byte[] buffer;
                 
-                if (!File.Exists(Path.Join(PathService.SitePath, requestedFile)))
+                //if (!File.Exists(Path.Join(PathService.SitePath, requestedFile)))
+                //{
+                //    context.Response.StatusCode = 404;
+                //    const string responseString = "<HTML><BODY>404</BODY></HTML>";
+                //    buffer = Encoding.UTF8.GetBytes(responseString);
+                //}
+
+                if (File.Exists(Path.Join(PathService.SitePath, requestedFile)))
                 {
-                    response.StatusCode = 404;
+                    context.Response.StatusCode = 200;
+                    buffer = File.ReadAllBytes(Path.Join(PathService.SitePath, requestedFile));
+                }
+                else
+                {
+                    context.Response.StatusCode = 404;
                     const string responseString = "<HTML><BODY>404</BODY></HTML>";
                     buffer = Encoding.UTF8.GetBytes(responseString);
                 }
 
                 // Set a content type.
                 string extension = Path.GetExtension(requestedFile);
-                response.ContentType = extension switch
+
+                context.Response.ContentType = extension switch
                 {
                     ".png" => "image/png",
                     ".bmp" => "image/bmp",
@@ -117,14 +129,15 @@ namespace Stein.Routines
                     ".tif" => "image/tiff",
                     ".tiff" => "image/tiff",
                     ".webp" => "image/webp",
-                    _ => response.ContentType
+                    _ => context.Response.ContentType
                 };
                 
                 // Todo: try/catch for files removed during project edit.
-                buffer = File.ReadAllBytes(Path.Join(PathService.SitePath, requestedFile));
+                //buffer = File.ReadAllBytes(Path.Join(PathService.SitePath, requestedFile));
                 
-                response.ContentLength64 = buffer.Length;
-                Stream output = response.OutputStream;
+                context.Response.ContentLength64 = buffer.Length;
+
+                Stream output = context.Response.OutputStream;
                 output.Write(buffer);
                 output.Close();
             }
