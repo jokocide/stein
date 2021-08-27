@@ -5,6 +5,7 @@ using Stein.Models;
 using Stein.Resources;
 using Stein.Services;
 using HandlebarsDotNet;
+using System.Threading;
 
 namespace Stein.Routines
 {
@@ -12,7 +13,7 @@ namespace Stein.Routines
     /// Provide a method that can be used to build a project.
     /// </summary>
     public sealed class BuildRoutine : Routine 
-    {   
+    {
         /// <summary>
         /// Combine all existing and valid collection and page files to produce HTML, and copy public files to
         /// the site directory. This should produce a functional website at /site.
@@ -72,6 +73,12 @@ namespace Stein.Routines
                         metadata.Invalidate(Resource.InvalidType.TemplateNotFound);
                         MessageService.Log(new Message($"Skipped collection item with missing template: {metadata.Info.FullName}",
                                                         Message.InfoType.Warning));
+                    }
+                    catch (IOException)
+                    {
+                        Thread.Sleep(20);
+                        rawTemplate =
+                            File.ReadAllText(Path.Join(PathService.TemplatesPath, metadata.Template + ".hbs"));
                     }
                         
                     if (metadata.IsInvalid) continue;
@@ -138,8 +145,21 @@ namespace Stein.Routines
         private void RegisterHandlebarsPartials(string filePath)
         {
             // Todo: try/catch for missing template partials.
-            string template = File.ReadAllText(filePath);
-            string templateName = Path.GetFileNameWithoutExtension(filePath);
+            string template;
+            string templateName;
+
+            try
+            {
+                template = File.ReadAllText(filePath);
+                templateName = Path.GetFileNameWithoutExtension(filePath);
+            }
+            catch (IOException)
+            {
+                Thread.Sleep(20);
+                template = File.ReadAllText(filePath);
+                templateName = Path.GetFileNameWithoutExtension(filePath);
+            }
+
             Handlebars.RegisterTemplate(templateName, template);
         }
 
