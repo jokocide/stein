@@ -59,5 +59,17 @@ namespace Stein.Services
 
             Console.ResetColor();
         }
+
+        /// <summary>
+        /// Return a slugified version of the specified text.
+        /// Ex. ("Tony Stark" -> "tony-stark")
+        /// </summary>
+        /// <param name="text">The original text to be slugified.</param>
+        /// <returns>A slug string.</returns>
+        public static string Slugify(string text)
+        {
+            text = text.ToLower();
+            return text.Replace(" ", "-");
+        }
     }
 }

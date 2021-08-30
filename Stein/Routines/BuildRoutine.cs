@@ -101,7 +101,17 @@ namespace Stein.Routines
             foreach (string filePath in Directory.GetFiles(PathService.PagesPath, $"*.{templateExtension}"))
             {
                 FileInfo pageInfo = new(filePath);
-                string rawFile = File.ReadAllText(pageInfo.FullName);
+                string rawFile;
+
+                try
+                {
+                    rawFile = File.ReadAllText(pageInfo.FullName);
+                }
+                catch (IOException)
+                {
+                    Thread.Sleep(20);
+                    rawFile = File.ReadAllText(pageInfo.FullName);
+                }
                 
                 // Todo: try/catch to handle templates with asymmetrical tags.
                 HandlebarsTemplate<object,object> compiledTemplate = Handlebars.Compile(rawFile);
@@ -155,7 +165,7 @@ namespace Stein.Routines
             }
             catch (IOException)
             {
-                Thread.Sleep(20);
+                Thread.Sleep(50);
                 template = File.ReadAllText(filePath);
                 templateName = Path.GetFileNameWithoutExtension(filePath);
             }

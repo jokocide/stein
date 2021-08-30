@@ -42,6 +42,7 @@ namespace Stein.Metadata
             injectable.Link = Link;
             injectable.Date = Date;
             injectable.Body = Body;
+            injectable.Slug = Slug;
 
             foreach (KeyValuePair<string, string> pair in Frontmatter)
             {
@@ -57,16 +58,21 @@ namespace Stein.Metadata
         internal override void Process()
         {
             string rawFile = null;
-            
+
             try
             {
-               rawFile = File.ReadAllText(Info.FullName);
+                rawFile = File.ReadAllText(Info.FullName);
             }
             catch (IOException)
             {
-               Thread.Sleep(10);
-               rawFile = File.ReadAllText(Info.FullName);
+                Thread.Sleep(10);
+                rawFile = File.ReadAllText(Info.FullName);
             }
+
+            // Skip empty files.
+            if (rawFile.Length <= 0) return;
+
+            Slug = StringService.Slugify(Path.GetFileNameWithoutExtension(Info.Name));
 
             (int FirstStart, int FirstEnd, int SecondStart, int SecondEnd) indices = new(0, 0, 0, 0);
 
@@ -99,7 +105,7 @@ namespace Stein.Metadata
             string transformedBody = Markdown.ToHtml(untransformedBody);
             Body = transformedBody;
 
-            if (Issues.Contains(InvalidType.NoFrontmatter) || Issues.Contains(InvalidType.InvalidFormat)) 
+            if (Issues.Contains(InvalidType.NoFrontmatter) || Issues.Contains(InvalidType.InvalidFormat))
                 return;
 
             Dictionary<string, string> rawPairs = new();
