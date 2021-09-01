@@ -10,12 +10,14 @@
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>stein</ToolCommandName>
     <PackageOutputPath>../Package</PackageOutputPath>
-    <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <RootNamespace>Stein</RootNamespace>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageIcon>stein_logo_normal.png</PackageIcon>
   </PropertyGroup>
 
   <ItemGroup>
       <None Include="../LICENSE" Pack="true" PackagePath="" />
+      <None Include="../stein_logo_normal.png" Pack="true" PackagePath="" />
   </ItemGroup>
   
   <ItemGroup>
