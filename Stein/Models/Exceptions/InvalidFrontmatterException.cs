@@ -2,7 +2,7 @@
 
 namespace Stein.Models.Exceptions
 {
-    class NoFrontmatterException : Exception
+    class InvalidFrontmatterException : Exception
     {
         public override string Message { get; }
     }

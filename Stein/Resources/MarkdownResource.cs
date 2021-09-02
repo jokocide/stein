@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 
-namespace Stein.Metadata
+namespace Stein.Resources
 {
     /// <summary>
     /// Represents a Markdown file.
@@ -55,7 +55,7 @@ namespace Stein.Metadata
         /// <summary>
         /// Populate the properties of this Resource.
         /// </summary>
-        internal override void Process()
+        internal override void Process(Store store)
         {
             string rawFile = null;
 
@@ -65,12 +65,12 @@ namespace Stein.Metadata
             }
             catch (IOException)
             {
-                Thread.Sleep(10);
+                Thread.Sleep(100);
                 rawFile = File.ReadAllText(Info.FullName);
             }
 
             // Skip empty files.
-            if (rawFile.Length <= 0) return;
+            if (String.IsNullOrEmpty(rawFile)) return;
 
             Slug = StringService.Slugify(Path.GetFileNameWithoutExtension(Info.Name));
 
@@ -78,20 +78,15 @@ namespace Stein.Metadata
 
             if (rawFile.Substring(0, 3) == "---")
             {
-                // First three characters being "---" in a Markdown file indicates YAML frontmatter,
-                // so we call GetIndices to determine where it actually is in the file and make sure
-                // that it appears to be in a valid format. (No missing ':' between key/value pairs, etc)
                 try
                 {
                     indices = YamlService.GetIndices(rawFile);
                 }
                 catch (ArgumentOutOfRangeException)
                 {
-                    Invalidate(InvalidType.InvalidFormat);
-
-                    string path = Path.Join("collections", Info.DirectoryName, Info.Name);
-                    string error = $"({Info.Name}) Found invalid YAML.";
-                    MessageService.Log(new Message(error, Message.InfoType.Error));
+                    Invalidate(InvalidType.InvalidFrontmatter);
+                    MessageService.Log(new Message($"Invalid YAML: {Info.Name}", Message.InfoType.Error));
+                    // return;
                 }
             }
             else
@@ -100,31 +95,29 @@ namespace Stein.Metadata
             }
 
             // This should accurately retrieve the body of the Markdown file whether it
-            // has YAML frontmatter or not.
+            // has YAML frontmatter or not, because indices.SecondEnd == 0.
             string untransformedBody = rawFile[indices.SecondEnd..].Trim();
             string transformedBody = Markdown.ToHtml(untransformedBody);
+
             Body = transformedBody;
 
-            if (Issues.Contains(InvalidType.NoFrontmatter) || Issues.Contains(InvalidType.InvalidFormat))
+            if (Issues.Contains(InvalidType.NoFrontmatter) || Issues.Contains(InvalidType.InvalidFrontmatter))
                 return;
 
             Dictionary<string, string> rawPairs = new();
 
             try
             {
-                rawPairs = YamlService.Deserialize(
-                    StringService.Slice(indices.FirstEnd, indices.SecondStart, rawFile).Trim()
-                );
+                string yamlSection = StringService.Slice(indices.FirstEnd, indices.SecondStart, rawFile).Trim();
+                rawPairs = YamlService.Deserialize(yamlSection);
             }
             catch (IndexOutOfRangeException)
             {
-                Invalidate(InvalidType.InvalidFormat);
-
-                string error = $"({Info.Name}) YAML contains invalid key/value pair.";
-                MessageService.Log(new Message(error, Message.InfoType.Error));
+                Invalidate(InvalidType.InvalidFrontmatter);
+                MessageService.Log(new Message($"Invalid key/value pair in YAML: {Info.Name}", Message.InfoType.Error));
             }
 
-            if (Issues.Contains(InvalidType.InvalidFormat)) return;
+            if (Issues.Contains(InvalidType.InvalidFrontmatter)) return;
 
             foreach (var (key, value) in rawPairs)
             {
@@ -141,6 +134,28 @@ namespace Stein.Metadata
                         break;
                 }
             }
+
+            if (Template == null) return;
+
+            Writable writable;
+
+            try
+            {
+                writable = Writable.CreateWritable(this);
+            }
+            catch (FileNotFoundException)
+            {
+                Invalidate(InvalidType.TemplateNotFound);
+                MessageService.Log(new Message($"Unable to locate template: {Info.FullName}", Message.InfoType.Error));
+                return;
+            }
+            catch (IOException)
+            {
+                Thread.Sleep(100);
+                writable = Writable.CreateWritable(this);
+            }
+
+            store.Writable.Add(writable);
         }
     }
 }

@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using Stein.Metadata;
 using Stein.Models;
 using Stein.Resources;
 using Stein.Services;
@@ -12,7 +11,7 @@ namespace Stein.Routines
     /// <summary>
     /// Provide a method that can be used to build a project.
     /// </summary>
-    public sealed class BuildRoutine : Routine 
+    public sealed class BuildRoutine : Routine
     {
         /// <summary>
         /// Combine all existing and valid collection and page files to produce HTML, and copy public files to
@@ -21,23 +20,18 @@ namespace Stein.Routines
         public override void Execute()
         {
             Store store = new();
-            
+
             DirectoryInfo projectInfo = new DirectoryInfo(Directory.GetCurrentDirectory());
 
-            // Todo: Auto-detect templating engine based on file extension.
-            const string templateExtension = "hbs";
-            
             // Register partials.
-            RegisterHandlebarsPartials(
-                Directory.GetFiles(PathService.PartialsPath, $"*.{templateExtension}")
-                );
-            
+            RegisterHandlebarsPartials(Directory.GetFiles(PathService.PartialsPath, "*.hbs"));
+
             foreach (string directoryPath in Directory.GetDirectories(PathService.CollectionsPath))
             {
                 // Register the collection.
                 DirectoryInfo collectionInfo = new(directoryPath);
                 Collection collection = new(collectionInfo);
-                
+
                 // Claim files.
                 foreach (FileInfo file in collectionInfo.GetFiles())
                 {
@@ -50,55 +44,28 @@ namespace Stein.Routines
                         ".xml" => new XmlResource(file),
                         _ => null
                     };
-            
-                    // Skip unsupported formats.
-                    if (metadata == null) continue;
+
+                    // This will work when all resource types are implemented.
+                    // if (metadata == null) continue;
+
+                    // Skip unsupported formats. Currently only Markdown is supported.
+                    if (metadata is not MarkdownResource)
+                    {
+                        MessageService.Log(new Message($"Markdown is currently the only supported format, skipped: {metadata.Info.Name}", Message.InfoType.Error));
+                        continue;
+                    }
 
                     collection.Items.Add(metadata);
-
-                    metadata.Process();
-
-                    // If the resource has not defined a template, no further action to develop a Writable is needed.
-                    if (metadata.Template == null) continue;
-
-                    string rawTemplate = null;
-
-                    try
-                    {
-                        rawTemplate =
-                            File.ReadAllText(Path.Join(PathService.TemplatesPath, metadata.Template + ".hbs"));
-                    }
-                    catch (FileNotFoundException)
-                    {
-                        metadata.Invalidate(Resource.InvalidType.TemplateNotFound);
-                        MessageService.Log(new Message($"Skipped collection item with missing template: {metadata.Info.FullName}",
-                                                        Message.InfoType.Warning));
-                    }
-                    catch (IOException)
-                    {
-                        Thread.Sleep(20);
-                        rawTemplate =
-                            File.ReadAllText(Path.Join(PathService.TemplatesPath, metadata.Template + ".hbs"));
-                    }
-                        
-                    if (metadata.IsInvalid) continue;
-                        
-                    Injectable injectable = metadata.Serialize();
-
-                    var compiledTemplate = Handlebars.Compile(rawTemplate);
-                    string renderedTemplate = compiledTemplate(injectable);
-
-                    Writable writable = new(metadata.Info, renderedTemplate);
-                    store.Writable.Add(writable);
+                    metadata.Process(store);
                 }
-                
+
                 store.Collections.Add(collection);
             }
 
             // Assemble an Injectable.
             var injectables = store.GetInjectables();
-            
-            foreach (string filePath in Directory.GetFiles(PathService.PagesPath, $"*.{templateExtension}"))
+
+            foreach (string filePath in Directory.GetFiles(PathService.PagesPath, "*.hbs"))
             {
                 FileInfo pageInfo = new(filePath);
                 string rawFile;
@@ -109,29 +76,29 @@ namespace Stein.Routines
                 }
                 catch (IOException)
                 {
-                    Thread.Sleep(20);
+                    Thread.Sleep(100);
                     rawFile = File.ReadAllText(pageInfo.FullName);
                 }
-                
+
                 // Todo: try/catch to handle templates with asymmetrical tags.
-                HandlebarsTemplate<object,object> compiledTemplate = Handlebars.Compile(rawFile);
+                HandlebarsTemplate<object, object> compiledTemplate = Handlebars.Compile(rawFile);
                 var renderedTemplate = compiledTemplate(injectables);
-                
+
                 Writable writable = new(pageInfo, renderedTemplate);
                 store.Writable.Add(writable);
             }
-            
+
             // Todo: Automatic archiving of old versions.
             // Todo: Incremental builds.
             if (Directory.Exists(PathService.SitePath)) Directory.Delete(PathService.SitePath, true);
-            
+
             // Assert public files are up-to-date.
             PathService.Synchronize(
-                PathService.ResourcesPublicPath, 
-                PathService.SitePublicPath, 
+                PathService.ResourcesPublicPath,
+                PathService.SitePublicPath,
                 true
                 );
-            
+
             // Finally, writing everything out to file system.
             foreach (Writable writable in store.Writable)
             {
@@ -165,7 +132,7 @@ namespace Stein.Routines
             }
             catch (IOException)
             {
-                Thread.Sleep(50);
+                Thread.Sleep(100);
                 template = File.ReadAllText(filePath);
                 templateName = Path.GetFileNameWithoutExtension(filePath);
             }
@@ -181,7 +148,7 @@ namespace Stein.Routines
         /// </param>
         private void RegisterHandlebarsPartials(string[] filePaths)
         {
-            foreach(string path in filePaths) RegisterHandlebarsPartials(path);
+            foreach (string path in filePaths) RegisterHandlebarsPartials(path);
         }
     }
 }

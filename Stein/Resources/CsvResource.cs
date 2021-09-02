@@ -10,7 +10,7 @@ namespace Stein.Resources
     public sealed class CsvResource : Resource
     {
         public CsvResource(FileInfo fileInfo) : base(fileInfo) { }
-        
+
         /// <summary>
         /// Return all data in a format suitable for template injection.
         /// </summary>
@@ -23,7 +23,7 @@ namespace Stein.Resources
         /// <summary>
         /// Populate the properties of this Resource.
         /// </summary>
-        internal override void Process()
+        internal override void Process(Store store)
         {
             throw new System.NotImplementedException();
         }

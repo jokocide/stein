@@ -16,7 +16,7 @@ namespace Stein.Models
         /// Classes deriving from Resource are responsible for providing a method to retrieve data from that
         /// type of resource.
         /// </summary>
-        internal abstract void Process();
+        internal abstract void Process(Store store);
 
         /// <summary>
         /// Return all data from a resource in a format suitable for template injection.
@@ -90,9 +90,10 @@ namespace Stein.Models
 
         internal enum InvalidType
         {
-            InvalidFormat,
+            InvalidFrontmatter,
             NoFrontmatter,
-            TemplateNotFound
+            TemplateNotFound,
+            NoTemplate
         }
     }
 }

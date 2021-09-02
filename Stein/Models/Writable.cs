@@ -1,4 +1,7 @@
+using System;
 using System.IO;
+using HandlebarsDotNet;
+using Stein.Resources;
 using Stein.Services;
 
 namespace Stein.Models
@@ -12,7 +15,7 @@ namespace Stein.Models
         /// A string path that represents the desired location of Payload.
         /// </summary>
         public string Target { get; }
-        
+
         /// <summary>
         ///  The data to be written to the path in Target.
         /// </summary>
@@ -27,6 +30,61 @@ namespace Stein.Models
         {
             Payload = payload;
             Target = PathService.GetOutputPath(file);
+        }
+
+        /// <summary>
+        /// A factory method to create a new Writable from a MarkdownResource.
+        /// </summary>
+        /// <param name="resource">A MarkdownResource object to be converted.</param>
+        /// <returns>A new Writable based on the given MarkdownResource.</returns>
+        public static Writable CreateWritable(MarkdownResource resource)
+        {
+            string rawTemplate = null;
+            rawTemplate = File.ReadAllText(Path.Join(PathService.TemplatesPath, resource.Template + ".hbs"));
+            Injectable injectable = resource.Serialize();
+            var compiledTemplate = Handlebars.Compile(rawTemplate);
+            string renderedTemplate = compiledTemplate(injectable);
+            return new Writable(resource.Info, renderedTemplate);
+        }
+
+        /// <summary>
+        /// A factory method to create a new Writable from a JsonResource.
+        /// </summary>
+        /// <param name="resource">A JsonResource object to be converted.</param>
+        /// <returns>A new Writable based on the given JsonResource.</returns>
+        public static Writable CreateWritable(JsonResource resource)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// A factory method to create a new Writable from a CsvResource.
+        /// </summary>
+        /// <param name="resource">A CsvResource object to be converted.</param>
+        /// <returns>A new Writable based on the given CsvResource.</returns>
+        public static Writable CreateWritable(CsvResource resource)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// A factory method to create a new Writable from a TomlResource.
+        /// </summary>
+        /// <param name="resource">A TomlResource object to be converted.</param>
+        /// <returns>A new Writable based on the given TomlResource.</returns>
+        public static Writable CreateWritable(TomlResource resource)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// A factory method to create a new Writable from an XmlResource.
+        /// </summary>
+        /// <param name="resource">A XmlResource object to be converted.</param>
+        /// <returns>A new Writable based on the given XmlResource.</returns>
+        public static Writable CreateWritable(XmlResource resource)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -23,7 +23,7 @@ namespace Stein.Resources
         /// <summary>
         /// Populate the properties of this Resource.
         /// </summary>
-        internal override void Process()
+        internal override void Process(Store store)
         {
             throw new NotImplementedException();
         }

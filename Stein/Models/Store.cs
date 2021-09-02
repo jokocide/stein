@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Stein.Models;
 
-namespace Stein.Services
+namespace Stein.Models
 {
     /// <summary>
     /// Keep track of objects as they are created through runtime and provide methods to use those items.
@@ -22,11 +22,11 @@ namespace Stein.Services
         public Dictionary<string, List<Injectable>> GetInjectables()
         {
             Dictionary<string, List<Injectable>> injectables = new();
-            
+
             foreach (Collection collection in Collections)
             {
                 LatestDateSort(collection);
-                
+
                 List<Injectable> injectableList = new();
                 injectables.Add(collection.Info.Name, injectableList);
 

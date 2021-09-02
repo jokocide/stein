@@ -25,11 +25,11 @@ namespace Stein.Services
             int firstStart = text.IndexOf("---", StringComparison.Ordinal);
             int firstEnd = firstStart + 3;
             int secondStart = text.IndexOf("---", firstEnd, StringComparison.Ordinal);
-            if (secondStart == -1) Console.WriteLine("wowzers");
+            if (secondStart == -1) throw new ArgumentOutOfRangeException();
             int secondEnd = secondStart + 3;
             return (firstStart, firstEnd, secondStart, secondEnd);
         }
-        
+
         /// <summary>
         /// Create a MetaData object by dividing key/value pairs by a specified delimiter, or ':' by
         /// default if no delimiter is given.
