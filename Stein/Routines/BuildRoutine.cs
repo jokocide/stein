@@ -45,9 +45,6 @@ namespace Stein.Routines
                         _ => null
                     };
 
-                    // This will work when all resource types are implemented.
-                    // if (metadata == null) continue;
-
                     // Skip unsupported formats. Currently only Markdown is supported.
                     if (metadata is not MarkdownResource)
                     {
@@ -69,18 +66,8 @@ namespace Stein.Routines
             {
                 FileInfo pageInfo = new(filePath);
                 string rawFile;
+                rawFile = File.ReadAllText(pageInfo.FullName);
 
-                try
-                {
-                    rawFile = File.ReadAllText(pageInfo.FullName);
-                }
-                catch (IOException)
-                {
-                    Thread.Sleep(100);
-                    rawFile = File.ReadAllText(pageInfo.FullName);
-                }
-
-                // Todo: try/catch to handle templates with asymmetrical tags.
                 HandlebarsTemplate<object, object> compiledTemplate = Handlebars.Compile(rawFile);
                 var renderedTemplate = compiledTemplate(injectables);
 
@@ -92,14 +79,12 @@ namespace Stein.Routines
             // Todo: Incremental builds.
             if (Directory.Exists(PathService.SitePath)) Directory.Delete(PathService.SitePath, true);
 
-            // Assert public files are up-to-date.
             PathService.Synchronize(
                 PathService.ResourcesPublicPath,
                 PathService.SitePublicPath,
                 true
                 );
 
-            // Finally, writing everything out to file system.
             foreach (Writable writable in store.Writable)
             {
                 string directory = Path.GetDirectoryName(writable.Target);
@@ -107,8 +92,33 @@ namespace Stein.Routines
                 File.WriteAllText(writable.Target, writable.Payload);
             }
 
-            StringService.Colorize($"Built project ", ConsoleColor.Green, false);
-            StringService.Colorize($"'{projectInfo.Name}'", ConsoleColor.Gray, true);
+            StringService.Colorize($"Built project ", ConsoleColor.White, false);
+            StringService.Colorize($"'{projectInfo.Name}' ", ConsoleColor.Gray, false);
+
+            if (!MessageService.HasError && !MessageService.HasWarning)
+            {
+                Console.WriteLine();
+            }
+            else if (MessageService.HasError && MessageService.HasWarning)
+            {
+                StringService.Colorize("(", ConsoleColor.Gray, false);
+                StringService.Colorize($"{MessageService.ErrorCount}", ConsoleColor.Red, false);
+                StringService.Colorize(", ", ConsoleColor.Gray, false);
+                StringService.Colorize($"{MessageService.WarningCount}", ConsoleColor.Yellow, false);
+                StringService.Colorize(")", ConsoleColor.Gray, true);
+            }
+            else if (MessageService.HasError && !MessageService.HasWarning)
+            {
+                StringService.Colorize("(", ConsoleColor.Gray, false);
+                StringService.Colorize($"{MessageService.ErrorCount}", ConsoleColor.Red, false);
+                StringService.Colorize(")", ConsoleColor.Gray, true);
+            }
+            else if (!MessageService.HasError && MessageService.HasWarning)
+            {
+                StringService.Colorize("(", ConsoleColor.Gray, false);
+                StringService.Colorize($"{MessageService.WarningCount}", ConsoleColor.Yellow, false);
+                StringService.Colorize(")", ConsoleColor.Gray, true);
+            }
 
             MessageService.Print();
         }

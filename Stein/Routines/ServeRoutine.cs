@@ -42,11 +42,9 @@ namespace Stein.Routines
         /// </summary>
         public override void Execute()
         {
-            // Server initialization.
             HttpListener listener = new HttpListener();
             foreach (string prefix in ServerPrefixes) listener.Prefixes.Add(prefix);
 
-            // Watcher initialization.
             FileSystemWatcher watcher = new(PathService.ResourcesPath);
             watcher.IncludeSubdirectories = true;
             
@@ -62,16 +60,6 @@ namespace Stein.Routines
             watcher.Renamed += Build;
             watcher.Error += OnError;
             
-            // Default filter will watch all files.
-            // watcher.Filters.Add("*.md");
-            // watcher.Filters.Add("*.hbs");
-            // watcher.Filters.Add("*.html");
-            // watcher.Filters.Add("*.js");
-            // watcher.Filters.Add("*.css");
-            // watcher.Filters.Add("*.scss");
-            // watcher.Filters.Add("*.sass");
-
-            // Watcher is enabled with this property.
             watcher.EnableRaisingEvents = true;
             
             listener.Start();
@@ -84,62 +72,46 @@ namespace Stein.Routines
                 // Block while waiting for a request.
                 HttpListenerContext context = listener.GetContext();
                 
-                // Log the requested file.
-                StringService.Colorize($"({DateTime.Now:T})", ConsoleColor.Gray, false);
-                StringService.Colorize($" {context.Request.RawUrl}", ConsoleColor.White, true);
+                byte[] buffer = Array.Empty<byte>();
 
                 string requestedFileName = Path.GetFileName(context.Request.RawUrl);
 
                 string requestedFile = !Path.HasExtension(requestedFileName)
                     ? Path.Join(context.Request.RawUrl, "index.html")
                     : context.Request.RawUrl;
-
-                byte[] buffer;
                 
-                //if (!File.Exists(Path.Join(PathService.SitePath, requestedFile)))
-                //{
-                //    context.Response.StatusCode = 404;
-                //    const string responseString = "<HTML><BODY>404</BODY></HTML>";
-                //    buffer = Encoding.UTF8.GetBytes(responseString);
-                //}
-
                 if (File.Exists(Path.Join(PathService.SitePath, requestedFile)))
                 {
-                    context.Response.StatusCode = 200;
                     buffer = File.ReadAllBytes(Path.Join(PathService.SitePath, requestedFile));
+                    context.Response.StatusCode = 200;
+
+                    string extension = Path.GetExtension(requestedFile);
+
+                    context.Response.ContentType = extension switch
+                    {
+                        ".png" => "image/png",
+                        ".bmp" => "image/bmp",
+                        ".gif" => "image/gif",
+                        ".jpeg" => "image/jpeg",
+                        ".jpg" => "image/jpeg",
+                        ".svg" => "image/svg+xml",
+                        ".tif" => "image/tiff",
+                        ".tiff" => "image/tiff",
+                        ".webp" => "image/webp",
+                        _ => context.Response.ContentType
+                    };
+
+                    context.Response.ContentLength64 = buffer.Length;
+                    context.Response.OutputStream.Write(buffer);
                 }
                 else
                 {
+                    StringService.Colorize($" {context.Request.RawUrl}", ConsoleColor.Red, false);
+                    StringService.Colorize(" (404)", ConsoleColor.Gray, true);
                     context.Response.StatusCode = 404;
-                    const string responseString = "<HTML><BODY>404</BODY></HTML>";
-                    buffer = Encoding.UTF8.GetBytes(responseString);
                 }
 
-                // Set a content type.
-                string extension = Path.GetExtension(requestedFile);
-
-                context.Response.ContentType = extension switch
-                {
-                    ".png" => "image/png",
-                    ".bmp" => "image/bmp",
-                    ".gif" => "image/gif",
-                    ".jpeg" => "image/jpeg",
-                    ".jpg" => "image/jpeg",
-                    ".svg" => "image/svg+xml",
-                    ".tif" => "image/tiff",
-                    ".tiff" => "image/tiff",
-                    ".webp" => "image/webp",
-                    _ => context.Response.ContentType
-                };
-                
-                // Todo: try/catch for files removed during project edit.
-                //buffer = File.ReadAllBytes(Path.Join(PathService.SitePath, requestedFile));
-                
-                context.Response.ContentLength64 = buffer.Length;
-
-                Stream output = context.Response.OutputStream;
-                output.Write(buffer);
-                output.Close();
+                context.Response.OutputStream.Close();
             }
         }
         
@@ -150,7 +122,6 @@ namespace Stein.Routines
             ServerCache.Add(e.FullPath);
             
             BuildRoutine build = new();
-            StringService.Colorize($"({DateTime.Now:T}) ", ConsoleColor.Gray, false);
             build.Execute();
             
             Timer timer = new Timer(100) {AutoReset = false};

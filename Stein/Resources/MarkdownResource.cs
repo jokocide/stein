@@ -58,18 +58,8 @@ namespace Stein.Resources
         internal override void Process(Store store)
         {
             string rawFile = null;
+            rawFile = File.ReadAllText(Info.FullName);
 
-            try
-            {
-                rawFile = File.ReadAllText(Info.FullName);
-            }
-            catch (IOException)
-            {
-                Thread.Sleep(100);
-                rawFile = File.ReadAllText(Info.FullName);
-            }
-
-            // Skip empty files.
             if (String.IsNullOrEmpty(rawFile)) return;
 
             Slug = StringService.Slugify(Path.GetFileNameWithoutExtension(Info.Name));
@@ -94,15 +84,15 @@ namespace Stein.Resources
                 Invalidate(InvalidType.NoFrontmatter);
             }
 
-            // This should accurately retrieve the body of the Markdown file whether it
-            // has YAML frontmatter or not, because indices.SecondEnd == 0.
             string untransformedBody = rawFile[indices.SecondEnd..].Trim();
             string transformedBody = Markdown.ToHtml(untransformedBody);
 
             Body = transformedBody;
 
-            if (Issues.Contains(InvalidType.NoFrontmatter) || Issues.Contains(InvalidType.InvalidFrontmatter))
-                return;
+            if (
+                Issues.Contains(InvalidType.NoFrontmatter) 
+                || Issues.Contains(InvalidType.InvalidFrontmatter)
+                ) return;
 
             Dictionary<string, string> rawPairs = new();
 
@@ -148,11 +138,6 @@ namespace Stein.Resources
                 Invalidate(InvalidType.TemplateNotFound);
                 MessageService.Log(new Message($"Unable to locate template: {Info.FullName}", Message.InfoType.Error));
                 return;
-            }
-            catch (IOException)
-            {
-                Thread.Sleep(100);
-                writable = Writable.CreateWritable(this);
             }
 
             store.Writable.Add(writable);

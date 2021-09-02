@@ -90,8 +90,7 @@ namespace Stein.Models
         public enum InfoType
         {
             Warning,
-            Error,
-            Critical
+            Error
         }
     }
 }
