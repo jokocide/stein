@@ -16,8 +16,8 @@ namespace Stein.Models
         /// <summary>
         /// The Resource objects that are a part of this collection.
         /// </summary>
-        public List<Resource> Items { get; } = new();
-        
+        public List<CollectionItem> Items { get; } = new();
+
         public Collection(DirectoryInfo directoryInfo) => Info = directoryInfo;
     }
 }

@@ -2,14 +2,14 @@
 using System.IO;
 using Stein.Models;
 
-namespace Stein.Resources
+namespace Stein.Collections
 {
     /// <summary>
     /// Represents a CSV file.
     /// </summary>
-    public sealed class CsvResource : Resource
+    public sealed class CsvItem : CollectionItem
     {
-        public CsvResource(FileInfo fileInfo) : base(fileInfo) { }
+        public CsvItem(FileInfo fileInfo) : base(fileInfo) { }
 
         /// <summary>
         /// Return all data in a format suitable for template injection.

@@ -52,7 +52,7 @@ namespace Stein.Services
         {
             messages.ToList().ForEach(message => Messages.Add(message));
         }
-        
+
         /// <summary>
         /// Report all messages that match the given type, optionally exit the program.
         /// </summary>
@@ -86,13 +86,6 @@ namespace Stein.Services
         /// <param name="message">The Message to be printed.</param>
         private static void Print(Message message)
         {
-            ConsoleColor color = message.Type switch
-            {
-                Message.InfoType.Error => ConsoleColor.Red,
-                Message.InfoType.Warning => ConsoleColor.Yellow,
-                _ => Console.ForegroundColor
-            };
-
             if (message.Type == Message.InfoType.Error)
             {
                 StringService.Colorize("Error: ", ConsoleColor.Red, false);

@@ -8,7 +8,7 @@ namespace Stein.Models
     /// Base class for all Resource types. A Resource represents a file that has been discovered in a project,
     /// and provides properties and methods to store and manipulate the data in that file.
     /// </summary>
-    public abstract class Resource
+    public abstract class CollectionItem
     {
         private string _template;
 
@@ -86,7 +86,7 @@ namespace Stein.Models
         /// </summary>
         internal List<InvalidType> Issues { get; } = new();
 
-        protected Resource(FileInfo fileInfo) => Info = fileInfo;
+        protected CollectionItem(FileInfo fileInfo) => Info = fileInfo;
 
         internal enum InvalidType
         {

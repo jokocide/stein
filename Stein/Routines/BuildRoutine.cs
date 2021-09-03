@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using Stein.Models;
-using Stein.Resources;
+using Stein.Collections;
 using Stein.Services;
 using HandlebarsDotNet;
 using System.Threading;
@@ -28,25 +28,22 @@ namespace Stein.Routines
 
             foreach (string directoryPath in Directory.GetDirectories(PathService.CollectionsPath))
             {
-                // Register the collection.
                 DirectoryInfo collectionInfo = new(directoryPath);
                 Collection collection = new(collectionInfo);
 
-                // Claim files.
                 foreach (FileInfo file in collectionInfo.GetFiles())
                 {
-                    Resource metadata = file.Extension switch
+                    CollectionItem metadata = file.Extension switch
                     {
-                        ".md" => new MarkdownResource(file),
-                        ".csv" => new CsvResource(file),
-                        ".json" => new JsonResource(file),
-                        ".toml" => new TomlResource(file),
-                        ".xml" => new XmlResource(file),
+                        ".md" => new MarkdownItem(file),
+                        ".csv" => new CsvItem(file),
+                        ".json" => new JsonItem(file),
+                        ".toml" => new TomlItem(file),
+                        ".xml" => new XmlItem(file),
                         _ => null
                     };
 
-                    // Skip unsupported formats. Currently only Markdown is supported.
-                    if (metadata is not MarkdownResource)
+                    if (metadata is not MarkdownItem)
                     {
                         MessageService.Log(new Message($"Markdown is currently the only supported format, skipped: {metadata.Info.Name}", Message.InfoType.Error));
                         continue;
@@ -59,7 +56,6 @@ namespace Stein.Routines
                 store.Collections.Add(collection);
             }
 
-            // Assemble an Injectable.
             var injectables = store.GetInjectables();
 
             foreach (string filePath in Directory.GetFiles(PathService.PagesPath, "*.hbs"))
@@ -75,8 +71,6 @@ namespace Stein.Routines
                 store.Writable.Add(writable);
             }
 
-            // Todo: Automatic archiving of old versions.
-            // Todo: Incremental builds.
             if (Directory.Exists(PathService.SitePath)) Directory.Delete(PathService.SitePath, true);
 
             PathService.Synchronize(
@@ -92,6 +86,7 @@ namespace Stein.Routines
                 File.WriteAllText(writable.Target, writable.Payload);
             }
 
+            StringService.Colorize($"({DateTime.Now:T}) ", ConsoleColor.Gray, false);
             StringService.Colorize($"Built project ", ConsoleColor.White, false);
             StringService.Colorize($"'{projectInfo.Name}' ", ConsoleColor.Gray, false);
 
@@ -131,7 +126,6 @@ namespace Stein.Routines
         /// </param>
         private void RegisterHandlebarsPartials(string filePath)
         {
-            // Todo: try/catch for missing template partials.
             string template;
             string templateName;
 

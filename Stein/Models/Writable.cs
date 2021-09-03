@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using HandlebarsDotNet;
-using Stein.Resources;
+using Stein.Collections;
 using Stein.Services;
 
 namespace Stein.Models
@@ -37,7 +37,7 @@ namespace Stein.Models
         /// </summary>
         /// <param name="resource">A MarkdownResource object to be converted.</param>
         /// <returns>A new Writable based on the given MarkdownResource.</returns>
-        public static Writable CreateWritable(MarkdownResource resource)
+        public static Writable CreateWritable(MarkdownItem resource)
         {
             string rawTemplate = null;
             rawTemplate = File.ReadAllText(Path.Join(PathService.TemplatesPath, resource.Template + ".hbs"));
@@ -52,7 +52,7 @@ namespace Stein.Models
         /// </summary>
         /// <param name="resource">A JsonResource object to be converted.</param>
         /// <returns>A new Writable based on the given JsonResource.</returns>
-        public static Writable CreateWritable(JsonResource resource)
+        public static Writable CreateWritable(JsonItem resource)
         {
             throw new NotImplementedException();
         }
@@ -62,7 +62,7 @@ namespace Stein.Models
         /// </summary>
         /// <param name="resource">A CsvResource object to be converted.</param>
         /// <returns>A new Writable based on the given CsvResource.</returns>
-        public static Writable CreateWritable(CsvResource resource)
+        public static Writable CreateWritable(CsvItem resource)
         {
             throw new NotImplementedException();
         }
@@ -72,7 +72,7 @@ namespace Stein.Models
         /// </summary>
         /// <param name="resource">A TomlResource object to be converted.</param>
         /// <returns>A new Writable based on the given TomlResource.</returns>
-        public static Writable CreateWritable(TomlResource resource)
+        public static Writable CreateWritable(TomlItem resource)
         {
             throw new NotImplementedException();
         }
@@ -82,7 +82,7 @@ namespace Stein.Models
         /// </summary>
         /// <param name="resource">A XmlResource object to be converted.</param>
         /// <returns>A new Writable based on the given XmlResource.</returns>
-        public static Writable CreateWritable(XmlResource resource)
+        public static Writable CreateWritable(XmlItem resource)
         {
             throw new NotImplementedException();
         }

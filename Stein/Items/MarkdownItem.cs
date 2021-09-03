@@ -4,14 +4,13 @@ using Stein.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading;
 
-namespace Stein.Resources
+namespace Stein.Collections
 {
     /// <summary>
     /// Represents a Markdown file.
     /// </summary>
-    public sealed class MarkdownResource : Resource
+    public sealed class MarkdownItem : CollectionItem
     {
         /// <summary>
         /// Contains all YAML Frontmatter.
@@ -23,7 +22,7 @@ namespace Stein.Resources
         /// </summary>
         private string Body { get; set; }
 
-        public MarkdownResource(FileInfo fileInfo) : base(fileInfo)
+        public MarkdownItem(FileInfo fileInfo) : base(fileInfo)
         {
             Link = PathService.GetIterablePath(Info);
         }
@@ -76,12 +75,12 @@ namespace Stein.Resources
                 {
                     Invalidate(InvalidType.InvalidFrontmatter);
                     MessageService.Log(new Message($"Invalid YAML: {Info.Name}", Message.InfoType.Error));
-                    // return;
                 }
             }
             else
             {
                 Invalidate(InvalidType.NoFrontmatter);
+                MessageService.Log(new Message($"No YAML: {Info.Name}", Message.InfoType.Warning));
             }
 
             string untransformedBody = rawFile[indices.SecondEnd..].Trim();
@@ -90,7 +89,7 @@ namespace Stein.Resources
             Body = transformedBody;
 
             if (
-                Issues.Contains(InvalidType.NoFrontmatter) 
+                Issues.Contains(InvalidType.NoFrontmatter)
                 || Issues.Contains(InvalidType.InvalidFrontmatter)
                 ) return;
 

@@ -30,7 +30,7 @@ namespace Stein.Services
             int len = endIndex - startIndex;
             return text.Substring(startIndex, len);
         }
-        
+
         /// <summary>
         /// Print the given text with the specified ConsoleColor and then set the ConsoleColor
         /// back to default.

@@ -2,14 +2,14 @@
 using System.IO;
 using Stein.Models;
 
-namespace Stein.Resources
+namespace Stein.Collections
 {
     /// <summary>
-    /// Represents an XML file.
+    /// Represents a TOML file.
     /// </summary>
-    public sealed class XmlResource : Resource
+    public sealed class TomlItem : CollectionItem
     {
-        public XmlResource(FileInfo fileInfo) : base(fileInfo) { }
+        public TomlItem(FileInfo fileInfo) : base(fileInfo) { }
 
         /// <summary>
         /// Return all data in a format suitable for template injection.

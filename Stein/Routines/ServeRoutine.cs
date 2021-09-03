@@ -18,12 +18,12 @@ namespace Stein.Routines
         /// The port to run the server on.
         /// </summary>
         private string ServerPort { get; }
-        
+
         /// <summary>
         /// The server address(es).
         /// </summary>
         private string[] ServerPrefixes { get; } = { "http://localhost:" };
-        
+
         /// <summary>
         /// .NET will emit multiple events when a file is accessed in certain cases, so the file paths are stored here
         /// and removed shortly after to prevent duplicate rebuilds.
@@ -47,31 +47,33 @@ namespace Stein.Routines
 
             FileSystemWatcher watcher = new(PathService.ResourcesPath);
             watcher.IncludeSubdirectories = true;
-            
-            watcher.NotifyFilter = 
+
+            watcher.NotifyFilter =
                 NotifyFilters.DirectoryName
                 | NotifyFilters.FileName
                 | NotifyFilters.LastWrite
                 | NotifyFilters.Size;
-            
+
             watcher.Changed += Build;
             watcher.Created += Build;
             watcher.Deleted += Build;
             watcher.Renamed += Build;
             watcher.Error += OnError;
-            
+
             watcher.EnableRaisingEvents = true;
-            
+
             listener.Start();
-            
-            StringService.Colorize("Serving project on ", ConsoleColor.White, false);
-            StringService.Colorize($"http://localhost:{ServerPort}", ConsoleColor.Gray, true);
+
+            string projectName = Path.GetFileName(Directory.GetCurrentDirectory());
+            StringService.Colorize($"({DateTime.Now:T}) ", ConsoleColor.Gray, false);
+            StringService.Colorize($"Serving {projectName} ", ConsoleColor.White, false);
+            StringService.Colorize($"on http://localhost:{ServerPort}", ConsoleColor.White, true);
 
             while (true)
             {
                 // Block while waiting for a request.
                 HttpListenerContext context = listener.GetContext();
-                
+
                 byte[] buffer = Array.Empty<byte>();
 
                 string requestedFileName = Path.GetFileName(context.Request.RawUrl);
@@ -79,9 +81,13 @@ namespace Stein.Routines
                 string requestedFile = !Path.HasExtension(requestedFileName)
                     ? Path.Join(context.Request.RawUrl, "index.html")
                     : context.Request.RawUrl;
-                
+
+                StringService.Colorize($"({DateTime.Now:T}) ", ConsoleColor.Gray, false);
+                StringService.Colorize($"{context.Request.RawUrl} ", ConsoleColor.White, false);
+
                 if (File.Exists(Path.Join(PathService.SitePath, requestedFile)))
                 {
+                    StringService.Colorize("200", ConsoleColor.Green, true);
                     buffer = File.ReadAllBytes(Path.Join(PathService.SitePath, requestedFile));
                     context.Response.StatusCode = 200;
 
@@ -106,26 +112,25 @@ namespace Stein.Routines
                 }
                 else
                 {
-                    StringService.Colorize($" {context.Request.RawUrl}", ConsoleColor.Red, false);
-                    StringService.Colorize(" (404)", ConsoleColor.Gray, true);
+                    StringService.Colorize("404", ConsoleColor.Red, true);
                     context.Response.StatusCode = 404;
                 }
 
                 context.Response.OutputStream.Close();
             }
         }
-        
+
         // Todo: Document this!
         private void Build(object sender, FileSystemEventArgs e)
         {
             if (ServerCache.Contains(e.FullPath)) return;
             ServerCache.Add(e.FullPath);
-            
+
             BuildRoutine build = new();
             build.Execute();
-            
-            Timer timer = new Timer(100) {AutoReset = false};
-            
+
+            Timer timer = new Timer(100) { AutoReset = false };
+
             timer.Elapsed += (timerElapsedSender, timerElapsedArgs) =>
             {
                 lock (ServerCache)
@@ -133,10 +138,10 @@ namespace Stein.Routines
                     ServerCache.Remove(e.FullPath);
                 }
             };
-            
+
             timer.Start();
         }
-        
+
         // Todo: Document this!
         private void OnError(object sender, ErrorEventArgs e) =>
             PrintException(e.GetException());

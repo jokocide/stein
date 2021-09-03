@@ -23,13 +23,16 @@ namespace Stein.Routines
 
             File.Create("stein.json");
             Directory.CreateDirectory(Path.Join("resources", "pages"));
-            Directory.CreateDirectory(Path.Join("resources", "templates"));
+            Directory.CreateDirectory(Path.Join("resources", "templates", "partials"));
             Directory.CreateDirectory(Path.Join("resources", "collections"));
             Directory.CreateDirectory(Path.Join("resources", "public"));
             Directory.CreateDirectory("site");
 
-            StringService.Colorize("Created project ", ConsoleColor.Green, false);
-            StringService.Colorize(Directory.GetCurrentDirectory(), ConsoleColor.Gray, true);
+            StringService.Colorize($"({DateTime.Now:T}) ", ConsoleColor.Gray, false);
+            StringService.Colorize("Created project ", ConsoleColor.White, false);
+
+            string projectName = Path.GetFileName(Directory.GetCurrentDirectory());
+            StringService.Colorize($"'{projectName}'", ConsoleColor.Gray, true);
         }
     }
 }

@@ -2,14 +2,14 @@
 using System.IO;
 using Stein.Models;
 
-namespace Stein.Resources
+namespace Stein.Collections
 {
     /// <summary>
     /// Represents a JSON file.
     /// </summary>
-    public sealed class JsonResource : Resource
+    public sealed class JsonItem : CollectionItem
     {
-        public JsonResource(FileInfo fileInfo) : base(fileInfo) { }
+        public JsonItem(FileInfo fileInfo) : base(fileInfo) { }
 
         /// <summary>
         /// Return all data in a format suitable for template injection.
