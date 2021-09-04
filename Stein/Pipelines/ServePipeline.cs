@@ -16,7 +16,9 @@ namespace Stein.Pipelines
         /// <summary>
         /// Return a ServeRoutine, or a HelpRoutine if the command is invalid.
         /// </summary>
-        /// <returns>A Routine object.</returns>
+        /// <returns>
+        /// A Routine object.
+        /// </returns>
         public override Routine Execute()
         {
             if (Arguments.Length > 1) return ServePathPipeline(Arguments);
@@ -33,16 +35,20 @@ namespace Stein.Pipelines
         /// <summary>
         /// Handle serve commands that have received a path argument.
         /// </summary>
-        /// <param name="arguments">The arguments received from the command line.</param>
-        /// <returns>A Routine object.</returns>
+        /// <param name="arguments">
+        /// The arguments received from the command line.
+        /// </param>
+        /// <returns>
+        /// A Routine object.
+        /// </returns>
         private Routine ServePathPipeline(string[] arguments)
         {
             if (arguments.Length > 2) return ServePathPortPipeline(arguments);
-            
+
             if (!PathService.IsProject(arguments[1]))
             {
                 int number;
-                
+
                 if (Int32.TryParse(arguments[1], out number))
                 {
                     return new ServeRoutine(arguments[1]);
@@ -51,7 +57,7 @@ namespace Stein.Pipelines
                 MessageService.Log(Message.ProvidedPathIsNotProject());
                 MessageService.Print(true);
             }
-            
+
             Directory.SetCurrentDirectory(arguments[1]);
             return new ServeRoutine();
         }
@@ -59,8 +65,12 @@ namespace Stein.Pipelines
         /// <summary>
         /// Handle serve commands that have received a path and port argument.
         /// </summary>
-        /// <param name="arguments">The arguments received from the command line.</param>
-        /// <returns>A Routine object.</returns>
+        /// <param name="arguments">
+        /// The arguments received from the command line.
+        /// </param>
+        /// <returns>
+        /// A Routine object.
+        /// </returns>
         private Routine ServePathPortPipeline(string[] arguments)
         {
             if (!PathService.IsProject(arguments[1]))
@@ -68,7 +78,7 @@ namespace Stein.Pipelines
                 MessageService.Log(Message.ProvidedPathIsNotProject());
                 MessageService.Print(true);
             }
-            
+
             Directory.SetCurrentDirectory(arguments[1]);
             return new ServeRoutine(arguments[2]);
         }

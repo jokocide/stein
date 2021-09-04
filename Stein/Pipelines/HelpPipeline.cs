@@ -11,11 +11,13 @@ namespace Stein.Pipelines
     public sealed class HelpPipeline : Pipeline
     {
         public HelpPipeline(string[] arguments) : base(arguments) { }
-        
+
         /// <summary>
         /// Return a HelpRoutine.
         /// </summary>
-        /// <returns>A Routine object.</returns>
+        /// <returns>
+        /// A Routine object.
+        /// </returns>
         public override Routine Execute()
         {
             return Arguments.Length > 1 ? PipelineHelpTopic() : new HelpRoutine();
@@ -24,7 +26,7 @@ namespace Stein.Pipelines
         private Routine PipelineHelpTopic()
         {
             string topic = Arguments[1].ToLower();
-            
+
             if (topic != "build" && topic != "new" && topic != "serve")
             {
                 MessageService.Log(Message.CommandNotRecognized());

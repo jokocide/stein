@@ -17,11 +17,13 @@ namespace Stein.Services
         public static string PartialsPath => Path.Join(TemplatesPath, "partials");
         public static string ResourcesPublicPath => Path.Join(ResourcesPath, "public");
         public static string SitePublicPath => Path.Join(SitePath, "public");
-        
+
         /// <summary>
         /// Copy one directory to another, recursion is optional.
         /// </summary>
-        /// <param name="source">A path representing the directory to be copied.</param>
+        /// <param name="source">
+        /// A path representing the directory to be copied.
+        /// </param>
         /// <param name="destination">
         /// A path representing the desired location of the copied files from sourceDirName.
         /// </param>
@@ -42,7 +44,7 @@ namespace Stein.Services
             }
 
             DirectoryInfo[] dirs = dir.GetDirectories();
-            Directory.CreateDirectory(destination);        
+            Directory.CreateDirectory(destination);
 
             FileInfo[] files = dir.GetFiles();
             foreach (FileInfo file in files)
@@ -52,14 +54,14 @@ namespace Stein.Services
             }
 
             if (!recursive) return;
-            
+
             foreach (DirectoryInfo subDirectory in dirs)
             {
                 string tempPath = Path.Combine(destination, subDirectory.Name);
                 Synchronize(subDirectory.FullName, tempPath, true);
             }
         }
-        
+
         /// <summary>
         /// Return true if the given path is a Stein project, defaults to the current
         /// directory if no path is given.
@@ -75,7 +77,7 @@ namespace Stein.Services
             path ??= Directory.GetCurrentDirectory();
             return File.Exists(Path.Join(path, "stein.json"));
         }
-        
+
         /// <summary>
         /// Return a path representing a suitable output location for the given file.
         /// </summary>
@@ -88,7 +90,7 @@ namespace Stein.Services
         public static string GetOutputPath(FileInfo file)
         {
             string fileNameNoExtension = Path.GetFileNameWithoutExtension(file.Name);
-            
+
             return file.Directory?.Name switch
             {
                 "pages" when fileNameNoExtension == "index" => IndexPagePath(),
@@ -96,7 +98,7 @@ namespace Stein.Services
                 _ => CollectionPath(fileNameNoExtension, file.Directory.Name)
             };
         }
-        
+
         /// <summary>
         /// Return a path suitable for iterating over collection items in a template.
         /// </summary>
@@ -112,7 +114,7 @@ namespace Stein.Services
             string fileName = Path.GetFileNameWithoutExtension(file.Name);
             return $"/{file.Directory.Name}/{fileName}/";
         }
-        
+
         /// <summary>
         /// Return a path suitable for an index page file.
         /// </summary>
@@ -130,7 +132,7 @@ namespace Stein.Services
         /// <returns>
         /// A string that represents a suitable output location.
         /// </returns>
-        private static string NonIndexPagePath(string fileName) 
+        private static string NonIndexPagePath(string fileName)
         {
             string newDirectory = Path.Join(PathService.SitePath, fileName);
             Directory.CreateDirectory(newDirectory);

@@ -70,7 +70,6 @@ namespace Stein.Routines
 
             while (true)
             {
-                // Block while waiting for a request.
                 HttpListenerContext context = listener.GetContext();
 
                 byte[] buffer = Array.Empty<byte>();

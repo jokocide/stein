@@ -38,7 +38,9 @@ namespace Stein.Services
         /// <summary>
         /// Record a Message object.
         /// </summary>
-        /// <param name="message">the Message object to be recorded.</param>
+        /// <param name="message">
+        /// the Message object to be recorded.
+        /// </param>
         public static void Log(Message message)
         {
             Messages.Add(message);
@@ -47,7 +49,9 @@ namespace Stein.Services
         /// <summary>
         /// Record an array of Message objects.
         /// </summary>
-        /// <param name="messages">The Message objects to be recorded.</param>
+        /// <param name="messages">
+        /// The Message objects to be recorded.
+        /// </param>
         public static void Log(Message[] messages)
         {
             messages.ToList().ForEach(message => Messages.Add(message));
@@ -83,7 +87,9 @@ namespace Stein.Services
         /// <summary>
         /// Send the given Message text to stdout.
         /// </summary>
-        /// <param name="message">The Message to be printed.</param>
+        /// <param name="message">
+        /// The Message to be printed.
+        /// </param>
         private static void Print(Message message)
         {
             if (message.Type == Message.InfoType.Error)
@@ -102,7 +108,9 @@ namespace Stein.Services
         /// <summary>
         /// Send the given Message objects to stdout.
         /// </summary>
-        /// <param name="messages">The Message objects to be printed.</param>
+        /// <param name="messages">
+        /// The Message objects to be printed.
+        /// </param>
         private static void Print(IEnumerable<Message> messages)
         {
             messages.ToList().ForEach(Print);

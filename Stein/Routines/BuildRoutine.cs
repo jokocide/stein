@@ -116,7 +116,9 @@ namespace Stein.Routines
         /// <summary>
         /// Make Handlebars aware of a given partial. The name of the partial will be equal to the file name.
         /// </summary>
-        /// <param name="filePath">The path to the Handlebars partial.</param>
+        /// <param name="filePath">
+        /// The path to the Handlebars partial.
+        /// </param>
         private void RegisterHandlebarsPartials(string filePath)
         {
             string template;
