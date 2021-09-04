@@ -8,9 +8,7 @@ using System.Threading;
 
 namespace Stein.Routines
 {
-    /// <summary>
-    /// Provide a method that can be used to build a project.
-    /// </summary>
+    /// <summary>Provide a method that can be used to build a project.</summary>
     public sealed class BuildRoutine : Routine
     {
         /// <summary>
@@ -20,10 +18,7 @@ namespace Stein.Routines
         public override void Execute()
         {
             Store store = new();
-
             DirectoryInfo projectInfo = new DirectoryInfo(Directory.GetCurrentDirectory());
-
-            // Register partials.
             RegisterHandlebarsPartials(Directory.GetFiles(PathService.PartialsPath, "*.hbs"));
 
             foreach (string directoryPath in Directory.GetDirectories(PathService.CollectionsPath))
@@ -121,9 +116,7 @@ namespace Stein.Routines
         /// <summary>
         /// Make Handlebars aware of a given partial. The name of the partial will be equal to the file name.
         /// </summary>
-        /// <param name="filePath">
-        /// The path to the Handlebars partial.
-        /// </param>
+        /// <param name="filePath">The path to the Handlebars partial.</param>
         private void RegisterHandlebarsPartials(string filePath)
         {
             string template;

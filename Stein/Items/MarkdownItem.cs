@@ -57,7 +57,12 @@ namespace Stein.Collections
         internal override void Process(Store store)
         {
             string rawFile = null;
-            rawFile = File.ReadAllText(Info.FullName);
+
+            using (var stream = File.Open(Info.FullName, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
+            {
+                var reader = new StreamReader(stream);
+                rawFile = reader.ReadToEnd();
+            }
 
             if (String.IsNullOrEmpty(rawFile)) return;
 

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using System.Text;
 using System.Timers;
 using Stein.Models;
 using Stein.Services;
@@ -14,19 +13,20 @@ namespace Stein.Routines
     /// </summary>
     public sealed class ServeRoutine : Routine
     {
-        /// <summary>
-        /// The port to run the server on.
-        /// </summary>
+        /// <summary>The port to run the server on.</summary>
         private string ServerPort { get; }
 
         /// <summary>
-        /// The server address(es).
+        /// The server addresses, defaults to localhost + ServerPort or 
+        /// http://localhost:8000 by default.
         /// </summary>
         private string[] ServerPrefixes { get; } = { "http://localhost:" };
 
         /// <summary>
-        /// .NET will emit multiple events when a file is accessed in certain cases, so the file paths are stored here
-        /// and removed shortly after to prevent duplicate rebuilds.
+        /// Used to store files that have recently emitted events. When an event is detected,
+        /// the event will be ignored if the file exists in this list. This is necessary because
+        /// .NET emits multiple events from a single logical action, and that would cause multiple 
+        /// project rebuilds for a single change.
         /// </summary>
         private List<string> ServerCache { get; } = new();
 
@@ -54,11 +54,10 @@ namespace Stein.Routines
                 | NotifyFilters.LastWrite
                 | NotifyFilters.Size;
 
-            watcher.Changed += Build;
-            watcher.Created += Build;
-            watcher.Deleted += Build;
-            watcher.Renamed += Build;
-            watcher.Error += OnError;
+            watcher.Changed += HandleEvent;
+            watcher.Deleted += HandleEvent;
+            watcher.Renamed += HandleEvent;
+            watcher.Error += HandleError;
 
             watcher.EnableRaisingEvents = true;
 
@@ -120,14 +119,15 @@ namespace Stein.Routines
             }
         }
 
-        // Todo: Document this!
-        private void Build(object sender, FileSystemEventArgs e)
+        private void HandleEvent(object sender, FileSystemEventArgs e)
         {
             if (ServerCache.Contains(e.FullPath)) return;
             ServerCache.Add(e.FullPath);
 
-            BuildRoutine build = new();
-            build.Execute();
+            if (e.ChangeType == WatcherChangeTypes.Changed)
+            {
+                FullRebuild();
+            }
 
             Timer timer = new Timer(100) { AutoReset = false };
 
@@ -142,21 +142,16 @@ namespace Stein.Routines
             timer.Start();
         }
 
-        // Todo: Document this!
-        private void OnError(object sender, ErrorEventArgs e) =>
-            PrintException(e.GetException());
-
-        // Todo: Document this!
-        private void PrintException(Exception ex)
+        private void FullRebuild()
         {
-            if (ex != null)
-            {
-                Console.WriteLine($"Message: {ex.Message}");
-                Console.WriteLine("Stacktrace:");
-                Console.WriteLine(ex.StackTrace);
-                Console.WriteLine();
-                PrintException(ex.InnerException);
-            }
+            BuildRoutine build = new();
+            build.Execute();
+        }
+
+        private void HandleError(object sender, ErrorEventArgs e)
+        {
+            MessageService.Log(new Message($"Server restart is required: ({e.GetException().Message})", Message.InfoType.Error));
+            MessageService.Print(true);
         }
     }
 }
