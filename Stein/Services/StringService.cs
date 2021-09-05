@@ -72,8 +72,22 @@ namespace Stein.Services
         /// </returns>
         public static string Slugify(string text)
         {
-            text = text.ToLower();
+            text = text.ToLower().Trim();
             return text.Replace(" ", "-");
+        }
+
+        public static string Camelize(string text)
+        {
+            text = text.Trim();
+
+            while (text.Contains(" "))
+            {
+                int whitespaceIndex = text.IndexOf(" ");
+                char characterAfterWhitespace = text[whitespaceIndex + 1];
+                text = text.Remove(whitespaceIndex, 2).Insert(whitespaceIndex, characterAfterWhitespace.ToString().ToUpper());
+            }
+
+            return text;
         }
     }
 }

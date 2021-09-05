@@ -72,11 +72,9 @@ namespace Stein.Collections
 
             if (rawFile.Substring(0, 3) == "---")
             {
-                try
-                {
-                    indices = YamlService.GetIndices(rawFile);
-                }
-                catch (ArgumentOutOfRangeException)
+                indices = YamlService.GetIndices(rawFile);
+
+                if (indices == (0, 0, 0, 0))
                 {
                     Invalidate(InvalidType.InvalidFrontmatter);
                     MessageService.Log(new Message($"Invalid YAML: {Info.Name}", Message.InfoType.Error));

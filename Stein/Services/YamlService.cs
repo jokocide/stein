@@ -24,7 +24,8 @@ namespace Stein.Services
             int firstStart = text.IndexOf("---", StringComparison.Ordinal);
             int firstEnd = firstStart + 3;
             int secondStart = text.IndexOf("---", firstEnd, StringComparison.Ordinal);
-            if (secondStart == -1) throw new ArgumentOutOfRangeException();
+            //if (secondStart == -1) throw new ArgumentOutOfRangeException();
+            if (secondStart == -1) return (0, 0, 0, 0);
             int secondEnd = secondStart + 3;
             return (firstStart, firstEnd, secondStart, secondEnd);
         }
@@ -46,13 +47,19 @@ namespace Stein.Services
         {
             var dictionary = new Dictionary<string, string>();
             string[] lines = text.Split(Environment.NewLine);
+
             foreach (string line in lines)
             {
                 string[] splitLines = line.Split(delimiter, 2);
                 string key = splitLines[0].Trim();
+
+                // If the key contains a space it is removed and made camel-case.
+                if (key.Contains(" ")) key = StringService.Camelize(key);
+
                 string value = splitLines[1].Trim();
                 dictionary.Add(key, value);
             }
+
             return dictionary;
         }
     }
