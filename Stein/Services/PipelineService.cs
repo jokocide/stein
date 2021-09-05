@@ -12,6 +12,10 @@ namespace Stein.Services
     /// </returns>
     public static class PipelineService
     {
+        /// <summary>
+        /// Dicate the maximum allowed arguments across all possible combinations of
+        /// acceptable commands.
+        /// </summary>
         private static int MaxTotalArgs => 3;
 
         /// <summary>
@@ -37,6 +41,7 @@ namespace Stein.Services
 
             Routine routine = null;
 
+            // Attempt to populate routine with a Routine type object.
             switch (arguments[0].ToLower())
             {
                 case "help":

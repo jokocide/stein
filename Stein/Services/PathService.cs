@@ -9,17 +9,48 @@ namespace Stein.Services
     /// </summary>
     public static class PathService
     {
+        /// <summary>
+        /// Refer to the Resources directory of a project within the current directory.
+        /// </summary>
         public static string ResourcesPath => Path.Join(Directory.GetCurrentDirectory(), "resources");
+
+        /// <summary>
+        /// Refer to the Site directory of a project within the current directory.
+        /// </summary>
         public static string SitePath => Path.Join(Directory.GetCurrentDirectory(), "site");
+
+        /// <summary>
+        /// Refer to the Pages directory of a project within the current directory.
+        /// </summary>
         public static string PagesPath => Path.Join(ResourcesPath, "pages");
+
+        /// <summary>
+        /// Refer to the Templates directory of a project within the current directory.
+        /// </summary>
         public static string TemplatesPath => Path.Join(ResourcesPath, "templates");
+
+        /// <summary>
+        /// Refer to the Collections directory of a project within the current directory.
+        /// </summary>
         public static string CollectionsPath => Path.Join(ResourcesPath, "collections");
+
+        /// <summary>
+        /// Refer to the Templates/Partials directory of a project within the current directory.
+        /// </summary>
         public static string PartialsPath => Path.Join(TemplatesPath, "partials");
+
+        /// <summary>
+        /// Refer to the Resources/Public directory of a project within the current directory.
+        /// </summary>
         public static string ResourcesPublicPath => Path.Join(ResourcesPath, "public");
+
+        /// <summary>
+        /// Refer to the Site/Public directory of a project within the current directory.
+        /// </summary>
         public static string SitePublicPath => Path.Join(SitePath, "public");
 
         /// <summary>
-        /// Copy one directory to another, recursion is optional.
+        /// Copy one directory to another with optional recursion.
         /// </summary>
         /// <param name="source">
         /// A path representing the directory to be copied.
@@ -70,7 +101,8 @@ namespace Stein.Services
         /// A path to the directory that will be tested.
         /// </param>
         /// <returns>
-        /// Return True if the path is a Stein project.
+        /// Return True if the path is a Stein project, which is indicated by the presence of
+        /// a stein.json file in the path.
         /// </returns>
         public static bool IsProject(string path = null)
         {
