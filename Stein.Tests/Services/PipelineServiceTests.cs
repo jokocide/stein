@@ -1,19 +1,28 @@
 ﻿using Xunit;
-using Stein.Services;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Stein.Models;
 using Stein.Routines;
 
 namespace Stein.Services.Tests
 {
     public class PipelineServiceTests
     {
-        public void EvaluateTest()
+        /// <summary>
+        /// Test data to be injected into EvaluateTest via MemberData attribute.
+        /// </summary>
+        public static IEnumerable<object[]> Pipelines =>
+            new List<object[]>
+            {
+                new object[] { new string[] { "build" }, new BuildRoutine() },
+            };
+
+        [Theory()]
+        [MemberData(nameof(Pipelines))]
+        public void EvaluateTest(string[] arguments, Routine expectedRoutine)
         {
-            throw new NotImplementedException();
+            Routine routine = PipelineService.Evaluate(arguments);
+            Assert.Equal(expectedRoutine, routine);
         }
     }
 }
