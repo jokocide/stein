@@ -10,7 +10,7 @@ namespace Stein.Services
     /// <returns>
     /// A Routine object.
     /// </returns>
-    public static class PipelineService
+    public class PipelineService
     {
         /// <summary>
         /// Dicate the maximum allowed arguments across all possible combinations of
@@ -27,7 +27,7 @@ namespace Stein.Services
         /// <returns>
         /// A Routine object best suited to respond to the given arguments.
         /// </returns>
-        public static Routine Evaluate(string[] arguments)
+        public Routine Evaluate(string[] arguments)
         {
             // If no arguments are received, serve the current directory.
             if (arguments.Length == 0) return new HelpRoutine();

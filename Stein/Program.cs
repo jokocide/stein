@@ -17,7 +17,8 @@ namespace Stein
         /// </param>
         static void Main(string[] arguments)
         {
-            Routine instructions = PipelineService.Evaluate(arguments);
+            PipelineService pipeline = new();
+            Routine instructions = pipeline.Evaluate(arguments);
             instructions.Execute();
         }
     }
