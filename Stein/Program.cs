@@ -1,5 +1,4 @@
 ﻿using Stein.Models;
-using Stein.Services;
 
 namespace Stein
 {
@@ -17,9 +16,9 @@ namespace Stein
         /// </param>
         static void Main(string[] arguments)
         {
-            PipelineService pipeline = new();
-            Routine instructions = pipeline.Evaluate(arguments);
-            instructions.Execute();
+            Pipeline pipeline = Pipeline.GetPipeline(arguments);
+            Routine routine = pipeline.Execute();
+            routine.Execute();
         }
     }
 }

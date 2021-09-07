@@ -9,18 +9,10 @@ namespace Stein.Services.Tests
         /// <summary>
         /// Slice should return a portion of text between the given indices, not including startIndex.
         /// </summary>
-        /// <param name="text">
-        /// The source text.
-        /// </param>
-        /// <param name="startIndex">
-        /// The character to start capturing input on.
-        /// </param>
-        /// <param name="endIndex">
-        /// The desired final character.
-        /// </param>
-        /// <param name="expectedResult">
-        /// The string that we expect to be returned.
-        /// </param>
+        /// <param name="text">The source text.</param>
+        /// <param name="startIndex">The character to start capturing input on.</param>
+        /// <param name="endIndex">The desired final character.</param>
+        /// <param name="expectedResult">The string that we expect to be returned.</param>
         [Theory()]
         [InlineData("abcdThis is the way.22", 4, 20, "This is the way.")]
         [InlineData("   hello! ", 3, 9, "hello!")]
@@ -55,12 +47,8 @@ namespace Stein.Services.Tests
         /// remaining whitespace characters in the middle of the string to hypens,
         /// and then return that string in lowercase.
         /// </summary>
-        /// <param name="testString">
-        /// The source string.
-        /// </param>
-        /// <param name="expectedResult">
-        /// The expected slug result.
-        /// </param>
+        /// <param name="testString">The source string.</param>
+        /// <param name="expectedResult">The expected slug result.</param>
         [Theory()]
         [InlineData("Master Chief", "master-chief")]
         [InlineData("Arbiter", "arbiter")]
@@ -74,22 +62,32 @@ namespace Stein.Services.Tests
 
         /// <summary>
         /// Camelize should remove all whitespace in the string and capitalize each character
-        /// that comes after the whitespace, the very first character in the string should
-        /// never be changed.
+        /// that comes after the whitespace, the first character will always be lowercase.
         /// </summary>
-        /// <param name="text">
-        /// The source string.
-        /// </param>
-        /// <param name="expectedResult">
-        /// The expected camel case string.
-        /// </param>
+        /// <param name="text">The source string.</param>
+        /// <param name="expectedResult">The expected camel case string.</param>
         [Theory()]
-        [InlineData("Alabama alaska", "AlabamaAlaska")]
+        [InlineData("Alabama alaska", "alabamaAlaska")]
         [InlineData("arizona california Arkansas ", "arizonaCaliforniaArkansas")]
-        [InlineData(" Colorado Delaware florida:", "ColoradoDelawareFlorida:")]
+        [InlineData(" Colorado Delaware florida:", "coloradoDelawareFlorida:")]
         public void CamelizeTest(string text, string expectedResult)
         {
             string result = StringService.Camelize(text);
+            Assert.Equal(expectedResult, result);
+        }
+
+        /// <summary>
+        /// Pascalize should remove all whitespace in the string and capitalize each character
+        /// that comes after the whitespace, the first character will always be uppercase.
+        /// </summary>
+        /// <param name="text">The source string.</param>
+        /// <param name="expectedResult">The expected Pascal case string.</param>
+        [Theory()]
+        [InlineData("Texas Arizona", "TexasArizona")]
+        [InlineData("missouri mississippi", "MissouriMississippi")]
+        public void PascalizeTest(string text, string expectedResult)
+        {
+            string result = StringService.Pascalize(text);
             Assert.Equal(expectedResult, result);
         }
     }

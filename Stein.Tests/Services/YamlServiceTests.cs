@@ -22,12 +22,8 @@ namespace Stein.Services.Tests
         /// the location of YAML frontmatter within a string, defaults to (0, 0, 0, 0)
         /// to indicate a problem with the format of the frontmatter, or that frontmatter
         /// does not exist in the string.
-        /// <param name="text">
-        /// The source string.
-        /// </param>
-        /// <param name="expectedResult">
-        /// The expected tuple result.
-        /// </param>
+        /// <param name="text">The source string.</param>
+        /// <param name="expectedResult">The expected tuple result.</param>
         [Theory]
         [MemberData(nameof(Indices))]
         public void GetIndicesTest(string text, (int, int, int, int) expectedResult)

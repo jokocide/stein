@@ -121,19 +121,13 @@ namespace Stein.Routines
         /// </param>
         private void RegisterHandlebarsPartials(string filePath)
         {
+            string templateName = Path.GetFileNameWithoutExtension(filePath);
             string template;
-            string templateName;
 
-            try
+            using (var stream = File.Open(filePath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
             {
-                template = File.ReadAllText(filePath);
-                templateName = Path.GetFileNameWithoutExtension(filePath);
-            }
-            catch (IOException)
-            {
-                Thread.Sleep(100);
-                template = File.ReadAllText(filePath);
-                templateName = Path.GetFileNameWithoutExtension(filePath);
+                var reader = new StreamReader(stream);
+                template = reader.ReadToEnd();
             }
 
             Handlebars.RegisterTemplate(templateName, template);
