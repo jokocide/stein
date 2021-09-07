@@ -1,8 +1,8 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <PackageId>Stein</PackageId>
-    <Version>0.1.0</Version>
+    <Version>0.1.1</Version>
     <Authors>Jonathan Koenig</Authors>
     <Description>A patchwork static site generator.</Description>
     <OutputType>Exe</OutputType>

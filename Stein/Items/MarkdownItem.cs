@@ -91,10 +91,8 @@ namespace Stein.Collections
 
             Body = transformedBody;
 
-            if (
-                Issues.Contains(InvalidType.NoFrontmatter)
-                || Issues.Contains(InvalidType.InvalidFrontmatter)
-                ) return;
+            if (Issues.Contains(InvalidType.NoFrontmatter) || 
+                Issues.Contains(InvalidType.InvalidFrontmatter)) return;
 
             Dictionary<string, string> rawPairs = new();
 
@@ -127,18 +125,22 @@ namespace Stein.Collections
                 }
             }
 
-            if (Template == null) return;
+            if (Template == null)
+            {
+                MessageService.Log(Message.NoTemplateKey(Info));
+                return;
+            }
 
             Writable writable;
 
             try
             {
-                writable = Writable.CreateWritable(this);
+                writable = Writable.GetWritable(this);
             }
             catch (FileNotFoundException)
             {
                 Invalidate(InvalidType.TemplateNotFound);
-                MessageService.Log(new Message($"Unable to locate template: {Info.FullName}", Message.InfoType.Error));
+                MessageService.Log(Message.TemplateNotFound(Info));
                 return;
             }
 
