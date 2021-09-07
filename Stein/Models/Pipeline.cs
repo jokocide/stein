@@ -23,9 +23,7 @@ namespace Stein.Models
         /// <summary>
         /// Evaluate the given command line arguments and return a suitable Pipeline.
         /// </summary>
-        /// <param name="arguments">
-        /// Arguments received from the command line.
-        /// </param>
+        /// <param name="arguments">Arguments received from the command line.</param>
         /// <returns>
         /// A Pipeline object that can be used to evaluate command line arguments,
         /// set up the program, and determine which Routine we should be using to
@@ -33,12 +31,18 @@ namespace Stein.Models
         /// </returns>
         public static Pipeline GetPipeline(string[] arguments)
         {
-            string argumentZeroLower = arguments[0].ToLower();
+            if (arguments.Length == 0 || arguments[0].ToLower() == "help") 
+                return new HelpPipeline(arguments);
 
-            if (argumentZeroLower.Length == 0 || argumentZeroLower == "help") return new HelpPipeline(arguments);
-            else if (argumentZeroLower == "build") return new BuildPipeline(arguments);
-            else if (argumentZeroLower == "new") return new NewPipeline(arguments);
-            else if (argumentZeroLower == "serve") return new ServePipeline(arguments);
+            else if (arguments[0].ToLower() == "build") return 
+                    new BuildPipeline(arguments);
+
+            else if (arguments[0].ToLower() == "new") 
+                return new NewPipeline(arguments);
+
+            else if (arguments[0].ToLower() == "serve") 
+                return new ServePipeline(arguments);
+
             else return new NotRecognizedPipeline(arguments);
         }
     }

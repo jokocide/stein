@@ -1,9 +1,6 @@
-﻿using Stein.Services;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Xunit;
 using System.IO;
-using Xunit.Abstractions;
-using System;
 
 namespace Stein.Services.Tests
 {
