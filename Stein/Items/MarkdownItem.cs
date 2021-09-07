@@ -58,12 +58,14 @@ namespace Stein.Collections
         {
             string rawFile = null;
 
+            // Reading with ReadWrite on FileAccess & FileShare will prevent IOException during ServeRoutine.
             using (var stream = File.Open(Info.FullName, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
             {
                 var reader = new StreamReader(stream);
                 rawFile = reader.ReadToEnd();
             }
 
+            // Ignore empty files.
             if (String.IsNullOrEmpty(rawFile)) return;
 
             Slug = StringService.Slugify(Path.GetFileNameWithoutExtension(Info.Name));

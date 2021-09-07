@@ -124,6 +124,7 @@ namespace Stein.Routines
             string templateName = Path.GetFileNameWithoutExtension(filePath);
             string template;
 
+            // Reading with ReadWrite on FileAccess & FileShare will prevent IOException during ServeRoutine.
             using (var stream = File.Open(filePath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
             {
                 var reader = new StreamReader(stream);
