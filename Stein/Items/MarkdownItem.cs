@@ -56,6 +56,7 @@ namespace Stein.Collections
         /// </summary>
         internal override void Process(Store store)
         {
+            // Raw contents of the file will be stored here.
             string rawFile = null;
 
             // Reading with ReadWrite on FileAccess & FileShare will prevent IOException during ServeRoutine.
@@ -68,24 +69,33 @@ namespace Stein.Collections
             // Ignore empty files.
             if (String.IsNullOrEmpty(rawFile)) return;
 
+            // Develop a 'slug' based on the file name.
             Slug = StringService.Slugify(Path.GetFileNameWithoutExtension(Info.Name));
 
-            (int FirstStart, int FirstEnd, int SecondStart, int SecondEnd) indices = new(0, 0, 0, 0);
+            // The location of the frontmatter key/value pairs within rawFile are stored here.
+            (int FirstStart, int FirstEnd, int SecondStart, int SecondEnd) indices = (0, 0, 0, 0);
 
-            if (rawFile.Length >= 3 && rawFile.Substring(0, 3) == "---")
+            // Determine the distance between the first '---' and second '---'.
+            int openBlock = rawFile.IndexOf("---");
+            int closeBlock = rawFile.IndexOf("---", 2);
+
+            // If the file does not have two instances of '---' or no content is between them.
+            if (openBlock == -1 || closeBlock == -1 || closeBlock - openBlock <= 5)
+            {
+                Invalidate(InvalidType.InvalidFrontmatter);
+                MessageService.Log(new Message($"No YAML: {Info.Name}", Message.InfoType.Error));
+            }
+            else // Attempt to populate indices.
             {
                 indices = YamlService.GetIndices(rawFile);
-
-                if (indices == (0, 0, 0, 0))
-                {
-                    Invalidate(InvalidType.InvalidFrontmatter);
-                    MessageService.Log(new Message($"Invalid YAML: {Info.Name}", Message.InfoType.Error));
-                }
             }
-            else
+
+            // If a problem occurred while getting indices, it will return as (0, 0, 0, 0). We can mark the
+            // file as invalid, but we only do so if the file is not already invalid.
+            if (indices == (0, 0, 0, 0) && !Issues.Contains(InvalidType.InvalidFrontmatter))
             {
-                Invalidate(InvalidType.NoFrontmatter);
-                MessageService.Log(new Message($"No YAML: {Info.Name}", Message.InfoType.Warning));
+                Invalidate(InvalidType.InvalidFrontmatter);
+                MessageService.Log(new Message($"Invalid YAML: {Info.Name}", Message.InfoType.Error));
             }
 
             string untransformedBody = rawFile[indices.SecondEnd..].Trim();
@@ -93,7 +103,7 @@ namespace Stein.Collections
 
             Body = transformedBody;
 
-            if (Issues.Contains(InvalidType.NoFrontmatter) || 
+            if (Issues.Contains(InvalidType.NoFrontmatter) ||
                 Issues.Contains(InvalidType.InvalidFrontmatter)) return;
 
             Dictionary<string, string> rawPairs = new();
