@@ -72,7 +72,7 @@ namespace Stein.Collections
 
             (int FirstStart, int FirstEnd, int SecondStart, int SecondEnd) indices = new(0, 0, 0, 0);
 
-            if (rawFile.Substring(0, 3) == "---")
+            if (rawFile.Length >= 3 && rawFile.Substring(0, 3) == "---")
             {
                 indices = YamlService.GetIndices(rawFile);
 

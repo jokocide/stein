@@ -47,6 +47,12 @@ namespace Stein.Models
             return message;
         }
 
+        /// <summary>
+        /// Return a message to indicate that a file has defined a key, but the specified template was
+        /// not found in the expected location.
+        /// </summary>
+        /// <param name="fileInfo">A FileInfo object derived from the file.</param>
+        /// <returns>A Message object.</returns>
         public static Message TemplateNotFound(FileInfo fileInfo)
         {
             Message message = new($"Template not found: {fileInfo.Name}", InfoType.Error);
@@ -66,7 +72,6 @@ namespace Stein.Models
             Message message = new(text, Message.InfoType.Error);
             return message;
         }
-
 
         /// <summary>
         /// Return a Message to indicate that Stein has received a command but cannot proceed

@@ -4,11 +4,12 @@ using Stein.Models;
 using Stein.Collections;
 using Stein.Services;
 using HandlebarsDotNet;
-using System.Threading;
 
 namespace Stein.Routines
 {
-    /// <summary>Provide a method that can be used to build a project.</summary>
+    /// <summary>
+    /// Provide a method that can be used to build a project.
+    /// </summary>
     public sealed class BuildRoutine : Routine
     {
         /// <summary>
@@ -40,7 +41,7 @@ namespace Stein.Routines
 
                     if (metadata is not MarkdownItem)
                     {
-                        MessageService.Log(new Message($"Markdown is currently the only supported format, skipped: {metadata.Info.Name}", Message.InfoType.Error));
+                        MessageService.Log(new Message($"Format unsupported: {metadata.Info.Name}", Message.InfoType.Error));
                         continue;
                     }
 
@@ -116,9 +117,7 @@ namespace Stein.Routines
         /// <summary>
         /// Make Handlebars aware of a given partial. The name of the partial will be equal to the file name.
         /// </summary>
-        /// <param name="filePath">
-        /// The path to the Handlebars partial.
-        /// </param>
+        /// <param name="filePath">The path to the Handlebars partial.</param>
         private void RegisterHandlebarsPartials(string filePath)
         {
             string templateName = Path.GetFileNameWithoutExtension(filePath);

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 
 namespace Stein.Models
@@ -10,8 +9,6 @@ namespace Stein.Models
     /// </summary>
     public abstract class CollectionItem
     {
-        private string _template;
-
         /// <summary>
         /// Classes deriving from Resource are responsible for providing a method to retrieve data from that
         /// type of resource.
@@ -27,19 +24,9 @@ namespace Stein.Models
         internal abstract Injectable Serialize();
 
         /// <summary>
-        /// Stores the name of a requested template file, not including the extension.
+        /// Stores the name of a requested template file.
         /// </summary>
-        internal string Template
-        {
-            get => _template;
-            set
-            {
-                if (Path.HasExtension(value))
-                    throw new InvalidOperationException("Received path with extension.");
-
-                _template = value;
-            }
-        }
+        internal string Template { get; set; }
 
         /// <summary>
         /// A string representing the output path for a file, injected to allow for generating links

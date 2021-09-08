@@ -41,8 +41,26 @@ namespace Stein.Models
         {
             // Attempt to read the template file, this will throw a FileNotFoundException
             // if the template is not found in the expected location.
-            string rawTemplate = null;
-            rawTemplate = File.ReadAllText(Path.Join(PathService.TemplatesPath, resource.Template + ".hbs"));
+            string rawTemplate;
+            string commonPath = Path.Join(PathService.TemplatesPath, resource.Template);
+            FileStream stream;
+
+            // Template has an extension.
+            if (Path.HasExtension(resource.Template))
+            {
+                stream = File.Open(commonPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+            }
+
+            // Template has no extension.
+            else
+            {
+                stream = File.Open(commonPath + ".hbs", FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+            }
+
+            StreamReader reader = new StreamReader(stream);
+            rawTemplate = reader.ReadToEnd();
+
+            stream.Close();
 
             // Retrieve an injectable.
             Injectable injectable = resource.Serialize();
