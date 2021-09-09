@@ -18,18 +18,31 @@ namespace Stein.Routines
         /// </summary>
         public override void Execute()
         {
+            // Each build will have its own Store, which is a data structure that keeps
+            // track of important objects that are created while building a project.
             Store store = new();
-            DirectoryInfo projectInfo = new DirectoryInfo(Directory.GetCurrentDirectory());
+
+            // Handlebars is currently the only supported template engine, so immediately
+            // register all partials with an extension of '.hbs'.
             RegisterHandlebarsPartials(Directory.GetFiles(PathService.PartialsPath, "*.hbs"));
 
+            DirectoryInfo projectInfo = new DirectoryInfo(Directory.GetCurrentDirectory());
+
+            // Page files usually depend on information that is derived from collection items, 
+            // so process the collections first.
             foreach (string directoryPath in Directory.GetDirectories(PathService.CollectionsPath))
             {
                 DirectoryInfo collectionInfo = new(directoryPath);
+
+                // The contents of each collection will be stored in a Collection object and
+                // then registered with the Store.
                 Collection collection = new(collectionInfo);
 
+                // Look at the file extension of each item and create a specific type of Item object,
+                // which will come with instructions and rules to help pull information from this item.
                 foreach (FileInfo file in collectionInfo.GetFiles())
                 {
-                    CollectionItem metadata = file.Extension switch
+                    CollectionItem item = file.Extension switch
                     {
                         ".md" => new MarkdownItem(file),
                         ".csv" => new CsvItem(file),
@@ -39,19 +52,27 @@ namespace Stein.Routines
                         _ => null
                     };
 
-                    if (metadata is not MarkdownItem)
+                    // Most of the Item types are not implemented yet, so warn the user if they are trying
+                    // to use any of them.
+                    if (item is not MarkdownItem)
                     {
-                        MessageService.Log(new Message($"Format unsupported: {metadata.Info.Name}", Message.InfoType.Error));
+                        MessageService.Log(new Message($"Format unsupported: {item.Info.Name}", Message.InfoType.Error));
                         continue;
                     }
 
-                    collection.Items.Add(metadata);
-                    metadata.Process(store);
+                    // Process(Store) will actually pull information from the file and create a Writable
+                    // if a valid Template key is provided.
+                    item.Process(store);
+
+                    // Register the item with the collection.
+                    collection.Items.Add(item);
                 }
 
+                // Register the collection with the store.
                 store.Collections.Add(collection);
             }
 
+            // Assemble a dynamic object that can be injected into a template.
             var injectables = store.GetInjectables();
 
             foreach (string filePath in Directory.GetFiles(PathService.PagesPath, "*.hbs"))
