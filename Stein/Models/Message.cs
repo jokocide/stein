@@ -112,6 +112,12 @@ namespace Stein.Models
             return message;
         }
 
+        public static Message NoExtension(FileInfo fileInfo)
+        {
+            Message message = new("File has no extension: {fileInfo.name}", InfoType.Error);
+            return message;
+        }
+
         public enum InfoType
         {
             Warning,

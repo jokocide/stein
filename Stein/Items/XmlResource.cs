@@ -7,7 +7,7 @@ namespace Stein.Collections
     /// <summary>
     /// Represents an XML file.
     /// </summary>
-    public sealed class XmlItem : CollectionItem
+    public sealed class XmlItem : Item
     {
         public XmlItem(FileInfo fileInfo) : base(fileInfo) { }
 

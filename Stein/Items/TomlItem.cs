@@ -7,7 +7,7 @@ namespace Stein.Collections
     /// <summary>
     /// Represents a TOML file.
     /// </summary>
-    public sealed class TomlItem : CollectionItem
+    public sealed class TomlItem : Item
     {
         public TomlItem(FileInfo fileInfo) : base(fileInfo) { }
 

@@ -10,7 +10,7 @@ namespace Stein.Collections
     /// <summary>
     /// Represents a Markdown file.
     /// </summary>
-    public sealed class MarkdownItem : CollectionItem
+    public sealed class MarkdownItem : Item
     {
         /// <summary>
         /// Contains all YAML Frontmatter.
@@ -18,7 +18,7 @@ namespace Stein.Collections
         internal Dictionary<string, string> Frontmatter { get; } = new();
 
         /// <summary>
-        /// Stores the Markdown body, which is everything in the file except for the YAML frontmatter.
+        /// Stores the HTML body.
         /// </summary>
         private string Body { get; set; }
 
@@ -109,6 +109,8 @@ namespace Stein.Collections
             // The key/value pairs derived from the YAML are temporarily stored here.
             Dictionary<string, string> rawPairs = new();
 
+            // Attempt to select all of the YAML content and transform them into
+            // KeyValuePair<string, string>. Store the result in rawPairs.
             try
             {
                 string yamlSection = StringService.Slice(indices.FirstEnd, indices.SecondStart, rawFile).Trim();
@@ -116,6 +118,7 @@ namespace Stein.Collections
             }
             catch (IndexOutOfRangeException)
             {
+                // If the YAML is in an unexpected format
                 Invalidate(InvalidType.InvalidFrontmatter);
                 MessageService.Log(new Message($"Invalid key/value pair in YAML: {Info.Name}", Message.InfoType.Error));
             }

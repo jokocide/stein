@@ -28,43 +28,41 @@ namespace Stein.Routines
 
             DirectoryInfo projectInfo = new DirectoryInfo(Directory.GetCurrentDirectory());
 
-            // Page files usually depend on information that is derived from collection items, 
-            // so process the collections first.
+            // Collection items are processed first so that Page files have access to iterable data.
             foreach (string directoryPath in Directory.GetDirectories(PathService.CollectionsPath))
             {
                 DirectoryInfo collectionInfo = new(directoryPath);
 
                 // The contents of each collection will be stored in a Collection object and
-                // then registered with the Store.
+                // then registered with the Store after converting any files inside into Item objects.
                 Collection collection = new(collectionInfo);
 
-                // Look at the file extension of each item and create a specific type of Item object,
+                // Look at the file extension of each item and create a suitable Item object,
                 // which will come with instructions and rules to help pull information from this item.
-                foreach (FileInfo file in collectionInfo.GetFiles())
+                foreach (FileInfo info in collectionInfo.GetFiles())
                 {
-                    CollectionItem item = file.Extension switch
+                    // Skip file if it doesn't specify an extension.
+                    if (info.Extension == "")
                     {
-                        ".md" => new MarkdownItem(file),
-                        ".csv" => new CsvItem(file),
-                        ".json" => new JsonItem(file),
-                        ".toml" => new TomlItem(file),
-                        ".xml" => new XmlItem(file),
-                        _ => null
-                    };
+                        MessageService.Log(Message.NoExtension(info));
+                        continue;
+                    }
+
+                    // Create Item object.
+                    Item item = Item.GetItem(info);
 
                     // Most of the Item types are not implemented yet, so warn the user if they are trying
-                    // to use any of them.
+                    // to use any of them and continue to the next file.
                     if (item is not MarkdownItem)
                     {
                         MessageService.Log(new Message($"Format unsupported: {item.Info.Name}", Message.InfoType.Error));
                         continue;
                     }
 
-                    // Process(Store) will actually pull information from the file and create a Writable
-                    // if a valid Template key is provided.
+                    // Pull information from the Item and create a Writable if a valid template key is provided.
                     item.Process(store);
 
-                    // Register the item with the collection.
+                    // Register the Item with the Collection.
                     collection.Items.Add(item);
                 }
 
@@ -75,27 +73,42 @@ namespace Stein.Routines
             // Assemble a dynamic object that can be injected into a template.
             var injectables = store.GetInjectables();
 
-            foreach (string filePath in Directory.GetFiles(PathService.PagesPath, "*.hbs"))
+            // Page files are processed next. Handlebars is currently the only supported template engine,
+            // so we grab everything that ends with '.hbs'.
+            foreach (FileInfo info in new DirectoryInfo(PathService.PagesPath).GetFiles("*.hbs"))
             {
-                FileInfo pageInfo = new(filePath);
                 string rawFile;
-                rawFile = File.ReadAllText(pageInfo.FullName);
 
+                // Read the file contents into rawFile.
+                using (var stream = File.Open(info.FullName, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
+                {
+                    var reader = new StreamReader(stream);
+                    rawFile = reader.ReadToEnd();
+                }
+
+                // Each page file is considered its own template, so compile right away.
                 HandlebarsTemplate<object, object> compiledTemplate = Handlebars.Compile(rawFile);
+
+                // Render the item with the injectables so that the template has access to all of 
+                // the collections.
                 var renderedTemplate = compiledTemplate(injectables);
 
-                Writable writable = new(pageInfo, renderedTemplate);
+                // Register a new Writable with the Store.
+                Writable writable = new(info, renderedTemplate);
                 store.Writable.Add(writable);
             }
 
+            // Delete the old site.
             if (Directory.Exists(PathService.SitePath)) Directory.Delete(PathService.SitePath, true);
 
+            // Copy the public files over.
             PathService.Synchronize(
                 PathService.ResourcesPublicPath,
                 PathService.SitePublicPath,
                 true
                 );
 
+            // Write out the Writable objects that are registered with the Store.
             foreach (Writable writable in store.Writable)
             {
                 string directory = Path.GetDirectoryName(writable.Target);
@@ -103,35 +116,12 @@ namespace Stein.Routines
                 File.WriteAllText(writable.Target, writable.Payload);
             }
 
+            // Provide user output.
             StringService.Colorize($"({DateTime.Now:T}) ", ConsoleColor.Gray, false);
             StringService.Colorize($"Built project ", ConsoleColor.White, false);
-            StringService.Colorize($"'{projectInfo.Name}' ", ConsoleColor.Gray, false);
+            StringService.Colorize($"'{projectInfo.Name}' ", ConsoleColor.Gray, true);
 
-            if (!MessageService.HasError && !MessageService.HasWarning)
-            {
-                Console.WriteLine();
-            }
-            else if (MessageService.HasError && MessageService.HasWarning)
-            {
-                StringService.Colorize("(", ConsoleColor.Gray, false);
-                StringService.Colorize($"{MessageService.ErrorCount}", ConsoleColor.Red, false);
-                StringService.Colorize(", ", ConsoleColor.Gray, false);
-                StringService.Colorize($"{MessageService.WarningCount}", ConsoleColor.Yellow, false);
-                StringService.Colorize(")", ConsoleColor.Gray, true);
-            }
-            else if (MessageService.HasError && !MessageService.HasWarning)
-            {
-                StringService.Colorize("(", ConsoleColor.Gray, false);
-                StringService.Colorize($"{MessageService.ErrorCount}", ConsoleColor.Red, false);
-                StringService.Colorize(")", ConsoleColor.Gray, true);
-            }
-            else if (!MessageService.HasError && MessageService.HasWarning)
-            {
-                StringService.Colorize("(", ConsoleColor.Gray, false);
-                StringService.Colorize($"{MessageService.WarningCount}", ConsoleColor.Yellow, false);
-                StringService.Colorize(")", ConsoleColor.Gray, true);
-            }
-
+            // Display any warnings/errors.
             MessageService.Print();
         }
 

@@ -14,8 +14,13 @@ namespace Stein
         /// <param name="arguments">The command line arguments.</param>
         static void Main(string[] arguments)
         {
+            // A Pipeline object is capable of evaluating the arguments provided to an acceptable command.
             Pipeline pipeline = Pipeline.GetPipeline(arguments);
+
+            // Use the Pipeline object to find a suitable Routine.
             Routine routine = pipeline.Execute();
+
+            // Execute the routine to complete the requested operation.
             routine.Execute();
         }
     }

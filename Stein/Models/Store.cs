@@ -30,7 +30,7 @@ namespace Stein.Models
                 List<Injectable> injectableList = new();
                 injectables.Add(collection.Info.Name, injectableList);
 
-                foreach (CollectionItem item in collection.Items)
+                foreach (Item item in collection.Items)
                 {
                     dynamic injectable = item.Serialize();
                     injectableList.Add(injectable);

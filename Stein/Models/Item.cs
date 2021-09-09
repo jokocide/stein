@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Stein.Collections;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Stein.Models
@@ -7,8 +8,26 @@ namespace Stein.Models
     /// Base class for all Resource types. A Resource represents a file that has been discovered in a project,
     /// and provides properties and methods to store and manipulate the data in that file.
     /// </summary>
-    public abstract class CollectionItem
+    public abstract class Item
     {
+        /// <summary>
+        /// Create an Item suitable for the extension of the received FileInfo object.
+        /// </summary>
+        /// <param name="extension">A FileInfo object derived from the file.</param>
+        /// <returns>An Item object.</returns>
+        public static Item GetItem(FileInfo fileInfo)
+        {
+            return fileInfo.Extension switch
+            {
+                ".md" => new MarkdownItem(fileInfo),
+                ".csv" => new CsvItem(fileInfo),
+                ".json" => new JsonItem(fileInfo),
+                ".toml" => new TomlItem(fileInfo),
+                ".xml" => new XmlItem(fileInfo),
+                _ => null
+            };
+        }
+
         /// <summary>
         /// Classes deriving from Resource are responsible for providing a method to retrieve data from that
         /// type of resource.
@@ -73,7 +92,7 @@ namespace Stein.Models
         /// </summary>
         internal List<InvalidType> Issues { get; } = new();
 
-        protected CollectionItem(FileInfo fileInfo) => Info = fileInfo;
+        protected Item(FileInfo fileInfo) => Info = fileInfo;
 
         internal enum InvalidType
         {

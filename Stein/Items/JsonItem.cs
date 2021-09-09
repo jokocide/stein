@@ -7,7 +7,7 @@ namespace Stein.Collections
     /// <summary>
     /// Represents a JSON file.
     /// </summary>
-    public sealed class JsonItem : CollectionItem
+    public sealed class JsonItem : Item
     {
         public JsonItem(FileInfo fileInfo) : base(fileInfo) { }
 

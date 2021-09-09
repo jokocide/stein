@@ -7,7 +7,7 @@ namespace Stein.Collections
     /// <summary>
     /// Represents a CSV file.
     /// </summary>
-    public sealed class CsvItem : CollectionItem
+    public sealed class CsvItem : Item
     {
         public CsvItem(FileInfo fileInfo) : base(fileInfo) { }
 
