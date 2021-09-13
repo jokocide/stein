@@ -36,36 +36,28 @@ namespace Stein.Services
         private static List<Message> Messages { get; } = new();
 
         /// <summary>
-        /// Record a Message object.
+        /// Log a Message object.
         /// </summary>
-        /// <param name="message">
-        /// the Message object to be recorded.
-        /// </param>
+        /// <param name="message">the Message object to be recorded.</param>
         public static void Log(Message message)
         {
             Messages.Add(message);
         }
 
         /// <summary>
-        /// Record an array of Message objects.
+        /// Log an array of Message objects.
         /// </summary>
-        /// <param name="messages">
-        /// The Message objects to be recorded.
-        /// </param>
+        /// <param name="messages">The Message objects to be recorded.</param>
         public static void Log(Message[] messages)
         {
             messages.ToList().ForEach(message => Messages.Add(message));
         }
 
         /// <summary>
-        /// Report all messages that match the given type, optionally exit the program.
+        /// Print all messages that match the given type, optionally exit the program.
         /// </summary>
-        /// <param name="type">
-        /// The desired message type to search for.
-        /// </param>
-        /// <param name="exit">
-        /// Determines if the program should exit after printing.
-        /// </param>
+        /// <param name="type">The desired message type to search for.</param>
+        /// <param name="exit">Determines if the program should exit after printing.</param>
         public static void Print(Message.InfoType type, bool exit = false)
         {
             Messages.FindAll(message => message.Type == type).ForEach(Print);
@@ -73,11 +65,9 @@ namespace Stein.Services
         }
 
         /// <summary>
-        /// Report all messages, optionally exit the program.
+        /// Print all messages and optionally exit the program.
         /// </summary>
-        /// <param name="exit">
-        /// Determines if the program should exit after printing.
-        /// </param>
+        /// <param name="exit">Determines if the program should exit after printing.</param>
         public static void Print(bool exit = false)
         {
             Print(Messages);
@@ -85,13 +75,25 @@ namespace Stein.Services
         }
 
         /// <summary>
+        /// Send the given Message objects to stdout.
+        /// </summary>
+        /// <param name="messages">The Message objects to be printed.</param>
+        private static void Print(IEnumerable<Message> messages)
+        {
+            messages.ToList().ForEach(Print);
+        }
+
+        /// <summary>
         /// Send the given Message text to stdout.
         /// </summary>
-        /// <param name="message">
-        /// The Message to be printed.
-        /// </param>
+        /// <param name="message">The Message to be printed.</param>
         private static void Print(Message message)
         {
+            // Check configuration to verify that we are supposed to print this message.
+            if (message.Type == Message.InfoType.Warning && ConfigurationService.Set.SilenceWarnings)
+                return;
+
+            // Display a colored tag to indicate the type of message.
             if (message.Type == Message.InfoType.Error)
             {
                 StringService.Colorize("Error: ", ConsoleColor.Red, false);
@@ -101,19 +103,9 @@ namespace Stein.Services
                 StringService.Colorize("Warning: ", ConsoleColor.Yellow, false);
             }
 
+            // Print the message body in gray font and remove it from memory.
             StringService.Colorize(message.Text, ConsoleColor.Gray, true);
             Messages.Remove(message);
-        }
-
-        /// <summary>
-        /// Send the given Message objects to stdout.
-        /// </summary>
-        /// <param name="messages">
-        /// The Message objects to be printed.
-        /// </param>
-        private static void Print(IEnumerable<Message> messages)
-        {
-            messages.ToList().ForEach(Print);
         }
     }
 }

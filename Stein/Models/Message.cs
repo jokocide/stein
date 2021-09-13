@@ -11,7 +11,7 @@ namespace Stein.Models
         /// A string message that can be displayed in stdout.
         /// </summary>
         public string Text { get; init; }
-        
+
         /// <summary>
         /// A descriptor of the severity of the message.
         /// </summary>
@@ -22,14 +22,12 @@ namespace Stein.Models
             Text = text;
             Type = type;
         }
-        
+
         /// <summary>
         /// Return a Message to indicate that Stein has received more than the maximum number
         /// of allowed arguments.
         /// </summary>
-        /// <returns>
-        /// A Routine object.
-        /// </returns>
+        /// <returns>A Message object.</returns>
         public static Message TooManyArguments()
         {
             Message message = new("Received too many arguments.", InfoType.Error);
@@ -58,14 +56,12 @@ namespace Stein.Models
             Message message = new($"Template not found: {fileInfo.Name}", InfoType.Error);
             return message;
         }
-        
+
         /// <summary>
         /// Return a Message to indicate that Stein has received a path argument which does
         /// not lead to a Stein project, as indicated by the presence of a stein.json file.
         /// </summary>
-        /// <returns>
-        /// A Routine object.
-        /// </returns>
+        /// <returns>A Message object.</returns>
         public static Message ProvidedPathIsNotProject()
         {
             string text = "The provided path does not appear to be a Stein project. (Missing a stein.json file?)";
@@ -77,9 +73,7 @@ namespace Stein.Models
         /// Return a Message to indicate that Stein has received a command but cannot proceed
         /// because a path was not provided, and was also not called from the directory of a Stein project.
         /// </summary>
-        /// <returns>
-        /// A Routine object.
-        /// </returns>
+        /// <returns>A Message object.</returns>
         public static Message NotInProject(bool routineAcceptsPaths)
         {
             string text = routineAcceptsPaths
@@ -94,7 +88,7 @@ namespace Stein.Models
         /// Return a Message to indicate that Stein has received arguments but does not
         /// understand how to respond to them.
         /// </summary>
-        /// <returns>A Routine object.</returns>
+        /// <returns>A Message object.</returns>
         public static Message CommandNotRecognized()
         {
             Message message = new("Command not recognized.", InfoType.Error);
@@ -105,16 +99,33 @@ namespace Stein.Models
         /// Return a Message to indicate that Stein has received a path argument, but
         /// the path argument does not appear to be valid. Stein cannot create or move into the directory.
         /// </summary>
-        /// <returns>A Routine object.</returns>
+        /// <returns>A Message object.</returns>
         public static Message ProvidedPathIsInvalid()
         {
             Message message = new("The provided path does not appear to be valid.", InfoType.Error);
             return message;
         }
 
+        /// <summary>
+        /// Return a Message to indicate that a file has no extension, and thus cannot be converted to a 
+        /// specific type of Item.
+        /// </summary>
+        /// <param name="fileInfo">A FileInfo object derived from the file.</param>
+        /// <returns>A Message object.</returns>
         public static Message NoExtension(FileInfo fileInfo)
         {
-            Message message = new("File has no extension: {fileInfo.name}", InfoType.Error);
+            Message message = new($"File has no extension: {fileInfo.Name}", InfoType.Error);
+            return message;
+        }
+
+        /// <summary>
+        /// Return a Message to indicate that a file contains invalid JSON.
+        /// </summary>
+        /// <param name="fileInfo">A FileInfo object derived from the file.</param>
+        /// <returns>A Message object.</returns>
+        public static Message InvalidJson(FileInfo fileInfo)
+        {
+            Message message = new($"Invalid JSON: {fileInfo.Name}", InfoType.Error);
             return message;
         }
 

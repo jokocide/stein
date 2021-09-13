@@ -83,7 +83,7 @@ namespace Stein.Collections
             if (openBlock == -1 || closeBlock == -1 || closeBlock - openBlock <= 5)
             {
                 Invalidate(InvalidType.InvalidFrontmatter);
-                MessageService.Log(new Message($"No YAML: {Info.Name}", Message.InfoType.Error));
+                MessageService.Log(new Message($"No YAML: {Info.Name}", Message.InfoType.Warning));
             }
             else // Attempt to populate indices.
             {
