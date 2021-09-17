@@ -1,6 +1,23 @@
-# Patchwork static site generator, built on .NET
 
-> This project is under construction and considered unstable. Look for version 1.0 on [NuGet](https://www.nuget.org/packages/stein/) soon!
+<p align="center">
+  <img src="https://github.com/jokocide/stein/blob/main/stein_logo_normal.png?raw=true" />
+</p>
+<p align="center">
+  A minimal static site generator that allows you to write content in a variety of formats.
+</p>
+
+
+
+## Features
+
+<ul>
+  <li>Write in multiple formats! (Markdown, JSON, CSV, Etc..) 🪡</li>
+  <li>Fast builds. 🐆</li>
+  <li>Minimal, no feature creep. ⛔</li>
+  <li>Easy to use, easy to contribute to. 💬</li>
+</ul>
+
+## Installation
 
 To start using Stein, you'll need to have the [**.NET SDK**](https://dotnet.microsoft.com/download) installed.
 
