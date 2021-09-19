@@ -1,38 +1,29 @@
 using System.IO;
+using Stein.Interfaces;
 using Stein.Models;
 using Stein.Routines;
 using Stein.Services;
 
 namespace Stein.Pipelines
 {
-    /// <summary>
-    /// A Pipeline to handle the new command.
-    /// </summary>
-    public sealed class NewPipeline : Pipeline
+    public sealed class NewPipeline : Pipeline, IEvaluator
     {
+        private int MaxNewArgs => 2;
+
         public NewPipeline(string[] args) : base(args) { }
 
-        /// <summary>
-        /// Return a NewRoutine, or a HelpRoutine if the command is invalid.
-        /// </summary>
-        /// <returns>
-        /// A Routine object.
-        /// </returns>
-        public override Routine Execute()
+        public IExecutable Evaluate()
         {
-            return Arguments.Length > 1 ? PipelineNewPath(Arguments) : new NewRoutine();
+            if (Args.Length > MaxNewArgs)
+            {
+                MessageService.Log(Message.TooManyArgs());
+                MessageService.Print(true);
+            }
+
+            return Args.Length > 1 ? PipelineNewPath(Args) : new NewRoutine();
         }
 
-        /// <summary>
-        /// Handle new commands that have received a path argument.
-        /// </summary>
-        /// <param name="arguments">
-        /// The arguments received from the command line.
-        /// </param>
-        /// <returns>
-        /// A Routine object.
-        /// </returns>
-        private Routine PipelineNewPath(string[] arguments)
+        private IExecutable PipelineNewPath(string[] arguments)
         {
             if (!Directory.Exists(arguments[1]))
             {

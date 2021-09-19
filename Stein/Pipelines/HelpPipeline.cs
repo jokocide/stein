@@ -1,30 +1,30 @@
+using Stein.Interfaces;
 using Stein.Models;
 using Stein.Routines;
 using Stein.Services;
 
 namespace Stein.Pipelines
 {
-    /// <summary>
-    /// A Pipeline to handle the help command.
-    /// </summary>
-    public sealed class HelpPipeline : Pipeline
+    public sealed class HelpPipeline : Pipeline, IEvaluator
     {
-        public HelpPipeline(string[] arguments) : base(arguments) { }
+        private int MaxHelpArgs => 2;
 
-        /// <summary>
-        /// Return a HelpRoutine.
-        /// </summary>
-        /// <returns>
-        /// A Routine object.
-        /// </returns>
-        public override Routine Execute()
+        public HelpPipeline(string[] args) : base(args) { }
+
+        public IExecutable Evaluate()
         {
-            return Arguments.Length > 1 ? PipelineHelpTopic() : new HelpRoutine();
+            if (Args.Length > MaxHelpArgs)
+            {
+                MessageService.Log(Message.TooManyArgs());
+                MessageService.Print(true);
+            }
+
+            return Args.Length > 1 ? PipelineHelpTopic() : new HelpRoutine();
         }
 
-        private Routine PipelineHelpTopic()
+        private IExecutable PipelineHelpTopic()
         {
-            string topic = Arguments[1].ToLower();
+            string topic = Args[1].ToLower();
 
             if (topic != "build" && topic != "new" && topic != "serve")
             {

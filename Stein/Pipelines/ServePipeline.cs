@@ -1,27 +1,27 @@
 using System;
 using System.IO;
+using Stein.Interfaces;
 using Stein.Models;
 using Stein.Routines;
 using Stein.Services;
 
 namespace Stein.Pipelines
 {
-    /// <summary>
-    /// A Pipeline to handle the Serve command.
-    /// </summary>
-    public sealed class ServePipeline : Pipeline
+    public sealed class ServePipeline : Pipeline, IEvaluator
     {
-        public ServePipeline(string[] arguments) : base(arguments) { }
+        private int MaxServeArgs => 3;
 
-        /// <summary>
-        /// Return a ServeRoutine, or a HelpRoutine if the command is invalid.
-        /// </summary>
-        /// <returns>
-        /// A Routine object.
-        /// </returns>
-        public override Routine Execute()
+        public ServePipeline(string[] args) : base(args) { }
+
+        public IExecutable Evaluate()
         {
-            if (Arguments.Length > 1) return ServePathPipeline(Arguments);
+            if (Args.Length > MaxServeArgs)
+            {
+                MessageService.Log(Message.TooManyArgs());
+                MessageService.Print(true);
+            }
+
+            if (Args.Length > 1) return ServePathPipeline(Args);
 
             if (!PathService.IsProject())
             {
@@ -32,55 +32,37 @@ namespace Stein.Pipelines
             return new ServeRoutine();
         }
 
-        /// <summary>
-        /// Handle serve commands that have received a path argument.
-        /// </summary>
-        /// <param name="arguments">
-        /// The arguments received from the command line.
-        /// </param>
-        /// <returns>
-        /// A Routine object.
-        /// </returns>
-        private Routine ServePathPipeline(string[] arguments)
+        private IExecutable ServePathPipeline(string[] args)
         {
-            if (arguments.Length > 2) return ServePathPortPipeline(arguments);
+            if (args.Length > 2) return ServePathPortPipeline(args);
 
-            if (!PathService.IsProject(arguments[1]))
+            if (!PathService.IsProject(args[1]))
             {
                 int number;
 
-                if (Int32.TryParse(arguments[1], out number))
+                if (Int32.TryParse(args[1], out number))
                 {
-                    return new ServeRoutine(arguments[1]);
+                    return new ServeRoutine(args[1]);
                 }
 
                 MessageService.Log(Message.ProvidedPathIsNotProject());
                 MessageService.Print(true);
             }
 
-            Directory.SetCurrentDirectory(arguments[1]);
+            Directory.SetCurrentDirectory(args[1]);
             return new ServeRoutine();
         }
 
-        /// <summary>
-        /// Handle serve commands that have received a path and port argument.
-        /// </summary>
-        /// <param name="arguments">
-        /// The arguments received from the command line.
-        /// </param>
-        /// <returns>
-        /// A Routine object.
-        /// </returns>
-        private Routine ServePathPortPipeline(string[] arguments)
+        private IExecutable ServePathPortPipeline(string[] args)
         {
-            if (!PathService.IsProject(arguments[1]))
+            if (!PathService.IsProject(args[1]))
             {
                 MessageService.Log(Message.ProvidedPathIsNotProject());
                 MessageService.Print(true);
             }
 
-            Directory.SetCurrentDirectory(arguments[1]);
-            return new ServeRoutine(arguments[2]);
+            Directory.SetCurrentDirectory(args[1]);
+            return new ServeRoutine(args[2]);
         }
     }
 }

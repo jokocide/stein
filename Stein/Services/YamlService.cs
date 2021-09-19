@@ -1,23 +1,12 @@
-﻿using System;
+﻿using Stein.Interfaces;
+using System;
 using System.Collections.Generic;
 
 namespace Stein.Services
 {
-    /// <summary>
-    /// Methods to interact with and change YAML content.
-    /// </summary>
-    public static class YamlService
+    public class YamlService : IInterpreter
     {
-        /// <summary>
-        /// Find the indices representing the end of the first YAML frontmatter indicator and the beginning of the
-        /// second YAML frontmatter indicator. all indices between these two numbers represent frontmatter.
-        /// </summary>
-        /// <param name="text">A string containing YAML frontmatter.</param>
-        /// <returns>
-        /// A tuple representing the beginning and ending indices of the frontmatter content
-        /// (without the traditional YAML '---' indicators)
-        /// </returns>
-        public static (int FirstStart, int FirstEnd, int SecondStart, int SecondEnd) GetIndices(string text)
+        public (int FirstStart, int FirstEnd, int SecondStart, int SecondEnd) GetIndicatorIndices(string text)
         {
             int firstStart = text.IndexOf("---", StringComparison.Ordinal);
             int firstEnd = firstStart + 3;
@@ -27,26 +16,17 @@ namespace Stein.Services
             return (firstStart, firstEnd, secondStart, secondEnd);
         }
 
-        /// <summary>
-        /// Create a MetaData object by dividing key/value pairs by a specified delimiter, or ':' by
-        /// default if no delimiter is given.
-        /// </summary>
-        /// <param name="text">The source string.</param>
-        /// <param name="delimiter">The delimiter that will be used to divide the lines.</param>
-        /// <returns>
-        /// A new MetaData object containing the key/value pairs from the source string.
-        /// </returns>
-        public static Dictionary<string, string> Deserialize(string text, string delimiter = ":")
+        public Dictionary<string, string> Deserialize(string text)
         {
-            var dictionary = new Dictionary<string, string>();
-            string[] lines = text.Split(Environment.NewLine);
+            Dictionary<string, string> dictionary = new();
 
+            string[] lines = text.Split(Environment.NewLine);
             foreach (string line in lines)
             {
-                string[] splitLines = line.Split(delimiter, 2);
+                string[] splitLines = line.Split(":", 2);
                 string key = splitLines[0].Trim();
 
-                // If the key contains a space it is removed and made camel-case.
+                // Keys with whitespace are camel cased by default!
                 if (key.Contains(" ")) key = StringService.Camelize(key);
 
                 string value = splitLines[1].Trim();

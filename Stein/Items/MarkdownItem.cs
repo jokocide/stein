@@ -1,4 +1,5 @@
 ﻿using Markdig;
+using Stein.Interfaces;
 using Stein.Models;
 using Stein.Services;
 using System;
@@ -7,36 +8,18 @@ using System.IO;
 
 namespace Stein.Collections
 {
-    /// <summary>
-    /// Represents a Markdown file.
-    /// </summary>
-    public sealed class MarkdownItem : Item
+    public sealed class MarkdownItem : Item, ISerializable
     {
-        /// <summary>
-        /// Contains all YAML Frontmatter.
-        /// </summary>
-        internal Dictionary<string, string> Frontmatter { get; } = new();
+        public MarkdownItem(FileInfo fileInfo) : base(fileInfo) => Link = PathService.GetIterablePath(Info);
 
-        /// <summary>
-        /// Stores the HTML body.
-        /// </summary>
+        public Dictionary<string, string> Frontmatter { get; } = new();
+
         private string Body { get; set; }
 
-        public MarkdownItem(FileInfo fileInfo) : base(fileInfo)
+        public SerializedItem Serialize()
         {
-            Link = PathService.GetIterablePath(Info);
-        }
-
-        /// <summary>
-        /// Return all data in a format suitable for template injection.
-        /// </summary>
-        /// <returns>
-        /// A dynamic object that is ready to be injected into a template.
-        /// </returns>
-        internal override Injectable Serialize()
-        {
-            dynamic injectable = new Injectable();
-            Injectable castedInjectable = (Injectable)injectable;
+            dynamic injectable = new SerializedItem();
+            SerializedItem castedInjectable = (SerializedItem)injectable;
 
             injectable.Link = Link;
             injectable.Date = Date;
@@ -51,16 +34,13 @@ namespace Stein.Collections
             return injectable;
         }
 
-        /// <summary>
-        /// Populate the properties of this Resource.
-        /// </summary>
-        internal override void Process(Store store)
+        public override void Process(Store store)
         {
             // Raw contents of the file will be stored here.
             string rawFile = null;
 
             // Reading with ReadWrite on FileAccess & FileShare will prevent IOException during ServeRoutine.
-            using (var stream = File.Open(Info.FullName, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
+            using (var stream = File.Open(Info.FullName, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
                 var reader = new StreamReader(stream);
                 rawFile = reader.ReadToEnd();

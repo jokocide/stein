@@ -1,37 +1,26 @@
 using System.IO;
+using Stein.Interfaces;
 using Stein.Models;
 using Stein.Routines;
 using Stein.Services;
 
 namespace Stein.Pipelines
 {
-    /// <summary>
-    /// A Pipeline to handle the build command.
-    /// </summary>
-    public sealed class BuildPipeline : Pipeline
+    public sealed class BuildPipeline : Pipeline, IEvaluator
     {
-        /// <summary>
-        /// The maximum expected arguments for a build command.
-        /// </summary>
-        private int MaxBuildArguments => 2;
+        private int MaxBuildArgs => 2;
 
-        public BuildPipeline(string[] arguments) : base(arguments) { }
+        public BuildPipeline(string[] args) : base(args) { }
 
-        /// <summary>
-        /// Return a BuildRoutine, or a HelpRoutine if the command is invalid.
-        /// </summary>
-        /// <returns>
-        /// A Routine object.
-        /// </returns>
-        public override Routine Execute()
+        public IExecutable Evaluate()
         {
-            if (Arguments.Length > MaxBuildArguments)
+            if (Args.Length > MaxBuildArgs)
             {
-                MessageService.Log(Message.TooManyArguments());
+                MessageService.Log(Message.TooManyArgs());
                 MessageService.Print(true);
             }
 
-            if (Arguments.Length > 1) return PipelineBuildPath(Arguments);
+            if (Args.Length > 1) return PipelineBuildPath(Args);
 
             if (!PathService.IsProject())
             {
@@ -42,16 +31,7 @@ namespace Stein.Pipelines
             return new BuildRoutine();
         }
 
-        /// <summary>
-        /// Handle build commands that have received a path argument.
-        /// </summary>
-        /// <param name="arguments">
-        /// The arguments received from the command line.
-        /// </param>
-        /// <returns>
-        /// A Routine object.
-        /// </returns>
-        private static Routine PipelineBuildPath(string[] arguments)
+        private static IExecutable PipelineBuildPath(string[] arguments)
         {
             try
             {

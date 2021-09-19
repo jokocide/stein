@@ -1,22 +1,14 @@
-﻿using Stein.Models;
+﻿using Stein.Interfaces;
+using Stein.Models;
 using Stein.Routines;
 
 namespace Stein.Pipelines
 {
-    /// <summary>
-    /// A Pipeline to handle commands that are not recognized.
-    /// </summary>
-    public sealed class NotRecognizedPipeline : Pipeline
+    public sealed class NotRecognizedPipeline : Pipeline, IEvaluator
     {
-        public NotRecognizedPipeline(string[] arguments) : base(arguments) { }
+        public NotRecognizedPipeline(string[] args) : base(args) { }
 
-        /// <summary>
-        /// Return a NotRecognizedRoutine.
-        /// </summary>
-        /// <returns>
-        /// A Routine object.
-        /// </returns>
-        public override Routine Execute()
+        public IExecutable Evaluate()
         {
             return new NotRecognizedRoutine();
         }

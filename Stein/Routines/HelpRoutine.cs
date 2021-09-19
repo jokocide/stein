@@ -1,26 +1,16 @@
-using static System.Console;
 using static System.ConsoleColor;
-using Stein.Models;
 using static Stein.Services.StringService;
+using Stein.Interfaces;
 
 namespace Stein.Routines
 {
-    /// <summary>
-    /// Provide a method that allows documentation to be displayed.
-    /// </summary>
-    public sealed class HelpRoutine : Routine
+    public sealed class HelpRoutine : IExecutable
     {
         private HelpTopic Topic { get; }
+
+        public HelpRoutine(HelpTopic topic = HelpTopic.General) => Topic = topic;
         
-        public HelpRoutine(HelpTopic topic = HelpTopic.General)
-        {
-            Topic = topic;
-        }
-        
-        /// <summary>
-        /// Write documentation to stdout.
-        /// </summary>
-        public override void Execute()
+        public void Execute()
         {
             if (Topic is HelpTopic.Build)
             {

@@ -1,22 +1,30 @@
-﻿using System.Collections.Generic;
+﻿using Stein.Interfaces;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Stein.Models
 {
-    /// <summary>
-    /// Represents a group of Resource objects from the same origin.
-    /// </summary>
-    public class Collection
+    public class Collection : ISerializable
     {
-        /// <summary>
-        /// A DirectoryInfo from the collection directory.
-        /// </summary>
         public DirectoryInfo Info { get; }
 
-        /// <summary>
-        /// The Resource objects that are a part of this collection.
-        /// </summary>
-        public List<Item> Items { get; } = new();
+        public List<ISerializable> Items { get; } = new();
+
+        public SerializedItem Serialize()
+        {
+            SerializedItem serializedCollection = new();
+            List<SerializedItem> serializedMembers = new();
+
+            serializedCollection.Add(Info.Name, serializedMembers);
+
+            Items.ForEach(item =>
+            {
+                SerializedItem serializedMember = item.Serialize();
+                serializedMembers.Add(serializedMember);
+            });
+
+            return serializedCollection;
+        }
 
         public Collection(DirectoryInfo directoryInfo) => Info = directoryInfo;
     }

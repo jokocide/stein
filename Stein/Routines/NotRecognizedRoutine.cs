@@ -1,11 +1,12 @@
-﻿using Stein.Models;
+﻿using Stein.Interfaces;
+using Stein.Models;
 using Stein.Services;
 
 namespace Stein.Routines
 {
-    class NotRecognizedRoutine : Routine
+    class NotRecognizedRoutine : IExecutable
     {
-        public override void Execute()
+        public void Execute()
         {
             MessageService.Log(Message.CommandNotRecognized());
             MessageService.Print(true);

@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using HandlebarsDotNet;
 using Stein.Collections;
+using Stein.Interfaces;
 using Stein.Services;
 
 namespace Stein.Models
@@ -43,19 +44,23 @@ namespace Stein.Models
             // if the template is not found in the expected location.
             string rawTemplate;
             string commonPath = Path.Join(PathService.TemplatesPath, resource.Template);
+
+            string resolvedPath;
             FileStream stream;
 
             // Template has an extension.
             if (Path.HasExtension(resource.Template))
             {
-                stream = File.Open(commonPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+                resolvedPath = commonPath;
             }
 
             // Template has no extension.
             else
             {
-                stream = File.Open(commonPath + ".hbs", FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+                resolvedPath = commonPath + ".hbs";
             }
+
+            stream = File.Open(resolvedPath, FileMode.Open, FileAccess.Read, FileShare.Read);
 
             StreamReader reader = new StreamReader(stream);
             rawTemplate = reader.ReadToEnd();
@@ -63,7 +68,8 @@ namespace Stein.Models
             stream.Close();
 
             // Retrieve an injectable.
-            Injectable injectable = resource.Serialize();
+            IInjectable castedResource = (IInjectable)resource;
+            Injectable injectable = castedResource.Serialize();
 
             // Compile, render and return.
             var compiledTemplate = Handlebars.Compile(rawTemplate);

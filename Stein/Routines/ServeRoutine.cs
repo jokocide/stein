@@ -3,47 +3,34 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Timers;
+using Stein.Interfaces;
 using Stein.Models;
 using Stein.Services;
 
 namespace Stein.Routines
 {
-    /// <summary>
-    /// Provides file watching and HTTP server capabilities for a project.
-    /// </summary>
-    public sealed class ServeRoutine : Routine
+    public sealed class ServeRoutine : IExecutable
     {
-        /// <summary>The port to run the server on.</summary>
-        private string ServerPort { get; }
+        private string Port { get; }
+
+        private string Address { get; } = "http://localhost:";
 
         /// <summary>
-        /// The server addresses, defaults to localhost + ServerPort or 
-        /// http://localhost:8000 by default.
+        /// Temporarily store the name of files that have emitted an event 
+        /// here, necessary to avoid multiple event emits from a single change.
         /// </summary>
-        private string[] ServerPrefixes { get; } = { "http://localhost:" };
-
-        /// <summary>
-        /// Used to store files that have recently emitted events. When an event is detected,
-        /// the event will be ignored if the file exists in this list. This is necessary because
-        /// .NET emits multiple events from a single logical action, and that would cause multiple 
-        /// project rebuilds for a single change.
-        /// </summary>
-        private List<string> ServerCache { get; } = new();
+        private List<string> Cache { get; } = new();
 
         public ServeRoutine(string port = "8000")
         {
-            ServerPort = port;
-            ServerPrefixes[0] += $"{port}/";
+            Port = port;
+            Address += $"{port}/";
         }
 
-        /// <summary>
-        /// Watch a project for changes to the resources directory, trigger BuildRoutine.Execute() when
-        /// a change is detected.
-        /// </summary>
-        public override void Execute()
+        public void Execute()
         {
             HttpListener listener = new HttpListener();
-            foreach (string prefix in ServerPrefixes) listener.Prefixes.Add(prefix);
+            listener.Prefixes.Add(Address);
 
             FileSystemWatcher watcher = new(PathService.ResourcesPath);
             watcher.IncludeSubdirectories = true;
@@ -66,7 +53,7 @@ namespace Stein.Routines
             string projectName = Path.GetFileName(Directory.GetCurrentDirectory());
             StringService.Colorize($"({DateTime.Now:T}) ", ConsoleColor.Gray, false);
             StringService.Colorize($"Serving {projectName} ", ConsoleColor.White, false);
-            StringService.Colorize($"on http://localhost:{ServerPort}", ConsoleColor.White, true);
+            StringService.Colorize($"on http://localhost:{Port}", ConsoleColor.White, true);
 
             while (true)
             {
@@ -120,8 +107,8 @@ namespace Stein.Routines
 
         private void HandleEvent(object sender, FileSystemEventArgs e)
         {
-            if (ServerCache.Contains(e.FullPath)) return;
-            ServerCache.Add(e.FullPath);
+            if (Cache.Contains(e.FullPath)) return;
+            Cache.Add(e.FullPath);
 
             if (e.ChangeType == WatcherChangeTypes.Changed)
             {
@@ -132,9 +119,9 @@ namespace Stein.Routines
 
             timer.Elapsed += (timerElapsedSender, timerElapsedArgs) =>
             {
-                lock (ServerCache)
+                lock (Cache)
                 {
-                    ServerCache.Remove(e.FullPath);
+                    Cache.Remove(e.FullPath);
                 }
             };
 

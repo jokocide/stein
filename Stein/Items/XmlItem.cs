@@ -5,9 +5,9 @@ using Stein.Models;
 
 namespace Stein.Collections
 {
-    public sealed class JsonItem : Item, ISerializable
+    public sealed class XmlItem : Item, ISerializable
     {
-        public JsonItem(FileInfo fileInfo) : base(fileInfo) { }
+        public XmlItem(FileInfo fileInfo) : base(fileInfo) { }
 
         public SerializedItem Serialize()
         {

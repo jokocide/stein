@@ -1,49 +1,21 @@
+using Stein.Interfaces;
 using Stein.Pipelines;
 
 namespace Stein.Models
 {
-    /// <summary>
-    /// Base class for all Pipeline types. A Pipeline is an object type that can evaluate command line arguments.
-    /// </summary>
     public abstract class Pipeline
     {
-        /// <summary>
-        /// The arguments received from the command line are stored here.
-        /// </summary>
-        protected string[] Arguments { get; }
+        protected string[] Args { get; }
 
-        protected Pipeline(string[] arguments) => Arguments = arguments;
+        protected Pipeline(string[] args) => Args = args;
         
-        /// <summary>
-        /// Evaluate the arguments provided during object instantiation and return a suitable Routine.
-        /// </summary>
-        /// <returns>A Routine object.</returns>
-        public abstract Routine Execute();
-
-        /// <summary>
-        /// Evaluate the given command line arguments and return a suitable Pipeline.
-        /// </summary>
-        /// <param name="arguments">Arguments received from the command line.</param>
-        /// <returns>
-        /// A Pipeline object that can be used to evaluate command line arguments,
-        /// set up the program, and determine which Routine we should be using to
-        /// complete the requested action.
-        /// </returns>
-        public static Pipeline GetPipeline(string[] arguments)
+        public static IEvaluator GetPipeline(string[] args)
         {
-            if (arguments.Length == 0 || arguments[0].ToLower() == "help") 
-                return new HelpPipeline(arguments);
-
-            else if (arguments[0].ToLower() == "build") return 
-                    new BuildPipeline(arguments);
-
-            else if (arguments[0].ToLower() == "new") 
-                return new NewPipeline(arguments);
-
-            else if (arguments[0].ToLower() == "serve") 
-                return new ServePipeline(arguments);
-
-            else return new NotRecognizedPipeline(arguments);
+            if (args.Length == 0 || args[0].ToLower() == "help") return new HelpPipeline(args);
+            else if (args[0].ToLower() == "build") return new BuildPipeline(args);
+            else if (args[0].ToLower() == "new") return new NewPipeline(args);
+            else if (args[0].ToLower() == "serve") return new ServePipeline(args);
+            else return new NotRecognizedPipeline(args);
         }
     }
 }

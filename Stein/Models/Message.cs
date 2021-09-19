@@ -28,7 +28,7 @@ namespace Stein.Models
         /// of allowed arguments.
         /// </summary>
         /// <returns>A Message object.</returns>
-        public static Message TooManyArguments()
+        public static Message TooManyArgs()
         {
             Message message = new("Received too many arguments.", InfoType.Error);
             return message;

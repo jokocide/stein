@@ -1,29 +1,20 @@
 ﻿using System;
 using System.IO;
+using Stein.Interfaces;
 using Stein.Models;
 
 namespace Stein.Collections
 {
-    /// <summary>
-    /// Represents a TOML file.
-    /// </summary>
-    public sealed class TomlItem : Item
+    public sealed class TomlItem : Item, ISerializable
     {
         public TomlItem(FileInfo fileInfo) : base(fileInfo) { }
 
-        /// <summary>
-        /// Return all data in a format suitable for template injection.
-        /// </summary>
-        /// <returns></returns>
-        internal override Injectable Serialize()
+        public SerializedItem Serialize()
         {
             throw new NotImplementedException();
         }
 
-        /// <summary>
-        /// Populate the properties of this Resource.
-        /// </summary>
-        internal override void Process(Store store)
+        public override void Process(Store store)
         {
             throw new NotImplementedException();
         }
