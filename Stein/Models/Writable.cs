@@ -2,7 +2,6 @@ using System;
 using System.IO;
 using HandlebarsDotNet;
 using Stein.Collections;
-using Stein.Interfaces;
 using Stein.Services;
 
 namespace Stein.Models

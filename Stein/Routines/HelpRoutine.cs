@@ -1,15 +1,27 @@
 using static System.ConsoleColor;
 using static Stein.Services.StringService;
 using Stein.Interfaces;
+using Stein.Models;
 
 namespace Stein.Routines
 {
-    public sealed class HelpRoutine : IExecutable
+    public sealed class HelpRoutine : Routine, IExecutable
     {
-        private HelpTopic Topic { get; }
+        public HelpRoutine(Configuration config) : base(config) { }
 
-        public HelpRoutine(HelpTopic topic = HelpTopic.General) => Topic = topic;
-        
+        public HelpRoutine(Configuration config, HelpTopic topic = HelpTopic.General) : base(config)
+        {
+            Topic = topic;
+        }
+
+        public static HelpRoutine GetDefault => new HelpRoutine(new Configuration());
+
+        public static HelpRoutine GetBuildTopic => new HelpRoutine(new ConfigurationService().GetConfigOrNew(), HelpTopic.Build);
+
+        public static HelpRoutine GetNewTopic => new HelpRoutine(new ConfigurationService().GetConfigOrNew(), HelpTopic.New);
+
+        public static HelpRoutine GetServeTopic => new HelpRoutine(new ConfigurationService().GetConfigOrNew(), HelpTopic.Serve);
+
         public void Execute()
         {
             if (Topic is HelpTopic.Build)
@@ -88,5 +100,7 @@ namespace Stein.Routines
             New,
             Serve
         }
+
+        private HelpTopic Topic { get; }
     }
 }

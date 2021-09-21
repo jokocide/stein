@@ -1,5 +1,4 @@
-﻿using Stein.Interfaces;
-using Stein.Models;
+﻿using Stein.Models;
 
 namespace Stein
 {
@@ -7,9 +6,13 @@ namespace Stein
     {
         private static void Main(string[] args)
         {
-            IEvaluator pipeline = Pipeline.GetPipeline(args);
-            IExecutable routine = pipeline.Evaluate();
-            routine.Execute();
+            Pipeline.GetPipeline(args).Evaluate().Execute();
+
+            // Program.cs -- done
+            // Models/Pipeline.cs -- done
+            // Models/Routine.cs -- done
+            // Pipelines/* -- done
+            // Routines/* -- done
         }
     }
 }

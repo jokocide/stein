@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using Stein.Interfaces;
 using Stein.Models;
@@ -9,8 +8,6 @@ namespace Stein.Pipelines
 {
     public sealed class ServePipeline : Pipeline, IEvaluator
     {
-        private int MaxServeArgs => 3;
-
         public ServePipeline(string[] args) : base(args) { }
 
         public IExecutable Evaluate()
@@ -29,8 +26,10 @@ namespace Stein.Pipelines
                 MessageService.Print(true);
             }
 
-            return new ServeRoutine();
+            return ServeRoutine.GetDefault;
         }
+
+        private int MaxServeArgs => 3;
 
         private IExecutable ServePathPipeline(string[] args)
         {
@@ -38,11 +37,9 @@ namespace Stein.Pipelines
 
             if (!PathService.IsProject(args[1]))
             {
-                int number;
-
-                if (Int32.TryParse(args[1], out number))
+                if (int.TryParse(args[1], out _) && (args[1].Length == 4 || args[1].Length == 5))
                 {
-                    return new ServeRoutine(args[1]);
+                    return new ServeRoutine(new Configuration(), args[1]);
                 }
 
                 MessageService.Log(Message.ProvidedPathIsNotProject());
@@ -50,7 +47,7 @@ namespace Stein.Pipelines
             }
 
             Directory.SetCurrentDirectory(args[1]);
-            return new ServeRoutine();
+            return ServeRoutine.GetDefault;
         }
 
         private IExecutable ServePathPortPipeline(string[] args)
@@ -62,7 +59,7 @@ namespace Stein.Pipelines
             }
 
             Directory.SetCurrentDirectory(args[1]);
-            return new ServeRoutine(args[2]);
+            return new ServeRoutine(new Configuration(), args[2]);
         }
     }
 }

@@ -7,8 +7,6 @@ namespace Stein.Pipelines
 {
     public sealed class HelpPipeline : Pipeline, IEvaluator
     {
-        private int MaxHelpArgs => 2;
-
         public HelpPipeline(string[] args) : base(args) { }
 
         public IExecutable Evaluate()
@@ -19,8 +17,10 @@ namespace Stein.Pipelines
                 MessageService.Print(true);
             }
 
-            return Args.Length > 1 ? PipelineHelpTopic() : new HelpRoutine();
+            return Args.Length > 1 ? PipelineHelpTopic() : HelpRoutine.GetDefault;
         }
+
+        private int MaxHelpArgs => 2;
 
         private IExecutable PipelineHelpTopic()
         {
@@ -34,9 +34,9 @@ namespace Stein.Pipelines
 
             return topic switch
             {
-                "build" => new HelpRoutine(HelpRoutine.HelpTopic.Build),
-                "new" => new HelpRoutine(HelpRoutine.HelpTopic.New),
-                _ => new HelpRoutine(HelpRoutine.HelpTopic.Serve)
+                "build" => HelpRoutine.GetBuildTopic,
+                "new" => HelpRoutine.GetNewTopic,
+                _ => HelpRoutine.GetServeTopic
             };
         }
     }

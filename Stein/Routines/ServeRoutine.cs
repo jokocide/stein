@@ -9,23 +9,13 @@ using Stein.Services;
 
 namespace Stein.Routines
 {
-    public sealed class ServeRoutine : IExecutable
+    public sealed class ServeRoutine : Routine, IExecutable
     {
-        private string Port { get; }
+        public ServeRoutine(Configuration config) : base(config) { }
 
-        private string Address { get; } = "http://localhost:";
+        public ServeRoutine(Configuration config, string port) : this(config) => Address = $"http://localhost:{port}/";
 
-        /// <summary>
-        /// Temporarily store the name of files that have emitted an event 
-        /// here, necessary to avoid multiple event emits from a single change.
-        /// </summary>
-        private List<string> Cache { get; } = new();
-
-        public ServeRoutine(string port = "8000")
-        {
-            Port = port;
-            Address += $"{port}/";
-        }
+        public static ServeRoutine GetDefault => new ServeRoutine(new ConfigurationService().GetConfigOrNew());
 
         public void Execute()
         {
@@ -105,6 +95,16 @@ namespace Stein.Routines
             }
         }
 
+        private string Port { get; }
+
+        private string Address { get; } = "http://localhost:8000/";
+
+        /// <summary>
+        /// Temporarily store the name of files that have emitted an event 
+        /// here, necessary to avoid multiple event emits from a single change.
+        /// </summary>
+        private List<string> Cache { get; } = new();
+
         private void HandleEvent(object sender, FileSystemEventArgs e)
         {
             if (Cache.Contains(e.FullPath)) return;
@@ -128,16 +128,12 @@ namespace Stein.Routines
             timer.Start();
         }
 
-        private void FullRebuild()
-        {
-            BuildRoutine build = new();
-            build.Execute();
-        }
-
         private void HandleError(object sender, ErrorEventArgs e)
         {
             MessageService.Log(new Message($"Server restart is required: ({e.GetException().Message})", Message.InfoType.Error));
             MessageService.Print(true);
         }
+
+        private void FullRebuild() => BuildRoutine.GetDefault.Execute();
     }
 }

@@ -8,8 +8,6 @@ namespace Stein.Pipelines
 {
     public sealed class NewPipeline : Pipeline, IEvaluator
     {
-        private int MaxNewArgs => 2;
-
         public NewPipeline(string[] args) : base(args) { }
 
         public IExecutable Evaluate()
@@ -20,8 +18,10 @@ namespace Stein.Pipelines
                 MessageService.Print(true);
             }
 
-            return Args.Length > 1 ? PipelineNewPath(Args) : new NewRoutine();
+            return Args.Length > 1 ? PipelineNewPath(Args) : NewRoutine.GetDefault;
         }
+
+        private int MaxNewArgs => 2;
 
         private IExecutable PipelineNewPath(string[] arguments)
         {
@@ -39,7 +39,7 @@ namespace Stein.Pipelines
             }
 
             Directory.SetCurrentDirectory(arguments[1]);
-            return new NewRoutine();
+            return NewRoutine.GetDefault;
         }
     }
 }

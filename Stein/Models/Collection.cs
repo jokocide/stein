@@ -8,7 +8,7 @@ namespace Stein.Models
     {
         public DirectoryInfo Info { get; }
 
-        public List<ISerializable> Items { get; } = new();
+        public List<Item> Items { get; } = new();
 
         public SerializedItem Serialize()
         {
@@ -19,7 +19,9 @@ namespace Stein.Models
 
             Items.ForEach(item =>
             {
-                SerializedItem serializedMember = item.Serialize();
+                ISerializable castedItem = item as ISerializable;
+
+                SerializedItem serializedMember = castedItem.Serialize();
                 serializedMembers.Add(serializedMember);
             });
 

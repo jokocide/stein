@@ -1,4 +1,5 @@
 ﻿using Stein.Interfaces;
+using Stein.Models;
 using System.Collections.Generic;
 using System.Text.Json;
 
@@ -23,6 +24,11 @@ namespace Stein.Services
             {
                 return null;
             }
+        }
+
+        public string Serialize(Configuration config)
+        {
+            return JsonSerializer.Serialize(config, Options);
         }
     }
 }

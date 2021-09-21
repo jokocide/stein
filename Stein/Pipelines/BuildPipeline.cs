@@ -8,8 +8,6 @@ namespace Stein.Pipelines
 {
     public sealed class BuildPipeline : Pipeline, IEvaluator
     {
-        private int MaxBuildArgs => 2;
-
         public BuildPipeline(string[] args) : base(args) { }
 
         public IExecutable Evaluate()
@@ -28,8 +26,10 @@ namespace Stein.Pipelines
                 MessageService.Print(true);
             }
 
-            return new BuildRoutine();
+            return BuildRoutine.GetDefault;
         }
+
+        private int MaxBuildArgs => 2;
 
         private static IExecutable PipelineBuildPath(string[] arguments)
         {
@@ -49,7 +49,7 @@ namespace Stein.Pipelines
                 MessageService.Print(true);
             }
 
-            return new BuildRoutine();
+            return BuildRoutine.GetDefault;
         }
     }
 }

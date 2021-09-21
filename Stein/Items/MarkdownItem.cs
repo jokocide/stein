@@ -34,7 +34,7 @@ namespace Stein.Collections
             return injectable;
         }
 
-        public override void Process(Store store)
+        public override Writable Process()
         {
             // Raw contents of the file will be stored here.
             string rawFile = null;
@@ -47,7 +47,7 @@ namespace Stein.Collections
             }
 
             // Ignore empty files.
-            if (String.IsNullOrEmpty(rawFile)) return;
+            if (String.IsNullOrEmpty(rawFile)) return null;
 
             // Develop a 'slug' based on the file name.
             Slug = StringService.Slugify(Path.GetFileNameWithoutExtension(Info.Name));
@@ -84,7 +84,7 @@ namespace Stein.Collections
             Body = Markdown.ToHtml(untransformedBody);
 
             if (Issues.Contains(InvalidType.NoFrontmatter) ||
-                Issues.Contains(InvalidType.InvalidFrontmatter)) return;
+                Issues.Contains(InvalidType.InvalidFrontmatter)) return null;
 
             // The key/value pairs derived from the YAML are temporarily stored here.
             Dictionary<string, string> rawPairs = new();
@@ -104,7 +104,7 @@ namespace Stein.Collections
             }
 
             // If the frontmatter is invalid for any reason, return here.
-            if (Issues.Contains(InvalidType.InvalidFrontmatter)) return;
+            if (Issues.Contains(InvalidType.InvalidFrontmatter)) return null;
 
             // Using the raw key/value pairs to populate the properties of the object.
             foreach (var (key, value) in rawPairs)
@@ -127,7 +127,7 @@ namespace Stein.Collections
             if (Template == null)
             {
                 MessageService.Log(Message.NoTemplateKey(Info));
-                return;
+                return null;
             }
 
             // Writable is stored here.
@@ -143,11 +143,12 @@ namespace Stein.Collections
             {
                 Invalidate(InvalidType.TemplateNotFound);
                 MessageService.Log(Message.TemplateNotFound(Info));
-                return;
+                return null;
             }
 
             // Register the Writable with a Store object.
-            store.Writable.Add(writable);
+            //store.Writable.Add(writable);
+            return writable;
         }
     }
 }

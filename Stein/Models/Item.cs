@@ -10,7 +10,7 @@ namespace Stein.Models
 
         public FileInfo Info { get; }
 
-        public abstract void Process(Store store);
+        public abstract Writable Process();
 
         public string Template { get; set; }
 

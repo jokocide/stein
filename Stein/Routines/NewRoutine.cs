@@ -6,8 +6,12 @@ using Stein.Services;
 
 namespace Stein.Routines
 {
-    public sealed class NewRoutine : IExecutable
+    public sealed class NewRoutine : Routine, IExecutable
     {
+        public NewRoutine(Configuration config) : base(config) { }
+
+        public static NewRoutine GetDefault => new NewRoutine(new ConfigurationService().GetConfigOrNew());
+
         public void Execute()
         {
             if (File.Exists("stein.json"))
@@ -16,7 +20,7 @@ namespace Stein.Routines
                 MessageService.Print(true);
             }
 
-            File.WriteAllText("stein.json", ConfigurationService.Defaults);
+            File.WriteAllText("stein.json", new JsonService().Serialize(new Configuration()));
 
             Directory.CreateDirectory(Path.Join("resources", "pages"));
             Directory.CreateDirectory(Path.Join("resources", "templates", "partials"));

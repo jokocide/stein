@@ -12,7 +12,7 @@ namespace Stein.Models
             _dictionary.Add(key.ToLower(), value);
         }
 
-        public Dictionary<string, object> ReturnMembers()
+        public Dictionary<string, object> GetMembers()
         {
             return _dictionary;
         }

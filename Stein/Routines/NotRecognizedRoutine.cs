@@ -4,7 +4,7 @@ using Stein.Services;
 
 namespace Stein.Routines
 {
-    class NotRecognizedRoutine : IExecutable
+    public sealed class NotRecognizedRoutine : IExecutable
     {
         public void Execute()
         {

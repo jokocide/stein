@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using System.Linq;
 using Stein.Models;
 using Stein.Collections;
 using Stein.Services;
@@ -10,11 +9,14 @@ using System.Collections.Generic;
 
 namespace Stein.Routines
 {
-    public sealed class BuildRoutine : IExecutable
+    public sealed class BuildRoutine : Routine, IExecutable
     {
+        public BuildRoutine(Store store, Configuration config) : base(store, config) { }
+        
+        public static BuildRoutine GetDefault => new BuildRoutine(new Store(), new ConfigurationService().GetConfigOrNew());
+
         public void Execute()
         {
-            Store store = new();
             DirectoryInfo projectInfo = new DirectoryInfo(Directory.GetCurrentDirectory());
 
             // 1. <PARTIALS>
@@ -26,19 +28,21 @@ namespace Stein.Routines
             // 2. <COLLECTIONS>
             // Collection items are processed second, so that they become available for iteration
             // as soon as possible.
-            foreach (string directoryPath in Directory.GetDirectories(PathService.CollectionsPath))
+            string[] collectionPaths = Directory.GetDirectories(PathService.CollectionsPath);
+            foreach (string path in collectionPaths)
             {
-                DirectoryInfo collectionInfo = new(directoryPath);
-                Collection collection = new(collectionInfo);
-                foreach (FileInfo info in collectionInfo.GetFiles())
+                DirectoryInfo info = new(path);
+                Collection collection = new(info);
+
+                foreach (FileInfo file in info.GetFiles())
                 {
-                    if (info.Extension == "")
+                    if (file.Extension == "")
                     {
-                        MessageService.Log(Message.NoExtension(info));
+                        MessageService.Log(Message.NoExtension(file));
                         continue;
                     }
 
-                    Item item = Item.GetItem(info);
+                    Item item = Item.GetItem(file);
 
                     if (item is not MarkdownItem)
                     {
@@ -46,14 +50,13 @@ namespace Stein.Routines
                         continue;
                     }
 
-                    if (item is ISerializable castedItem)
-                    {
-                        item.Process(store);
-                        collection.Items.Add(castedItem);
-                    }
+                    Writable writable = item.Process();
+                    if (writable != null) Store.Writable.Add(writable);
+
+                    collection.Items.Add(item);
                 }
 
-                store.Collections.Add(collection);
+                Store.Collections.Add(collection);
             }
 
             // 3. <INJECTABLE>
@@ -62,16 +65,27 @@ namespace Stein.Routines
             // template rendering step.
             Injectable injectable = new();
 
-            SerializedItem serializedConfiguration = new Configuration().Serialize();
-            Dictionary<string, object> configurationDictionary = serializedConfiguration.ReturnMembers();
-            configurationDictionary.ToList().ForEach(pair => injectable.Items.Add(pair.Key, pair.Value));
+            // Configuration is serialized and injected.
+            SerializedItem configuration = new ConfigurationService().Serialize();
+            Dictionary<string, object> members = configuration.GetMembers();
 
-            foreach (Collection collection in store.Collections)
+            foreach (KeyValuePair<string, object> pair in members)
+                injectable.Items.Add(pair.Key, pair.Value);
+
+            // Collections are serialized and injected.
+            foreach (Collection collection in Store.Collections)
             {
                 DateService.LatestDateSort(collection);
 
-                SerializedItem serializedCollection = collection.Serialize();
-                injectable.Items.Add(collection.)
+                List<SerializedItem> serializedMembers = new();
+                //collection.Items.ForEach(item => serializedMembers.Add(item.Serialize()));
+                collection.Items.ForEach(item =>
+                {
+                    ISerializable castedItem = item as ISerializable;
+                    serializedMembers.Add(castedItem.Serialize());
+                });
+
+                injectable.Items.Add(collection.Info.Name, serializedMembers);
             }
 
             // 4. <PAGE>
@@ -89,10 +103,10 @@ namespace Stein.Routines
 
                 HandlebarsTemplate<object, object> compiledTemplate = Handlebars.Compile(rawFile);
 
-                var renderedTemplate = compiledTemplate(injectables);
+                var renderedTemplate = compiledTemplate(injectable);
 
                 Writable writable = new(info, renderedTemplate);
-                store.Writable.Add(writable);
+                Store.Writable.Add(writable);
             }
 
             // 5. <CLEAN>
@@ -109,7 +123,7 @@ namespace Stein.Routines
 
             // 7. <WRITE>
             // Export Writable objects.
-            foreach (Writable writable in store.Writable)
+            foreach (Writable writable in Store.Writable)
             {
                 string directory = Path.GetDirectoryName(writable.Target);
                 Directory.CreateDirectory(directory);
@@ -143,7 +157,5 @@ namespace Stein.Routines
         {
             foreach (string path in filePaths) RegisterHandlebarsPartials(path);
         }
-
-
     }
 }
