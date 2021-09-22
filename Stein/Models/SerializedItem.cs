@@ -5,8 +5,6 @@ namespace Stein.Models
 {
     public class SerializedItem : DynamicObject
     {
-        private Dictionary<string, object> _dictionary = new();
-        
         public void Add(string key, object value)
         {
             _dictionary.Add(key.ToLower(), value);
@@ -30,5 +28,7 @@ namespace Stein.Models
             _dictionary[binder.Name.ToLower()] = value;
             return true;
         }
+
+        private Dictionary<string, object> _dictionary = new();
     }
 }

@@ -6,11 +6,7 @@ namespace Stein.Models
 {
     public abstract class Item
     {
-        protected Item(FileInfo fileInfo) => Info = fileInfo;
-
         public FileInfo Info { get; }
-
-        public abstract Writable Process();
 
         public string Template { get; set; }
 
@@ -19,6 +15,10 @@ namespace Stein.Models
         public string Slug { get; set; }
 
         public string Date { get; set; }
+
+        public bool IsInvalid { get; private set; }
+
+        public List<InvalidType> Issues { get; } = new();
 
         public void Invalidate(InvalidType type)
         {
@@ -39,10 +39,6 @@ namespace Stein.Models
             };
         }
 
-        public bool IsInvalid { get; private set; }
-
-        public List<InvalidType> Issues { get; } = new();
-
         public enum InvalidType
         {
             InvalidFrontmatter,
@@ -50,5 +46,9 @@ namespace Stein.Models
             TemplateNotFound,
             NoTemplate
         }
+
+        public abstract Writable Process();
+
+        protected Item(FileInfo fileInfo) => Info = fileInfo;
     }
 }

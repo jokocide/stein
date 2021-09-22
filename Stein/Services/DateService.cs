@@ -5,17 +5,8 @@ namespace Stein.Services
 {
     public static class DateService
     {
-        public enum SortMethod
-        {
-            LatestDate,
-            EarliestDate
-        }
-
         public static void Sort(Collection collection, SortMethod method)
         {
-            // The collections are ISerializable
-            //List<Item> items = (List<Item>)collection.Items.Cast<Item>().ToList();
-
             if (method is SortMethod.LatestDate)
             {
                 collection.Items.Sort(LatestDateComparison);
@@ -26,20 +17,10 @@ namespace Stein.Services
             }
         }
 
-        public static void LatestDateSort(Collection collection)
+        public enum SortMethod
         {
-            //collection.Items.Sort((a, b) =>
-            //{
-            //    Item item = 
-            //    if (a.Date == null && b.Date == null) return 0;
-            //    else if (a.Date == null) return 1;
-            //    else if (b.Date == null) return -1;
-
-            //    DateTime parsedA = DateTime.Parse(a.Date);
-            //    DateTime parsedB = DateTime.Parse(b.Date);
-
-            //    return DateTime.Compare(parsedB, parsedA);
-            //});
+            LatestDate,
+            EarliestDate
         }
 
         private static int LatestDateComparison(Item x, Item y)

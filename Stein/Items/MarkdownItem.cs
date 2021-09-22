@@ -14,8 +14,6 @@ namespace Stein.Collections
 
         public Dictionary<string, string> Frontmatter { get; } = new();
 
-        private string Body { get; set; }
-
         public SerializedItem Serialize()
         {
             dynamic injectable = new SerializedItem();
@@ -36,77 +34,60 @@ namespace Stein.Collections
 
         public override Writable Process()
         {
-            // Raw contents of the file will be stored here.
             string rawFile = null;
 
-            // Reading with ReadWrite on FileAccess & FileShare will prevent IOException during ServeRoutine.
             using (var stream = File.Open(Info.FullName, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
                 var reader = new StreamReader(stream);
                 rawFile = reader.ReadToEnd();
             }
 
-            // Ignore empty files.
             if (String.IsNullOrEmpty(rawFile)) return null;
 
-            // Develop a 'slug' based on the file name.
             Slug = StringService.Slugify(Path.GetFileNameWithoutExtension(Info.Name));
 
-            // The location of the frontmatter key/value pairs within rawFile are stored here.
             (int FirstStart, int FirstEnd, int SecondStart, int SecondEnd) indices = (0, 0, 0, 0);
 
-            // Determine the distance between the first '---' and second '---'.
             int openBlock = rawFile.IndexOf("---");
             int closeBlock = rawFile.IndexOf("---", 2);
 
-            // If the file does not have two instances of '---' or no content is between them.
             if (openBlock == -1 || closeBlock == -1 || closeBlock - openBlock <= 5)
             {
                 Invalidate(InvalidType.InvalidFrontmatter);
                 MessageService.Log(new Message($"No YAML: {Info.Name}", Message.InfoType.Warning));
             }
-            else // Attempt to populate indices.
+            else
             {
-                indices = YamlService.GetIndices(rawFile);
+                indices = new YamlService().GetIndicatorIndices(rawFile);
             }
 
-            // If a problem occurred while getting indices, it will return as (0, 0, 0, 0). We can mark the
-            // file as invalid, but we only do so if the file is not already invalid.
             if (indices == (0, 0, 0, 0) && !Issues.Contains(InvalidType.InvalidFrontmatter))
             {
                 Invalidate(InvalidType.InvalidFrontmatter);
                 MessageService.Log(new Message($"Invalid YAML: {Info.Name}", Message.InfoType.Error));
             }
 
-            // untransformedBody should be equal to the 'body' of the file, not including
-            // any YAML content.
             string untransformedBody = rawFile[indices.SecondEnd..].Trim();
             Body = Markdown.ToHtml(untransformedBody);
 
             if (Issues.Contains(InvalidType.NoFrontmatter) ||
                 Issues.Contains(InvalidType.InvalidFrontmatter)) return null;
 
-            // The key/value pairs derived from the YAML are temporarily stored here.
             Dictionary<string, string> rawPairs = new();
 
-            // Attempt to select all of the YAML content and transform them into
-            // KeyValuePair<string, string>. Store the result in rawPairs.
             try
             {
                 string yamlSection = StringService.Slice(indices.FirstEnd, indices.SecondStart, rawFile).Trim();
-                rawPairs = YamlService.Deserialize(yamlSection);
+                rawPairs = new YamlService().Deserialize(yamlSection);
             }
             catch (IndexOutOfRangeException)
             {
-                // If the YAML is in an unexpected format
                 Invalidate(InvalidType.InvalidFrontmatter);
                 MessageService.Log(new Message($"Invalid key/value pair in YAML: {Info.Name}", Message.InfoType.Error));
             }
 
-            // If the frontmatter is invalid for any reason, return here.
             if (Issues.Contains(InvalidType.InvalidFrontmatter)) return null;
 
-            // Using the raw key/value pairs to populate the properties of the object.
             foreach (var (key, value) in rawPairs)
             {
                 switch (key.ToLower())
@@ -123,18 +104,14 @@ namespace Stein.Collections
                 }
             }
 
-            // Creating a Writable is impossible without a Template key.
             if (Template == null)
             {
                 MessageService.Log(Message.NoTemplateKey(Info));
                 return null;
             }
 
-            // Writable is stored here.
             Writable writable;
 
-            // Attempt to use the information we've derived from the frontmatter to
-            // generate a Writable object.
             try
             {
                 writable = Writable.GetWritable(this);
@@ -146,9 +123,9 @@ namespace Stein.Collections
                 return null;
             }
 
-            // Register the Writable with a Store object.
-            //store.Writable.Add(writable);
             return writable;
         }
+
+        private string Body { get; set; }
     }
 }

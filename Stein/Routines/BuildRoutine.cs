@@ -2,10 +2,10 @@ using System;
 using System.IO;
 using Stein.Models;
 using Stein.Collections;
-using Stein.Services;
 using HandlebarsDotNet;
 using Stein.Interfaces;
 using System.Collections.Generic;
+using Stein.Services;
 
 namespace Stein.Routines
 {
@@ -28,6 +28,7 @@ namespace Stein.Routines
             // 2. <COLLECTIONS>
             // Collection items are processed second, so that they become available for iteration
             // as soon as possible.
+            // 
             string[] collectionPaths = Directory.GetDirectories(PathService.CollectionsPath);
             foreach (string path in collectionPaths)
             {
@@ -75,7 +76,7 @@ namespace Stein.Routines
             // Collections are serialized and injected.
             foreach (Collection collection in Store.Collections)
             {
-                DateService.LatestDateSort(collection);
+                DateService.Sort(collection, DateService.SortMethod.LatestDate);
 
                 List<SerializedItem> serializedMembers = new();
                 //collection.Items.ForEach(item => serializedMembers.Add(item.Serialize()));

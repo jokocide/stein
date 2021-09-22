@@ -8,10 +8,7 @@ namespace Stein.Models
 {
     public class ConfigurationService : ISerializable
     {
-        public ConfigurationService()
-        {
-            Raw = File.ReadAllText("stein.json");
-        }
+        public ConfigurationService() => Raw = File.ReadAllText("stein.json");
 
         public Configuration GetConfigOrNull()
         {

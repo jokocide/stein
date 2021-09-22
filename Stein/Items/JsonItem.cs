@@ -9,14 +9,8 @@ namespace Stein.Collections
     {
         public JsonItem(FileInfo fileInfo) : base(fileInfo) { }
 
-        public SerializedItem Serialize()
-        {
-            throw new NotImplementedException();
-        }
+        public SerializedItem Serialize() => throw new NotImplementedException();
 
-        public override void Process(Store store)
-        {
-            throw new NotImplementedException();
-        }
+        public override Writable Process() => throw new NotImplementedException();
     }
 }
