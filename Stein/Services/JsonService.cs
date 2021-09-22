@@ -16,14 +16,31 @@ namespace Stein.Services
 
         public Dictionary<string, string> Deserialize(string text)
         {
+            Dictionary<string, string> dictionary = new();
+
             try
             {
-                return JsonSerializer.Deserialize<Dictionary<string, string>>(text, Options);
+                using (JsonDocument document = JsonDocument.Parse(text))
+                {
+                    JsonElement root = document.RootElement;
+                    var objectEnum = root.EnumerateObject();
+
+                    foreach(JsonProperty pair in objectEnum)
+                    {
+                        string key = pair.Name;
+                        JsonElement value = pair.Value;
+
+                        dictionary.Add(key, value.ToString());
+                    }
+                }
             }
-            catch (JsonException)
+            catch
             {
                 return null;
             }
+
+            return dictionary;
+
         }
 
         public string Serialize(Configuration config)

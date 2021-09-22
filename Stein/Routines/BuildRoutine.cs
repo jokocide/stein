@@ -66,9 +66,15 @@ namespace Stein.Routines
             // template rendering step.
             Injectable injectable = new();
 
-            // Configuration is serialized and injected.
             SerializedItem configuration = new ConfigurationService().Serialize();
-            Dictionary<string, object> members = configuration.GetMembers();
+
+            if (configuration == null)
+            {
+                MessageService.Log(Message.InvalidJson(new FileInfo("stein.json")));
+                MessageService.Print(true);
+            }
+
+            Dictionary<string, object> members = configuration.Pairs;
 
             foreach (KeyValuePair<string, object> pair in members)
                 injectable.Items.Add(pair.Key, pair.Value);
@@ -104,7 +110,7 @@ namespace Stein.Routines
 
                 HandlebarsTemplate<object, object> compiledTemplate = Handlebars.Compile(rawFile);
 
-                var renderedTemplate = compiledTemplate(injectable);
+                var renderedTemplate = compiledTemplate(injectable.Items);
 
                 Writable writable = new(info, renderedTemplate);
                 Store.Writable.Add(writable);

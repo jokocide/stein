@@ -13,7 +13,11 @@ namespace Stein.Routines
     {
         public ServeRoutine(Configuration config) : base(config) { }
 
-        public ServeRoutine(Configuration config, string port) : this(config) => Address = $"http://localhost:{port}/";
+        public ServeRoutine(Configuration config, string port) : this(config)
+        {
+            Port = port;
+            Address = $"http://localhost:{port}/";
+        }
 
         public static ServeRoutine GetDefault => new ServeRoutine(new ConfigurationService().GetConfigOrNew());
 
@@ -95,7 +99,7 @@ namespace Stein.Routines
             }
         }
 
-        private string Port { get; }
+        private string Port { get; } = "8000";
 
         private string Address { get; } = "http://localhost:8000/";
 

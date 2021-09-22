@@ -1,5 +1,6 @@
 using Stein.Interfaces;
 using Stein.Services;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
@@ -8,7 +9,7 @@ namespace Stein.Models
 {
     public class ConfigurationService : ISerializable
     {
-        public ConfigurationService() => Raw = File.ReadAllText("stein.json");
+        public ConfigurationService() => Raw = File.Exists("stein.json") ? File.ReadAllText("stein.json") : null;
 
         public Configuration GetConfigOrNull()
         {
@@ -47,10 +48,9 @@ namespace Stein.Models
 
             Dictionary<string, string> pairs = new JsonService().Deserialize(Raw);
 
-            foreach(var pair in pairs)
-            {
-                castedItem.Add(pair.Key, pair.Value);
-            }
+            if (pairs == null) return null;
+
+            foreach(var pair in pairs) castedItem.Add(pair.Key, pair.Value);
 
             return item;
         }
