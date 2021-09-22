@@ -6,15 +6,8 @@ namespace Stein.Services.Tests
 {
     public class StringServiceTests
     {
-        /// <summary>
-        /// Slice should return a portion of text between the given indices, not including startIndex.
-        /// </summary>
-        /// <param name="text">The source text.</param>
-        /// <param name="startIndex">The character to start capturing input on.</param>
-        /// <param name="endIndex">The desired final character.</param>
-        /// <param name="expectedResult">The string that we expect to be returned.</param>
         [Theory()]
-        [InlineData("abcdThis is the way.22", 4, 20, "This is the way.")]
+        [InlineData("This is a test.", 10, 14, "test")]
         [InlineData("   hello! ", 3, 9, "hello!")]
         [InlineData("Seven", 2, 5, "ven")]
         public void SliceTest(string text, int startIndex, int endIndex, string expectedResult)
@@ -23,10 +16,6 @@ namespace Stein.Services.Tests
             Assert.Equal(expectedResult, result);
         }
 
-        /// <summary>
-        /// Colorize should print out text and always reset the ConsoleColor.Foreground
-        /// property back to default via Console.ResetColor().
-        /// </summary>
         [Fact()]
         public void ColorizeTest()
         {
@@ -42,30 +31,17 @@ namespace Stein.Services.Tests
             Assert.True(Console.ForegroundColor != ConsoleColor.DarkBlue && result == "Bonk bonk bonk");
         }
 
-        /// <summary>
-        /// Slugify should trim whitespace around a string before converting any
-        /// remaining whitespace characters in the middle of the string to hypens,
-        /// and then return that string in lowercase.
-        /// </summary>
-        /// <param name="testString">The source string.</param>
-        /// <param name="expectedResult">The expected slug result.</param>
         [Theory()]
-        [InlineData("Master Chief", "master-chief")]
-        [InlineData("Arbiter", "arbiter")]
-        [InlineData("Cortana ", "cortana")]
-        [InlineData(" uhhh hmmm ", "uhhh-hmmm")]
+        [InlineData("Round Trip", "round-trip")]
+        [InlineData("orbital", "orbital")]
+        [InlineData("Mimic ", "mimic")]
+        [InlineData("question feed", "question-feed")]
         public void SlugifyTest(string testString, string expectedResult)
         {
             string result = StringService.Slugify(testString);
             Assert.Equal(expectedResult, result);
         }
 
-        /// <summary>
-        /// Camelize should remove all whitespace in the string and capitalize each character
-        /// that comes after the whitespace, the first character will always be lowercase.
-        /// </summary>
-        /// <param name="text">The source string.</param>
-        /// <param name="expectedResult">The expected camel case string.</param>
         [Theory()]
         [InlineData("Alabama alaska", "alabamaAlaska")]
         [InlineData("arizona california Arkansas ", "arizonaCaliforniaArkansas")]
@@ -76,12 +52,6 @@ namespace Stein.Services.Tests
             Assert.Equal(expectedResult, result);
         }
 
-        /// <summary>
-        /// Pascalize should remove all whitespace in the string and capitalize each character
-        /// that comes after the whitespace, the first character will always be uppercase.
-        /// </summary>
-        /// <param name="text">The source string.</param>
-        /// <param name="expectedResult">The expected Pascal case string.</param>
         [Theory()]
         [InlineData("Texas Arizona", "TexasArizona")]
         [InlineData("missouri mississippi", "MissouriMississippi")]
