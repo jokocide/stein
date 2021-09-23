@@ -17,8 +17,6 @@ namespace Stein.Routines
 
         public void Execute()
         {
-            DirectoryInfo projectInfo = new DirectoryInfo(Directory.GetCurrentDirectory());
-
             // 1. <PARTIALS>
             // Partials/block files must be processed first, since most other types of 
             // resources will rely on these.
@@ -88,7 +86,7 @@ namespace Stein.Routines
                 //collection.Items.ForEach(item => serializedMembers.Add(item.Serialize()));
                 collection.Items.ForEach(item =>
                 {
-                    ISerializable castedItem = item as ISerializable;
+                    ISerializer castedItem = item as ISerializer;
                     serializedMembers.Add(castedItem.Serialize());
                 });
 
@@ -141,9 +139,14 @@ namespace Stein.Routines
             // Provide some output to the user.
             StringService.Colorize($"({DateTime.Now:T}) ", ConsoleColor.Gray, false);
             StringService.Colorize($"Built project ", ConsoleColor.White, false);
-            StringService.Colorize($"'{projectInfo.Name}' ", ConsoleColor.Gray, true);
+            StringService.Colorize($"'{new DirectoryInfo(Directory.GetCurrentDirectory()).Name}' ", ConsoleColor.Gray, true);
 
             MessageService.Print();
+        }
+
+        private void ProcessPartials(string[] partialsFiles)
+        {
+            throw new NotImplementedException();
         }
 
         private void RegisterHandlebarsPartials(string filePath)
