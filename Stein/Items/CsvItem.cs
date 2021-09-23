@@ -5,7 +5,7 @@ using Stein.Models;
 
 namespace Stein.Collections
 {
-    public sealed class CsvItem : Item, ISerializable
+    public sealed class CsvItem : Item, ISerializer
     {
         public CsvItem(FileInfo fileInfo) : base(fileInfo) { }
 

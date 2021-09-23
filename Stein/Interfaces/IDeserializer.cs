@@ -2,7 +2,7 @@
 
 namespace Stein.Interfaces
 {
-    public interface IInterpreter
+    public interface IDeserializer
     {
         public Dictionary<string, string> Deserialize(string text);
     }

@@ -5,7 +5,7 @@ using Stein.Models;
 
 namespace Stein.Collections
 {
-    public sealed class JsonItem : Item, ISerializable
+    public sealed class JsonItem : Item, ISerializer
     {
         public JsonItem(FileInfo fileInfo) : base(fileInfo) { }
 

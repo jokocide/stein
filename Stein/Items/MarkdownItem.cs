@@ -8,7 +8,7 @@ using System.IO;
 
 namespace Stein.Collections
 {
-    public sealed class MarkdownItem : Item, ISerializable
+    public sealed class MarkdownItem : Item, ISerializer
     {
         public MarkdownItem(FileInfo fileInfo) : base(fileInfo) => Link = PathService.GetIterablePath(Info);
 

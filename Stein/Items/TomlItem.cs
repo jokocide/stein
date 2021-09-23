@@ -5,7 +5,7 @@ using Stein.Models;
 
 namespace Stein.Collections
 {
-    public sealed class TomlItem : Item, ISerializable
+    public sealed class TomlItem : Item, ISerializer
     {
         public TomlItem(FileInfo fileInfo) : base(fileInfo) { }
 

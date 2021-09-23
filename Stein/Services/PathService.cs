@@ -10,11 +10,19 @@ namespace Stein.Services
 
         public static string PagesPath => Path.Join(ResourcesPath, "pages");
 
+        public static string[] Pagesfiles => Directory.GetFiles(PagesPath);
+
         public static string TemplatesPath => Path.Join(ResourcesPath, "templates");
+
+        public static string[] TemplatesFiles => Directory.GetFiles(TemplatesPath);
 
         public static string CollectionsPath => Path.Join(ResourcesPath, "collections");
 
+        public static string[] CollectionsDirectories => Directory.GetDirectories(CollectionsPath);
+
         public static string PartialsPath => Path.Join(TemplatesPath, "partials");
+
+        public static string[] PartialsFiles => Directory.GetFiles(PartialsPath);
 
         public static string ResourcesPublicPath => Path.Join(ResourcesPath, "public");
 

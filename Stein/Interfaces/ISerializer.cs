@@ -2,7 +2,7 @@
 
 namespace Stein.Interfaces
 {
-    public interface ISerializable
+    public interface ISerializer
     {
         public SerializedItem Serialize();
     }
