@@ -10,7 +10,7 @@ namespace Stein.Services
 
         public static string PagesPath => Path.Join(ResourcesPath, "pages");
 
-        public static string[] Pagesfiles => Directory.GetFiles(PagesPath);
+        public static string[] PagesFiles => Directory.GetFiles(PagesPath);
 
         public static string TemplatesPath => Path.Join(ResourcesPath, "templates");
 

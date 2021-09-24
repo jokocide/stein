@@ -24,7 +24,6 @@ namespace Stein.Collections
 
             if (indicators.NoYaml)
             {
-                int bonk = indicators.SecondEnd;
                 Invalidate(InvalidType.InvalidFrontmatter);
                 MessageService.Log(new Message($"No YAML: {Info.Name}", Message.InfoType.Warning));
             }

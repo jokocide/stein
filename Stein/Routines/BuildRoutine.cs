@@ -5,7 +5,6 @@ using Stein.Collections;
 using HandlebarsDotNet;
 using Stein.Interfaces;
 using Stein.Engines;
-using System.Collections.Generic;
 using Stein.Services;
 
 namespace Stein.Routines
@@ -72,42 +71,21 @@ namespace Stein.Routines
                 Store.Collections.Add(collection);
             }
 
-            Injectable injectable = new();
+            Injectable injectable = Injectable.Assemble(Store, Config);
 
-            Injectable injectable = Injectable.Assemble(Store);
-
-            SerializedItem configuration = new ConfigurationService().Serialize();
-            Dictionary<string, object> members = configuration.Pairs;
-            foreach (KeyValuePair<string, object> pair in members)
-                injectable.Items.Add(pair.Key, pair.Value);
-
-            foreach (Collection collection in Store.Collections)
+            foreach (string info in PathService.PagesFiles)
             {
-                DateService.Sort(collection, DateService.SortMethod.LatestDate);
+                // Todo:
+                // We now have a string instead of a FileInfo.
+                // We need to filter out files that don't match the configuration
+                // selected template engine's extension.
+                string rawFile = PathService.ReadAllSafe(info);
 
-                List<SerializedItem> serializedMembers = new();
-                //collection.Items.ForEach(item => serializedMembers.Add(item.Serialize()));
-                collection.Items.ForEach(item =>
-                {
-                    ISerializer castedItem = item as ISerializer;
-                    serializedMembers.Add(castedItem.Serialize());
-                });
-
-                injectable.Items.Add(collection.Info.Name, serializedMembers);
-            }
-
-            // 4. <PAGE>
-            // Page files can now be reliably rendered, now that we have access to
-            // the collection items.
-            foreach (FileInfo info in new DirectoryInfo(PathService.PagesPath).GetFiles("*.hbs"))
-            {
-                string rawFile;
-
-                using (var stream = File.Open(info.FullName, FileMode.Open, FileAccess.Read, FileShare.Read))
-                {
-                    var reader = new StreamReader(stream);
-                    rawFile = reader.ReadToEnd();
-                }
+                //using (var stream = File.Open(info.FullName, FileMode.Open, FileAccess.Read, FileShare.Read))
+                //{
+                //    var reader = new StreamReader(stream);
+                //    rawFile = reader.ReadToEnd();
+                //}
 
                 HandlebarsTemplate<object, object> compiledTemplate = Handlebars.Compile(rawFile);
 
