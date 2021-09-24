@@ -10,73 +10,36 @@ namespace Stein.Collections
 {
     public sealed class MarkdownItem : Item, ISerializer
     {
-        public MarkdownItem(FileInfo fileInfo) : base(fileInfo) => Link = PathService.GetIterablePath(Info);
-
         public MarkdownItem(FileInfo fileInfo) : base(fileInfo)
         {
             Link = PathService.GetIterablePath(Info);
             Slug = StringService.Slugify(Path.GetFileNameWithoutExtension(Info.Name));
-        }
 
-        public Dictionary<string, string> Frontmatter { get; } = new();
-
-        public SerializedItem Serialize()
-        {
-            dynamic injectable = new SerializedItem();
-            SerializedItem castedInjectable = (SerializedItem)injectable;
-
-            injectable.Link = Link;
-            injectable.Date = Date;
-            injectable.Body = Body;
-            injectable.Slug = Slug;
-
-            foreach (KeyValuePair<string, string> pair in Frontmatter)
-            {
-                castedInjectable.Add(pair.Key, pair.Value);
-            }
-
-            return injectable;
-        }
-
-        public override Writable Process()
-        {
             string rawFile = PathService.ReadAllSafe(Info.FullName);
 
-            if (String.IsNullOrEmpty(rawFile)) return null;
+            if (String.IsNullOrEmpty(rawFile))
+                return;
 
-            // (int FirstStart, int FirstEnd, int SecondStart, int SecondEnd) indices = (0, 0, 0, 0);
-            // int openBlock = rawFile.IndexOf("---");
-            // int closeBlock = rawFile.IndexOf("---", 2);
             YamlIndicators indicators = new(rawFile);
 
             if (indicators.NoYaml)
             {
+                int bonk = indicators.SecondEnd;
                 Invalidate(InvalidType.InvalidFrontmatter);
                 MessageService.Log(new Message($"No YAML: {Info.Name}", Message.InfoType.Warning));
             }
-            else
-            {
-                indices = new YamlService().GetIndicatorIndices(rawFile);
-            }
 
-            if (indices == (0, 0, 0, 0) && !Issues.Contains(InvalidType.InvalidFrontmatter))
-            {
-                Invalidate(InvalidType.InvalidFrontmatter);
-                MessageService.Log(new Message($"Invalid YAML: {Info.Name}", Message.InfoType.Error));
-            }
+            Body = Markdown.ToHtml(rawFile[indicators.SecondEnd..].Trim());
 
-            string untransformedBody = rawFile[indices.SecondEnd..].Trim();
-            Body = Markdown.ToHtml(untransformedBody);
-
-            if (Issues.Contains(InvalidType.NoFrontmatter) ||
-                Issues.Contains(InvalidType.InvalidFrontmatter)) return null;
+            if (Issues.Contains(InvalidType.NoFrontmatter) || Issues.Contains(InvalidType.InvalidFrontmatter))
+                return;
 
             Dictionary<string, string> rawPairs = new();
 
             try
             {
-                string yamlSection = StringService.Slice(indices.FirstEnd, indices.SecondStart, rawFile).Trim();
-                rawPairs = new YamlService().Deserialize(yamlSection);
+                string section = StringService.Slice(indicators.FirstEnd, indicators.SecondStart, rawFile);
+                rawPairs = new YamlService().Deserialize(section);
             }
             catch (IndexOutOfRangeException)
             {
@@ -84,7 +47,8 @@ namespace Stein.Collections
                 MessageService.Log(new Message($"Invalid key/value pair in YAML: {Info.Name}", Message.InfoType.Error));
             }
 
-            if (Issues.Contains(InvalidType.InvalidFrontmatter)) return null;
+            if (Issues.Contains(InvalidType.InvalidFrontmatter))
+                return;
 
             foreach (var (key, value) in rawPairs)
             {
@@ -105,24 +69,44 @@ namespace Stein.Collections
             if (Template == null)
             {
                 MessageService.Log(Message.NoTemplateKey(Info));
-                return null;
+                return;
             }
 
-            Writable writable;
+            //Writable writable;
 
-            try
-            {
-                writable = Writable.GetWritable(this);
-            }
-            catch (FileNotFoundException)
-            {
-                Invalidate(InvalidType.TemplateNotFound);
-                MessageService.Log(Message.TemplateNotFound(Info));
-                return null;
-            }
+            //try
+            //{
+            //    writable = Writable.GetWritable(this);
+            //}
+            //catch (FileNotFoundException)
+            //{
+            //    Invalidate(InvalidType.TemplateNotFound);
+            //    MessageService.Log(Message.TemplateNotFound(Info));
+            //    return;
+            //}
 
-            return writable;
+            //return writable;
         }
+
+        public SerializedItem Serialize()
+        {
+            dynamic injectable = new SerializedItem();
+            SerializedItem castedInjectable = (SerializedItem)injectable;
+
+            injectable.Link = Link;
+            injectable.Date = Date;
+            injectable.Body = Body;
+            injectable.Slug = Slug;
+
+            foreach (KeyValuePair<string, string> pair in Frontmatter)
+            {
+                castedInjectable.Add(pair.Key, pair.Value);
+            }
+
+            return injectable;
+        }
+
+        private Dictionary<string, string> Frontmatter { get; } = new();
 
         private string Body { get; set; }
     }

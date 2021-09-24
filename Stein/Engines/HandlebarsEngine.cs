@@ -11,7 +11,7 @@ namespace Stein.Engines
             Handlebars.RegisterTemplate(name, body);
         }
 
-        public Template CompileTemplate(string body)
+        public IRenderer CompileTemplate(string body)
         {
             Template template = new();
         }

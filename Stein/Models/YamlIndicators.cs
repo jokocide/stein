@@ -1,19 +1,20 @@
+using System;
+
 namespace Stein.Models
 {
     public class YamlIndicators
     {
-        public Indices(string text)
+        public YamlIndicators(string text)
         {
-            OpenBlock = text.IndexOf("---");
-            CloseBlock = rawFile.IndexOf("---", 2);
-
-            int firstStart = text.IndexOf("---", StringComparison.Ordinal);
-            int firstEnd = firstStart + 3;
-            int secondStart = text.IndexOf("---", firstEnd, StringComparison.Ordinal);
-            if (secondStart == -1) return (0, 0, 0, 0);
-            int secondEnd = secondStart + 3;
-            return (firstStart, firstEnd, secondStart, secondEnd);
+            FirstStart = text.IndexOf("---", StringComparison.Ordinal);
+            FirstEnd = FirstStart + 3;
+            SecondStart = text.IndexOf("---", FirstEnd, StringComparison.Ordinal);
+            SecondEnd = SecondStart + 3;
         }
+
+        public (int, int, int, int) Indices => (FirstStart, FirstEnd, SecondStart, SecondEnd);
+
+        public bool NoYaml => FirstStart == -1 || SecondStart == -1 || SecondStart - FirstStart <= 5;
 
         public int FirstStart { get; }
 
@@ -22,11 +23,5 @@ namespace Stein.Models
         public int SecondStart { get; }
 
         public int SecondEnd { get; }
-
-        public bool NoYaml { get; } => OpenBlock == -1 || CloseBlock == -1 || CloseBlock - OpenBlock <= 5;
-
-        private int OpenBlock { get; }
-
-        private int CloseBlock { get; }
     }
 }

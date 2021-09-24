@@ -18,7 +18,7 @@ namespace Stein.Routines
 
         public void Execute()
         {
-            IEngine engine = new();
+            IEngine engine;
 
             switch (Config.Engine)
             {
@@ -26,20 +26,19 @@ namespace Stein.Routines
                     engine = new HandlebarsEngine();
                     break;
                 default:
-                    MessageService.Log(Message.NoEngine);
+                    MessageService.Log(Message.NoEngine());
                     MessageService.Print(true);
+                    return;
             }
 
             foreach (string path in PathService.PartialsFiles)
             {
                 string name = Path.GetFileNameWithoutExtension(path);
                 string text = PathService.ReadAllSafe(path);
+
                 engine.RegisterPartial(name, text);
             }
 
-            // 2. <COLLECTIONS>
-            // Collection items are processed second, so that they become available for iteration
-            // as soon as possible.
             foreach (string path in PathService.CollectionsDirectories)
             {
                 DirectoryInfo info = new(path);
@@ -61,35 +60,27 @@ namespace Stein.Routines
                         continue;
                     }
 
-                    Writable writable = item.Process();
-                    if (writable != null) Store.Writable.Add(writable);
-
                     collection.Items.Add(item);
+                    Writable writable = Writable.GetWritable(item);
+
+                    if (writable == null) 
+                        continue;
+
+                    Store.Writable.Add(writable);
                 }
 
                 Store.Collections.Add(collection);
             }
 
-            // 3. <INJECTABLE>
-            // An 'injectable' object is formed by serializing all of the in-memory data
-            // available at this point. This object is injected into all page files during the 
-            // template rendering step.
             Injectable injectable = new();
 
+            Injectable injectable = Injectable.Assemble(Store);
+
             SerializedItem configuration = new ConfigurationService().Serialize();
-
-            if (configuration == null)
-            {
-                MessageService.Log(Message.InvalidJson(new FileInfo("stein.json")));
-                MessageService.Print(true);
-            }
-
             Dictionary<string, object> members = configuration.Pairs;
-
             foreach (KeyValuePair<string, object> pair in members)
                 injectable.Items.Add(pair.Key, pair.Value);
 
-            // Collections are serialized and injected.
             foreach (Collection collection in Store.Collections)
             {
                 DateService.Sort(collection, DateService.SortMethod.LatestDate);

@@ -47,7 +47,7 @@ namespace Stein.Models
             NoTemplate
         }
 
-        public abstract Writable Process();
+        //public abstract Writable Process();
 
         protected Item(FileInfo fileInfo) => Info = fileInfo;
     }

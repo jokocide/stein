@@ -1,13 +1,12 @@
 using Stein.Interfaces;
 using Stein.Services;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 
 namespace Stein.Models
 {
-    public class ConfigurationService : ISerializable
+    public class ConfigurationService : ISerializer
     {
         public ConfigurationService() => Raw = File.Exists("stein.json") ? File.ReadAllText("stein.json") : null;
 

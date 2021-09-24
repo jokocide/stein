@@ -10,7 +10,5 @@ namespace Stein.Collections
         public XmlItem(FileInfo fileInfo) : base(fileInfo) { }
 
         public SerializedItem Serialize() => throw new NotImplementedException();
-
-        public override Writable Process() => throw new NotImplementedException();
     }
 }

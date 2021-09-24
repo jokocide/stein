@@ -14,13 +14,36 @@ namespace Stein.Models
             Target = PathService.GetOutputPath(file);
         }
 
-        public static Writable GetWritable(JsonItem resource) => throw new NotImplementedException();
+        public string Target { get; }
 
-        public static Writable GetWritable(CsvItem resource) => throw new NotImplementedException();
+        public string Payload { get; }
 
-        public static Writable GetWritable(TomlItem resource) => throw new NotImplementedException();
+        public static Writable GetWritable(Item item)
+        {
+            switch (item)
+            {
+                case MarkdownItem markdownItem:
+                    return GetWritable(markdownItem);
+                case JsonItem jsonItem:
+                    return GetWritable(jsonItem);
+                case CsvItem csvItem:
+                    return GetWritable(csvItem);
+                case TomlItem tomlItem:
+                    return GetWritable(tomlItem);
+                case XmlItem xmlItem:
+                    return GetWritable(xmlItem);
+                default:
+                    return null;
+            }
+        }
 
-        public static Writable GetWritable(XmlItem resource) => throw new NotImplementedException();
+        public static Writable GetWritable(JsonItem resource) => null;
+
+        public static Writable GetWritable(CsvItem resource) => null;
+
+        public static Writable GetWritable(TomlItem resource) => null;
+
+        public static Writable GetWritable(XmlItem resource) => null;
 
         public static Writable GetWritable(MarkdownItem item)
         {
@@ -52,9 +75,5 @@ namespace Stein.Models
             string renderedTemplate = compiledTemplate(injectable);
             return new Writable(item.Info, renderedTemplate);
         }
-
-        public string Target { get; }
-
-        public string Payload { get; }
     }
 }

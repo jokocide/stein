@@ -10,7 +10,7 @@ namespace Stein.Services
                 endIndex = text.Length + endIndex;
 
             int len = endIndex - startIndex;
-            return text.Substring(startIndex, len);
+            return text.Substring(startIndex, len).Trim();
         }
 
         public static void Colorize(string text, ConsoleColor color, bool newLine)
