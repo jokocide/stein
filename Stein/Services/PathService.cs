@@ -88,5 +88,18 @@ namespace Stein.Services
             string fileName = Path.GetFileNameWithoutExtension(file.Name);
             return $"/{file.Directory.Name}/{fileName}/";
         }
+
+        public static string ReadAllSafe(string path)
+        {
+            string text;
+
+            using (var stream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+                var reader = new StreamReader(stream);
+                text = reader.ReadToEnd();
+            }
+
+            return text;
+        }
     }
 }

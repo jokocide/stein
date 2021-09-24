@@ -10,6 +10,12 @@ namespace Stein.Models
             return message;
         }
 
+        public static Message NoEngine()
+        {
+            Message message = new("Engine not specified in stein.json", InfoType.Error);
+            return message;
+        }
+
         public static Message NoTemplateKey(FileInfo fileInfo)
         {
             Message message = new($"No template key: {fileInfo.Name}", InfoType.Warning);

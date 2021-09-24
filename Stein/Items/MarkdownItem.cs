@@ -12,6 +12,12 @@ namespace Stein.Collections
     {
         public MarkdownItem(FileInfo fileInfo) : base(fileInfo) => Link = PathService.GetIterablePath(Info);
 
+        public MarkdownItem(FileInfo fileInfo) : base(fileInfo)
+        {
+            Link = PathService.GetIterablePath(Info);
+            Slug = StringService.Slugify(Path.GetFileNameWithoutExtension(Info.Name));
+        }
+
         public Dictionary<string, string> Frontmatter { get; } = new();
 
         public SerializedItem Serialize()
@@ -34,24 +40,16 @@ namespace Stein.Collections
 
         public override Writable Process()
         {
-            string rawFile = null;
-
-            using (var stream = File.Open(Info.FullName, FileMode.Open, FileAccess.Read, FileShare.Read))
-            {
-                var reader = new StreamReader(stream);
-                rawFile = reader.ReadToEnd();
-            }
+            string rawFile = PathService.ReadAllSafe(Info.FullName);
 
             if (String.IsNullOrEmpty(rawFile)) return null;
 
-            Slug = StringService.Slugify(Path.GetFileNameWithoutExtension(Info.Name));
+            // (int FirstStart, int FirstEnd, int SecondStart, int SecondEnd) indices = (0, 0, 0, 0);
+            // int openBlock = rawFile.IndexOf("---");
+            // int closeBlock = rawFile.IndexOf("---", 2);
+            YamlIndicators indicators = new(rawFile);
 
-            (int FirstStart, int FirstEnd, int SecondStart, int SecondEnd) indices = (0, 0, 0, 0);
-
-            int openBlock = rawFile.IndexOf("---");
-            int closeBlock = rawFile.IndexOf("---", 2);
-
-            if (openBlock == -1 || closeBlock == -1 || closeBlock - openBlock <= 5)
+            if (indicators.NoYaml)
             {
                 Invalidate(InvalidType.InvalidFrontmatter);
                 MessageService.Log(new Message($"No YAML: {Info.Name}", Message.InfoType.Warning));

@@ -4,6 +4,7 @@ using Stein.Models;
 using Stein.Collections;
 using HandlebarsDotNet;
 using Stein.Interfaces;
+using Stein.Engines;
 using System.Collections.Generic;
 using Stein.Services;
 
@@ -12,23 +13,34 @@ namespace Stein.Routines
     public sealed class BuildRoutine : Routine, IExecutable
     {
         public BuildRoutine(Store store, Configuration config) : base(store, config) { }
-        
+
         public static BuildRoutine GetDefault => new BuildRoutine(new Store(), new ConfigurationService().GetConfigOrNew());
 
         public void Execute()
         {
-            // 1. <PARTIALS>
-            // Partials/block files must be processed first, since most other types of 
-            // resources will rely on these.
-            string[] partials = Directory.GetFiles(PathService.PartialsPath, "*.hbs");
-            RegisterHandlebarsPartials(partials);
+            IEngine engine = new();
+
+            switch (Config.Engine)
+            {
+                case "handlebars":
+                    engine = new HandlebarsEngine();
+                    break;
+                default:
+                    MessageService.Log(Message.NoEngine);
+                    MessageService.Print(true);
+            }
+
+            foreach (string path in PathService.PartialsFiles)
+            {
+                string name = Path.GetFileNameWithoutExtension(path);
+                string text = PathService.ReadAllSafe(path);
+                engine.RegisterPartial(name, text);
+            }
 
             // 2. <COLLECTIONS>
             // Collection items are processed second, so that they become available for iteration
             // as soon as possible.
-            // 
-            string[] collectionPaths = Directory.GetDirectories(PathService.CollectionsPath);
-            foreach (string path in collectionPaths)
+            foreach (string path in PathService.CollectionsDirectories)
             {
                 DirectoryInfo info = new(path);
                 Collection collection = new(info);
@@ -144,28 +156,23 @@ namespace Stein.Routines
             MessageService.Print();
         }
 
-        private void ProcessPartials(string[] partialsFiles)
-        {
-            throw new NotImplementedException();
-        }
+        // private void RegisterHandlebarsPartials(string filePath)
+        // {
+        //     string templateName = Path.GetFileNameWithoutExtension(filePath);
+        //     string template;
 
-        private void RegisterHandlebarsPartials(string filePath)
-        {
-            string templateName = Path.GetFileNameWithoutExtension(filePath);
-            string template;
+        //     using (var stream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+        //     {
+        //         var reader = new StreamReader(stream);
+        //         template = reader.ReadToEnd();
+        //     }
 
-            using (var stream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
-            {
-                var reader = new StreamReader(stream);
-                template = reader.ReadToEnd();
-            }
+        //     Handlebars.RegisterTemplate(templateName, template);
+        // }
 
-            Handlebars.RegisterTemplate(templateName, template);
-        }
-
-        private void RegisterHandlebarsPartials(string[] filePaths)
-        {
-            foreach (string path in filePaths) RegisterHandlebarsPartials(path);
-        }
+        // private void RegisterHandlebarsPartials(string[] filePaths)
+        // {
+        //     foreach (string path in filePaths) RegisterHandlebarsPartials(path);
+        // }
     }
 }

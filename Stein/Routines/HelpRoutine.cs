@@ -9,10 +9,7 @@ namespace Stein.Routines
     {
         public HelpRoutine(Configuration config) : base(config) { }
 
-        public HelpRoutine(Configuration config, HelpTopic topic = HelpTopic.General) : base(config)
-        {
-            Topic = topic;
-        }
+        public HelpRoutine(Configuration config, HelpTopic topic = HelpTopic.General) : base(config) => Topic = topic;
 
         public static HelpRoutine GetDefault => new HelpRoutine(new Configuration());
 
@@ -52,16 +49,16 @@ namespace Stein.Routines
                 Colorize("stein new ", White, false);
                 Colorize("./projects/newsite", Gray, true);
                 Colorize("Options:", Gray, true);
-                Colorize("[path] ", White,  false);
+                Colorize("[path] ", White, false);
                 Colorize("(default: current directory)", DarkGray, true);
                 Colorize("An absolute or relative path to the desired location of the new project. " +
                                "If the directory does not exist, it will be created.", Gray, true);
             }
-            
+
             else if (Topic is HelpTopic.Serve)
             {
                 Colorize("Description:", Gray, true);
-                Colorize("Make the contents of a projects site directory available at a given port. " + 
+                Colorize("Make the contents of a projects site directory available at a given port. " +
                     "It also watches the projects resources directory for changes. When a file is changed," +
                     " renamed, created, moved or deleted, a build is triggered and the new contents of site " +
                     "will automatically be available for viewing at the previously specified port.", White, true);
