@@ -12,32 +12,16 @@ namespace Stein.Routines
     public sealed class BuildRoutine : Routine, IExecutable
     {
         public BuildRoutine(Store store, Configuration config) : base(store, config) { }
-
+        
         public static BuildRoutine GetDefault => new BuildRoutine(new Store(), new ConfigurationService().GetConfigOrNew());
 
         public void Execute()
         {
-            IEngine engine;
+            IEngine engine = Engine.GetEngine(Config);
+            engine.ClaimPartials(PathService.PartialsPath);
 
-            switch (Config.Engine)
-            {
-                case "handlebars":
-                    engine = new HandlebarsEngine();
-                    break;
-                default:
-                    MessageService.Log(Message.NoEngine());
-                    MessageService.Print(true);
-                    return;
-            }
-
-            foreach (string path in PathService.PartialsFiles)
-            {
-                string name = Path.GetFileNameWithoutExtension(path);
-                string text = PathService.ReadAllSafe(path);
-
-                engine.RegisterPartial(name, text);
-            }
-
+            // This should be implemented on Collection class because these files
+            // are independent of the Engine type.
             foreach (string path in PathService.CollectionsDirectories)
             {
                 DirectoryInfo info = new(path);
@@ -73,6 +57,8 @@ namespace Stein.Routines
 
             Injectable injectable = Injectable.Assemble(Store, Config);
 
+            // Implemented on Engine because this depends on the type of engine
+            // being used.
             foreach (string info in PathService.PagesFiles)
             {
                 // Todo:
@@ -95,20 +81,15 @@ namespace Stein.Routines
                 Store.Writable.Add(writable);
             }
 
-            // 5. <CLEAN>
-            // Clean the current site directory.
             if (Directory.Exists(PathService.SitePath)) Directory.Delete(PathService.SitePath, true);
 
-            // 6. <PUBLIC>
-            // Synchronize public files.
             PathService.Synchronize(
                 PathService.ResourcesPublicPath,
                 PathService.SitePublicPath,
                 true
                 );
 
-            // 7. <WRITE>
-            // Export Writable objects.
+            // Implemented on Writable class.
             foreach (Writable writable in Store.Writable)
             {
                 string directory = Path.GetDirectoryName(writable.Target);
@@ -116,8 +97,6 @@ namespace Stein.Routines
                 File.WriteAllText(writable.Target, writable.Payload);
             }
 
-            // 8. <OUTPUT>
-            // Provide some output to the user.
             StringService.Colorize($"({DateTime.Now:T}) ", ConsoleColor.Gray, false);
             StringService.Colorize($"Built project ", ConsoleColor.White, false);
             StringService.Colorize($"'{new DirectoryInfo(Directory.GetCurrentDirectory()).Name}' ", ConsoleColor.Gray, true);
