@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using Stein.Models;
-using Stein.Collections;
 using HandlebarsDotNet;
 using Stein.Interfaces;
 using Stein.Services;
@@ -17,7 +16,7 @@ namespace Stein.Routines
         public void Execute()
         {
             IEngine engine = Engine.GetEngine(Config);
-            engine.ClaimPartials(PathService.PartialsPath);
+            engine.RegisterPartial(PathService.PartialsFiles);
 
             Store.Register(Collection.GetCollection(PathService.CollectionsDirectories));
             Store.Register(Writable.GetWritable(Store.Collections));
@@ -33,16 +32,10 @@ namespace Stein.Routines
             foreach (string info in PathService.PagesFiles)
             {
                 // Todo:
-                // We now have a string instead of a FileInfo.
-                // We need to filter out files that don't match the configuration
-                // selected template engine's extension.
+                // We now have a string instead of a FileInfo, so we aren't filtering for "*.hbs" explicitly.
+                // we need to make sure the methods implemented on the engine is smart enough to know that
+                // it can only handle its own file type.
                 string rawFile = PathService.ReadAllSafe(info);
-
-                //using (var stream = File.Open(info.FullName, FileMode.Open, FileAccess.Read, FileShare.Read))
-                //{
-                //    var reader = new StreamReader(stream);
-                //    rawFile = reader.ReadToEnd();
-                //}
 
                 HandlebarsTemplate<object, object> compiledTemplate = Handlebars.Compile(rawFile);
 
@@ -74,24 +67,5 @@ namespace Stein.Routines
 
             MessageService.Print();
         }
-
-        // private void RegisterHandlebarsPartials(string filePath)
-        // {
-        //     string templateName = Path.GetFileNameWithoutExtension(filePath);
-        //     string template;
-
-        //     using (var stream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
-        //     {
-        //         var reader = new StreamReader(stream);
-        //         template = reader.ReadToEnd();
-        //     }
-
-        //     Handlebars.RegisterTemplate(templateName, template);
-        // }
-
-        // private void RegisterHandlebarsPartials(string[] filePaths)
-        // {
-        //     foreach (string path in filePaths) RegisterHandlebarsPartials(path);
-        // }
     }
 }

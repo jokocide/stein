@@ -4,7 +4,7 @@ using Stein.Services;
 
 namespace Stein.Models
 {
-    class Injectable
+    public class Injectable
     {
         public Dictionary<string, object> Items { get; } = new();
 

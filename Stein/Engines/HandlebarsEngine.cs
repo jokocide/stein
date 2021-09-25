@@ -1,29 +1,41 @@
+using System;
 using Stein.Interfaces;
 using Stein.Models;
 using HandlebarsDotNet;
 using System.IO;
 using Stein.Services;
+using System.Collections.Generic;
 
 namespace Stein.Engines
 {
     public class HandlebarsEngine : Engine, IEngine
     {
-        public void ClaimPartials(string directory)
+        public void RegisterPartial(IEnumerable<string> paths)
         {
-            string[] files = Directory.GetFiles(directory, "*.hbs");
-
             foreach (string path in files)
             {
                 string name = Path.GetFileNameWithoutExtension(path);
-                string text = PathService.ReadAllSafe(path);
+                string body = PathService.ReadAllSafe(path);
 
-                Handlebars.RegisterTemplate(name, text);
+                RegisterPartial(name, body);
             }
         }
 
-        public IRenderer CompileTemplate(string body)
+        public void RegisterPartial(string name, string text) => Handlebars.RegisterTemplate(name, text);
+
+        public IEnumerable<IRenderer> CompileTemplate(IEnumerable<string> paths)
         {
-            Template template = new();
+            throw new NotImplementedException();
+        }
+
+        public IRenderer CompileTemplate(string text)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string RenderTemplate(IRenderer template, Injectable injectable = null)
+        {
+            throw new NotImplementedException();
         }
     }
 }
