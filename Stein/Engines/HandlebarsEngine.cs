@@ -1,3 +1,4 @@
+using System;
 using Stein.Interfaces;
 using Stein.Templates;
 using Stein.Models;
@@ -65,9 +66,8 @@ namespace Stein.Engines
             if (template is HandlebarsTemplate castedTemplate)
             {
                 var castedObject = (HandlebarsTemplate<object, object>)castedTemplate.TemplateObject;
-                string result = castedObject(injectable);
+                string result = castedObject(injectable.Items);
                 return new Writable(castedTemplate.Info, result);
-
             }
 
             return null;
