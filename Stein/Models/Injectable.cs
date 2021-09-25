@@ -16,7 +16,9 @@ namespace Stein.Models
             Injectable injectable = new();
 
             foreach (var pair in members)
+            {
                 injectable.Items.Add(pair.Key, pair.Value);
+            }
 
             foreach (Collection collection in store.Collections)
             {
@@ -24,12 +26,12 @@ namespace Stein.Models
                 DateService.Sort(collection, DateService.SortMethod.LatestDate);
 
                 List<SerializedItem> serializedMembers = new();
-                //collection.Items.ForEach(item => serializedMembers.Add(item.Serialize()));
-                collection.Items.ForEach(item =>
+
+                foreach(Item item in collection.Items)
                 {
                     ISerializer castedItem = item as ISerializer;
                     serializedMembers.Add(castedItem.Serialize());
-                });
+                }
 
                 injectable.Items.Add(collection.Info.Name, serializedMembers);
             }

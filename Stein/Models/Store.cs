@@ -29,8 +29,8 @@ namespace Stein.Models
 
         private void Register(Writable writable) => Writable.Add(writable);
 
-        private List<Collection> Collections { get; } = new();
+        public List<Collection> Collections { get; } = new();
 
-        private List<Writable> Writable { get; } = new();
+        public List<Writable> Writable { get; } = new();
     }
 }

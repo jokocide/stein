@@ -1,4 +1,6 @@
-﻿using Stein.Interfaces;
+﻿using Stein.Collections;
+using Stein.Interfaces;
+using Stein.Services;
 using System.Collections.Generic;
 using System.IO;
 
@@ -11,6 +13,53 @@ namespace Stein.Models
         public DirectoryInfo Info { get; }
 
         public List<Item> Items { get; } = new();
+
+        public static IEnumerable<Collection> GetCollection(IEnumerable<string> directories)
+        {
+            List<Collection> collections = new();
+
+            foreach(string directory in directories)
+            {
+                if (File.Exists(directory)) continue;
+
+                else if (Directory.Exists(directory))
+                {
+                    Collection collection = GetCollection(directory);
+                    collections.Add(collection);
+                }
+            }
+
+            return collections;
+        }
+
+        public static Collection GetCollection(string directory)
+        {
+            DirectoryInfo info = new(directory);
+
+            Collection collection = new(info);
+
+            FileInfo[] files = info.GetFiles();
+            foreach(FileInfo file in files)
+            {
+                if (file.Extension == "")
+                {
+                    MessageService.Log(Message.NoExtension(file));
+                    continue;
+                }
+
+                Item item = Item.GetItem(file);
+
+                if (item is not MarkdownItem)
+                {
+                    MessageService.Log(new Message($"Format unsupported: {item.Info.Name}", Message.InfoType.Error));
+                    continue;
+                }
+
+                collection.Items.Add(item);
+            }
+
+            return collection;
+        }
 
         public SerializedItem Serialize()
         {
@@ -29,43 +78,5 @@ namespace Stein.Models
 
             return serializedCollection;
         }
-
-        public static IEnumerable<Collection> GetCollection(IEnumerable<string> directories)
-        {
-            //foreach (string path in PathService.CollectionsDirectories)
-            //{
-            //    DirectoryInfo info = new(path);
-            //    Collection collection = new(info);
-
-            //    foreach (FileInfo file in info.GetFiles())
-            //    {
-            //        if (file.Extension == "")
-            //        {
-            //            MessageService.Log(Message.NoExtension(file));
-            //            continue;
-            //        }
-
-            //        Item item = Item.GetItem(file);
-
-            //        if (item is not MarkdownItem)
-            //        {
-            //            MessageService.Log(new Message($"Format unsupported: {item.Info.Name}", Message.InfoType.Error));
-            //            continue;
-            //        }
-
-            //        collection.Items.Add(item);
-            //        Writable writable = Writable.GetWritable(item);
-
-            //        if (writable == null)
-            //            continue;
-
-            //        Store.Writable.Add(writable);
-            //    }
-
-            //    Store.Collections.Add(collection);
-            //}
-        }
-
-        public static Collection GetCollection(string directory) { }
     }
 }

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using HandlebarsDotNet;
 using Stein.Collections;
@@ -17,32 +18,76 @@ namespace Stein.Models
 
         public string Payload { get; }
 
+        public static IEnumerable<Writable> GetWritable(IEnumerable<Collection> collections)
+        {
+            List<Writable> writables = new();
+
+            foreach(Collection collection in collections)
+            {
+                IEnumerable<Writable> newWritables = GetWritable(collection);
+                writables.AddRange(newWritables);
+            }
+
+            return writables;
+
+        }
+
+        public static IEnumerable<Writable> GetWritable(Collection collection)
+        {
+            List<Writable> writables = new();
+
+            foreach(Item item in collection.Items)
+                writables.Add(GetWritable(item));
+
+            return writables;
+        }
+
+        public static IEnumerable<Writable> GetWritable(IEnumerable<Item> items)
+        {
+            List<Writable> writables = new();
+
+            foreach(Item item in items)
+                writables.Add(GetWritable(item));
+
+            return writables;
+        }
+
         public static Writable GetWritable(Item item)
         {
+            Writable writable;
+
             switch (item)
             {
                 case MarkdownItem markdownItem:
-                    return GetWritable(markdownItem);
+                    writable = GetWritable(markdownItem);
+                    break;
                 case JsonItem jsonItem:
-                    return GetWritable(jsonItem);
+                    writable = GetWritable(jsonItem);
+                    break;
                 case CsvItem csvItem:
-                    return GetWritable(csvItem);
+                    writable =  GetWritable(csvItem);
+                    break;
                 case TomlItem tomlItem:
-                    return GetWritable(tomlItem);
+                    writable =  GetWritable(tomlItem);
+                    break;
                 case XmlItem xmlItem:
-                    return GetWritable(xmlItem);
+                    writable =  GetWritable(xmlItem);
+                    break;
                 default:
-                    return null;
+                    writable = null;
+                    break;
             }
+
+            return writable;
         }
 
-        private static Writable GetWritable(JsonItem resource) => null;
+        private static Writable GetWritable(JsonItem item) => null;
 
-        private static Writable GetWritable(CsvItem resource) => null;
+        private static Writable GetWritable(CsvItem item) => null;
 
-        private static Writable GetWritable(TomlItem resource) => null;
+        private static Writable GetWritable(TomlItem item) => null;
 
-        private static Writable GetWritable(XmlItem resource) => null;
+        private static Writable GetWritable(XmlItem item) => null;
 
         private static Writable GetWritable(MarkdownItem item)
         {

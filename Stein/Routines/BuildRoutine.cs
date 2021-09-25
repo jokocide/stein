@@ -4,9 +4,7 @@ using Stein.Models;
 using Stein.Collections;
 using HandlebarsDotNet;
 using Stein.Interfaces;
-using Stein.Engines;
 using Stein.Services;
-using System.Collections.Generic;
 
 namespace Stein.Routines
 {
@@ -21,44 +19,12 @@ namespace Stein.Routines
             IEngine engine = Engine.GetEngine(Config);
             engine.ClaimPartials(PathService.PartialsPath);
 
-            // This should be implemented on Collection class because these files
-            // are independent of the Engine type.
-            IEnumerable<Collection> collections = Collection.GetCollection(PathService.CollectionsPath);
-            Store.Register(collections);
+            Store.Register(Collection.GetCollection(PathService.CollectionsDirectories));
+            Store.Register(Writable.GetWritable(Store.Collections));
 
-
-            foreach (string path in PathService.CollectionsDirectories)
-            {
-                DirectoryInfo info = new(path);
-                Collection collection = new(info);
-
-                foreach (FileInfo file in info.GetFiles())
-                {
-                    if (file.Extension == "")
-                    {
-                        MessageService.Log(Message.NoExtension(file));
-                        continue;
-                    }
-
-                    Item item = Item.GetItem(file);
-
-                    if (item is not MarkdownItem)
-                    {
-                        MessageService.Log(new Message($"Format unsupported: {item.Info.Name}", Message.InfoType.Error));
-                        continue;
-                    }
-
-                    collection.Items.Add(item);
-                    Writable writable = Writable.GetWritable(item);
-
-                    if (writable == null) 
-                        continue;
-
-                    Store.Writable.Add(writable);
-                }
-
-                Store.Collections.Add(collection);
-            }
+            // Create pages
+            // Create Writable from pages
+            // Write out pages
 
             Injectable injectable = Injectable.Assemble(Store, Config);
 
