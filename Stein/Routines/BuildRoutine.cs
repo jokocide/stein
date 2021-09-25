@@ -6,6 +6,7 @@ using HandlebarsDotNet;
 using Stein.Interfaces;
 using Stein.Engines;
 using Stein.Services;
+using System.Collections.Generic;
 
 namespace Stein.Routines
 {
@@ -22,6 +23,10 @@ namespace Stein.Routines
 
             // This should be implemented on Collection class because these files
             // are independent of the Engine type.
+            IEnumerable<Collection> collections = Collection.GetCollection(PathService.CollectionsPath);
+            Store.Register(collections);
+
+
             foreach (string path in PathService.CollectionsDirectories)
             {
                 DirectoryInfo info = new(path);
@@ -57,8 +62,8 @@ namespace Stein.Routines
 
             Injectable injectable = Injectable.Assemble(Store, Config);
 
-            // Implemented on Engine because this depends on the type of engine
-            // being used.
+            // Implemented on Engine because this will only convert files that are 
+            // compatible with the engine type.
             foreach (string info in PathService.PagesFiles)
             {
                 // Todo:

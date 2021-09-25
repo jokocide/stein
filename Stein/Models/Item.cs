@@ -6,8 +6,6 @@ namespace Stein.Models
 {
     public abstract class Item
     {
-        public FileInfo Info { get; }
-
         public string Template { get; set; }
 
         public string Link { get; set; }
@@ -18,25 +16,44 @@ namespace Stein.Models
 
         public bool IsInvalid { get; private set; }
 
+        public FileInfo Info { get; }
+
+        public static Item GetItem(FileInfo fileInfo)
+        {
+            Item item;
+            string extension = fileInfo.Extension;
+
+            switch (extension)
+            {
+                case ".md":
+                    item = new MarkdownItem(fileInfo);
+                    break;
+                case ".csv":
+                    item = new CsvItem(fileInfo);
+                    break;
+                case ".json":
+                    item = new JsonItem(fileInfo);
+                    break;
+                case ".toml":
+                    item = new TomlItem(fileInfo);
+                    break;
+                case ".xml":
+                    item = new XmlItem(fileInfo);
+                    break;
+                default:
+                    item = null;
+                    break;
+            }
+
+            return item;
+        }
+
         public List<InvalidType> Issues { get; } = new();
 
         public void Invalidate(InvalidType type)
         {
             if (!IsInvalid) IsInvalid = true;
             Issues.Add(type);
-        }
-
-        public static Item GetItem(FileInfo fileInfo)
-        {
-            return fileInfo.Extension switch
-            {
-                ".md" => new MarkdownItem(fileInfo),
-                ".csv" => new CsvItem(fileInfo),
-                ".json" => new JsonItem(fileInfo),
-                ".toml" => new TomlItem(fileInfo),
-                ".xml" => new XmlItem(fileInfo),
-                _ => null
-            };
         }
 
         public enum InvalidType
@@ -46,8 +63,6 @@ namespace Stein.Models
             TemplateNotFound,
             NoTemplate
         }
-
-        //public abstract Writable Process();
 
         protected Item(FileInfo fileInfo) => Info = fileInfo;
     }

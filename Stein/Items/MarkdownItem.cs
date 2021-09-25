@@ -70,21 +70,6 @@ namespace Stein.Collections
                 MessageService.Log(Message.NoTemplateKey(Info));
                 return;
             }
-
-            //Writable writable;
-
-            //try
-            //{
-            //    writable = Writable.GetWritable(this);
-            //}
-            //catch (FileNotFoundException)
-            //{
-            //    Invalidate(InvalidType.TemplateNotFound);
-            //    MessageService.Log(Message.TemplateNotFound(Info));
-            //    return;
-            //}
-
-            //return writable;
         }
 
         public SerializedItem Serialize()

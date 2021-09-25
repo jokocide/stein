@@ -4,8 +4,33 @@ namespace Stein.Models
 {
     public class Store
     {
-        public List<Collection> Collections { get; } = new();
+        public void Register<T>(IEnumerable<T> list)
+        {
+            foreach(T item in list)
+            {
+                Register(item);
+            }
+        }
 
-        public List<Writable> Writable { get; } = new();
+        public void Register<T>(T item)
+        {
+            switch (item)
+            {
+                case Writable writable:
+                    Register(writable);
+                    break;
+                case Collection collection:
+                    Register(collection);
+                    break;
+            }
+        }
+
+        private void Register(Collection collection) => Collections.Add(collection);
+
+        private void Register(Writable writable) => Writable.Add(writable);
+
+        private List<Collection> Collections { get; } = new();
+
+        private List<Writable> Writable { get; } = new();
     }
 }

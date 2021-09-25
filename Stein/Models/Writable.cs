@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using HandlebarsDotNet;
 using Stein.Collections;
@@ -37,15 +36,15 @@ namespace Stein.Models
             }
         }
 
-        public static Writable GetWritable(JsonItem resource) => null;
+        private static Writable GetWritable(JsonItem resource) => null;
 
-        public static Writable GetWritable(CsvItem resource) => null;
+        private static Writable GetWritable(CsvItem resource) => null;
 
-        public static Writable GetWritable(TomlItem resource) => null;
+        private static Writable GetWritable(TomlItem resource) => null;
 
-        public static Writable GetWritable(XmlItem resource) => null;
+        private static Writable GetWritable(XmlItem resource) => null;
 
-        public static Writable GetWritable(MarkdownItem item)
+        private static Writable GetWritable(MarkdownItem item)
         {
             string rawTemplate;
             string commonPath = Path.Join(PathService.TemplatesPath, item.Template);
