@@ -5,7 +5,7 @@ using System.Text.Json;
 
 namespace Stein.Services
 {
-    public class JsonService : IInterpreter
+    public class JsonService : IDeserializer
     {
         public static JsonSerializerOptions Options { get; } = new JsonSerializerOptions
         {

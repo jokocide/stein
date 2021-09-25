@@ -5,14 +5,16 @@ namespace Stein.Interfaces
 {
     public interface IEngine
     {
-        public void RegisterPartial(IEnumerable<string> files);
+        public void RegisterPartial(IEnumerable<string> paths);
 
-        public void RegisterPartial(string name, string body);
+        public void RegisterPartial(string path);
 
-        public IEnumerable<IRenderer> CompileTemplate(IEnumerable<string> files);
+        public IEnumerable<IRenderer> CompileTemplate(IEnumerable<string> paths);
 
-        public IRenderer CompileTemplate(string body);
+        public IRenderer CompileTemplate(string path);
 
-        public string RenderTemplate(IRenderer template, Injectable injectable = null);
+        public IEnumerable<Writable> RenderTemplate(IEnumerable<IRenderer> templates, Injectable injectable = null);
+
+        public Writable RenderTemplate(IRenderer template, Injectable injectable = null);
     }
 }

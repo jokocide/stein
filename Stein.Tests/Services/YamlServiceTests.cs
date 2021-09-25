@@ -14,13 +14,13 @@ namespace Stein.Services.Tests
                 new object[] { "---Key One: Value One\nKey Two: Getting Started: The Guide---", (0, 3, 57, 60)}
             };
 
-        [Theory]
-        [MemberData(nameof(Indices))]
-        public void GetIndicesTest(string text, (int, int, int, int) expectedResult)
-        {
-            (int, int, int, int) result = new YamlService().GetIndicatorIndices(text);
-            Assert.Equal(expectedResult, result);
-        }
+        //[Theory]
+        //[MemberData(nameof(Indices))]
+        //public void GetIndicesTest(string text, (int, int, int, int) expectedResult)
+        //{
+        //    (int, int, int, int) result = new YamlService().Deserialize(text);
+        //    Assert.Equal(expectedResult, result);
+        //}
 
         [Fact()]
         public void DeserializeTest()

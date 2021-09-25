@@ -93,7 +93,7 @@ namespace Stein.Services
         {
             string text;
 
-            using (var stream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+            using (var stream = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
                 var reader = new StreamReader(stream);
                 text = reader.ReadToEnd();
