@@ -33,21 +33,15 @@ namespace Stein.Routines
             Store.Register(engine.RenderTemplate(templates, injectable));
             Store.Register(Writable.GetWritable(Store.Collections));
 
-            if (Directory.Exists(PathService.SitePath)) Directory.Delete(PathService.SitePath, true);
+            if (Directory.Exists(PathService.SitePath))
+                Directory.Delete(PathService.SitePath, true);
 
             PathService.Synchronize(
                 PathService.ResourcesPublicPath,
                 PathService.SitePublicPath,
-                true
-                );
+                true);
 
-            // Implemented on Writable class.
-            foreach (Writable writable in Store.Writable)
-            {
-                string directory = Path.GetDirectoryName(writable.Target);
-                Directory.CreateDirectory(directory);
-                File.WriteAllText(writable.Target, writable.Payload);
-            }
+            Writable.Write(Store.Writable);
 
             StringService.Colorize($"({DateTime.Now:T}) ", ConsoleColor.Gray, false);
             StringService.Colorize($"Built project ", ConsoleColor.White, false);

@@ -18,6 +18,18 @@ namespace Stein.Models
 
         public string Payload { get; }
 
+        public static void Write(IEnumerable<Writable> writables)
+        {
+            foreach (Writable writable in writables) Write(writable);
+        }
+
+        public static void Write(Writable writable)
+        {
+            string directory = Path.GetDirectoryName(writable.Target);
+            Directory.CreateDirectory(directory);
+            File.WriteAllText(writable.Target, writable.Payload);
+        }
+
         public static IEnumerable<Writable> GetWritable(IEnumerable<Collection> collections)
         {
             List<Writable> writables = new();
