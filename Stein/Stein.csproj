@@ -16,6 +16,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="StyleCop.Analyzers" />
+  </ItemGroup>
+  <ItemGroup>
       <None Include="../LICENSE" Pack="true" PackagePath="" />
       <None Include="../stein_logo_normal.png" Pack="true" PackagePath="" />
   </ItemGroup>

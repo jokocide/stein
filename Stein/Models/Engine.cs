@@ -7,18 +7,11 @@ namespace Stein.Models
     {
         public static IEngine GetEngine(Configuration config)
         {
-            IEngine engine;
-
-            switch (config.Engine)
+            return config.Engine switch
             {
-                case "handlebars":
-                    engine = new HandlebarsEngine();
-                    break;
-                default:
-                    return null;
-            }
-
-            return engine;
+                "handlebars" => new HandlebarsEngine(),
+                _ => null
+            };
         }
     }
 }

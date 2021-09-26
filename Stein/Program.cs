@@ -1,12 +1,9 @@
-﻿using Stein.Models;
+﻿using Stein.Services;
 
 namespace Stein
 {
      public class Program
     {
-        private static void Main(string[] args)
-        {
-            Pipeline.GetPipeline(args).Evaluate().Execute();
-        }
+        private static void Main(string[] args) => SetupService.Evaluate(args).Execute();
     }
 }
