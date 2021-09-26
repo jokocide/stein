@@ -26,7 +26,7 @@ namespace Stein.Pipelines
                 MessageService.Print(true);
             }
 
-            return BuildRoutine.GetDefault;
+            return BuildRoutine.GetDefault();
         }
 
         private int MaxBuildArgs => 2;
@@ -49,7 +49,7 @@ namespace Stein.Pipelines
                 MessageService.Print(true);
             }
 
-            return BuildRoutine.GetDefault;
+            return BuildRoutine.GetDefault();
         }
     }
 }

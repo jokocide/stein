@@ -138,6 +138,6 @@ namespace Stein.Routines
             MessageService.Print(true);
         }
 
-        private void FullRebuild() => BuildRoutine.GetDefault.Execute();
+        private void FullRebuild() => BuildRoutine.GetDefault().Execute();
     }
 }

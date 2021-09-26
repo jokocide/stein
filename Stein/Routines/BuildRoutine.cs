@@ -3,34 +3,37 @@ using System.IO;
 using Stein.Models;
 using Stein.Interfaces;
 using Stein.Services;
-using System.Collections.Generic;
 
 namespace Stein.Routines
 {
     public sealed class BuildRoutine : Routine, IExecutable
     {
-        public BuildRoutine(Store store, Configuration config) : base(store, config) { }
+        public BuildRoutine(IEngine engine, Store store, Configuration config) : base(engine, store, config) { }
         
-        public static BuildRoutine GetDefault => new BuildRoutine(new Store(), new ConfigurationService().GetConfigOrNew());
+        public static BuildRoutine GetDefault()
+        {
+            Configuration config = new ConfigurationService().GetConfigOrNew();
+            IEngine engine = Models.Engine.GetEngine(config);
+
+            return new BuildRoutine(engine, new Store(), config);
+        }
 
         public void Execute()
         {
-            IEngine engine = Engine.GetEngine(Config);
+            // Most templates rely on partials, so assemble them first.
+            Engine.RegisterPartial(PathService.PartialsFiles);
 
-            // All other forms of generated content likely rely on partials, so we handle those first.
-            engine.RegisterPartial(PathService.PartialsFiles);
+            // Page files rely on Collection data, so register them with the store.
+            Store.Register(Collection.GetCollection(PathService.CollectionsDirectories));
 
-            // Collections are often iterated over on other templates, so we build those second.
-            IEnumerable<Collection> collections = Collection.GetCollection(PathService.CollectionsDirectories);
-            Store.Register(collections);
-
-            // We serialize the collections we've gathered into a format that is suitable for template injection.
+            // We can serialize the data in Store into dynamic objects and pack them together
+            // as an Injectable object.
             Injectable injectable = Injectable.Assemble(Store, Config);
 
-            // Lastly, compile and render the remaining templates and inject the serialized data.
-            IEnumerable<IRenderer> templates = engine.CompileTemplate(PathService.PagesFiles);
+            // With the Collections in hand, we can now safely render the Page files.
+            Store.Register(Engine.RenderTemplate(Engine.CompileTemplate(PathService.PagesFiles), injectable));
 
-            Store.Register(engine.RenderTemplate(templates, injectable));
+            // Lastly, we can convert the Collection items into Writable objects as well.
             Store.Register(Writable.GetWritable(Store.Collections));
 
             if (Directory.Exists(PathService.SitePath))
