@@ -9,12 +9,12 @@ namespace Stein.Interfaces
 
         public void RegisterPartial(string path);
 
-        public IEnumerable<IRenderer> CompileTemplate(IEnumerable<string> paths);
+        public IEnumerable<Template> CompileTemplate(IEnumerable<string> paths);
 
-        public IRenderer CompileTemplate(string path);
+        public Template CompileTemplate(string path);
 
-        public IEnumerable<Writable> RenderTemplate(IEnumerable<IRenderer> templates, Injectable injectable = null);
+        public IEnumerable<Writable> RenderTemplate(IEnumerable<Template> templates, Injectable injectable = null);
 
-        public Writable RenderTemplate(IRenderer template, Injectable injectable = null);
+        public Writable RenderTemplate(Template template, Injectable injectable = null);
     }
 }

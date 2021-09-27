@@ -18,13 +18,13 @@ namespace Stein.Routines
                     break;
             }
         }
-        
+
         public static BuildRoutine GetDefault()
         {
             Configuration config = new ConfigurationService().GetConfig();
             IEngine engine = Models.Engine.GetEngine(config);
 
-            return new BuildRoutine(engine, new Store(), config);
+            return new BuildRoutine(config);
         }
 
         public override void Execute()
@@ -62,7 +62,7 @@ namespace Stein.Routines
             MessageService.Print();
         }
 
-        private Engine Engine { get; }
+        private IEngine Engine { get; }
 
         private Store Store { get; } = new();
     }

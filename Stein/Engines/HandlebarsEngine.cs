@@ -23,23 +23,23 @@ namespace Stein.Engines
             Handlebars.RegisterTemplate(name, body);
         }
 
-        public IEnumerable<IRenderer> CompileTemplate(IEnumerable<string> paths)
+        public IEnumerable<Template> CompileTemplate(IEnumerable<string> paths)
         {
-            List<IRenderer> templates = new();
+            List<Template> templates = new();
 
-            foreach(string path in paths)
+            foreach (string path in paths)
             {
-                IRenderer template = CompileTemplate(path);
+                Template template = CompileTemplate(path);
                 templates.Add(template);
             }
 
             return templates;
         }
 
-        public IRenderer CompileTemplate(string path)
+        public Template CompileTemplate(string path)
         {
             string ext = Path.GetExtension(path);
-            if ( ext != ".hbs") return null;
+            if (ext != ".hbs") return null;
 
             string text = PathService.ReadAllSafe(path);
             var templateObject = Handlebars.Compile(text);
@@ -47,11 +47,11 @@ namespace Stein.Engines
             return new HandlebarsTemplate(new FileInfo(path), templateObject);
         }
 
-        public IEnumerable<Writable> RenderTemplate(IEnumerable<IRenderer> templates, Injectable injectable = null)
+        public IEnumerable<Writable> RenderTemplate(IEnumerable<Template> templates, Injectable injectable = null)
         {
             List<Writable> writables = new();
 
-            foreach(IRenderer template in templates)
+            foreach (Template template in templates)
             {
                 Writable writable = RenderTemplate(template, injectable);
                 writables.Add(writable);
@@ -60,7 +60,7 @@ namespace Stein.Engines
             return writables;
         }
 
-        public Writable RenderTemplate(IRenderer template, Injectable injectable = null)
+        public Writable RenderTemplate(Template template, Injectable injectable = null)
         {
             if (template is HandlebarsTemplate castedTemplate)
             {

@@ -37,7 +37,7 @@ namespace Stein.Services
 
         private static void Print(Message message)
         {
-            if (message.Type == Message.InfoType.Warning && new ConfigurationService().GetConfigOrNew().SilenceWarnings)
+            if (message.Type == Message.InfoType.Warning && new ConfigurationService().GetConfig().SilenceWarnings)
                 return;
 
             if (message.Type == Message.InfoType.Error) StringService.Colorize("Error: ", ConsoleColor.Red, false);

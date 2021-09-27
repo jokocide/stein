@@ -7,9 +7,7 @@ namespace Stein.Routines
 {
     public sealed class NewRoutine : Routine
     {
-        public NewRoutine(Configuration config) : base(config) { }
-
-        public static NewRoutine GetDefault => new NewRoutine(new ConfigurationService().GetConfig());
+        public static NewRoutine GetDefault => new NewRoutine();
 
         public override void Execute()
         {

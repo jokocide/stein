@@ -18,7 +18,7 @@ namespace Stein.Models
         {
             List<Collection> collections = new();
 
-            foreach(string directory in directories)
+            foreach (string directory in directories)
             {
                 if (File.Exists(directory)) continue;
 
@@ -39,7 +39,7 @@ namespace Stein.Models
             Collection collection = new(info);
 
             FileInfo[] files = info.GetFiles();
-            foreach(FileInfo file in files)
+            foreach (FileInfo file in files)
             {
                 if (file.Extension == "")
                 {

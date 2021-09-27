@@ -6,17 +6,15 @@ namespace Stein.Routines
 {
     public sealed class HelpRoutine : Routine
     {
-        public HelpRoutine(Configuration config) : base(config) { }
+        public HelpRoutine(HelpTopic topic = HelpTopic.General) => Topic = topic;
 
-        public HelpRoutine(Configuration config, HelpTopic topic = HelpTopic.General) : base(config) => Topic = topic;
+        public static HelpRoutine GetDefault => new HelpRoutine();
 
-        public static HelpRoutine GetDefault => new HelpRoutine(new Configuration());
+        public static HelpRoutine GetBuildTopic => new HelpRoutine(HelpTopic.Build);
 
-        public static HelpRoutine GetBuildTopic => new HelpRoutine(new ConfigurationService().GetConfig(), HelpTopic.Build);
+        public static HelpRoutine GetNewTopic => new HelpRoutine(HelpTopic.New);
 
-        public static HelpRoutine GetNewTopic => new HelpRoutine(new ConfigurationService().GetConfig(), HelpTopic.New);
-
-        public static HelpRoutine GetServeTopic => new HelpRoutine(new ConfigurationService().GetConfig(), HelpTopic.Serve);
+        public static HelpRoutine GetServeTopic => new HelpRoutine(HelpTopic.Serve);
 
         public override void Execute()
         {
