@@ -20,13 +20,8 @@ namespace Stein.Models
 
             foreach (string directory in directories)
             {
-                if (File.Exists(directory)) continue;
-
-                else if (Directory.Exists(directory))
-                {
-                    Collection collection = GetCollection(directory);
-                    collections.Add(collection);
-                }
+                Collection collection = GetCollection(directory);
+                collections.Add(collection);
             }
 
             return collections;
@@ -51,7 +46,8 @@ namespace Stein.Models
 
                 if (item is not MarkdownItem)
                 {
-                    MessageService.Log(new Message($"Format unsupported: {item.Info.Name}", Message.InfoType.Error));
+                    Message message = new($"Format unsupported: {item.Info.Name}", Message.InfoType.Error);
+                    MessageService.Log(message);
                     continue;
                 }
 

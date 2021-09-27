@@ -4,36 +4,25 @@ namespace Stein.Models
 {
     public class Message
     {
-        public static Message TooManyArgs()
+        public Message(string text, InfoType type)
         {
-            Message message = new("Received too many arguments.", InfoType.Error);
-            return message;
+            Text = text;
+            Type = type;
         }
 
-        public static Message NoEngine()
-        {
-            Message message = new("Engine not specified in stein.json", InfoType.Error);
-            return message;
-        }
+        public string Text { get; init; }
 
-        public static Message NoTemplateKey(FileInfo fileInfo)
-        {
-            Message message = new($"No template key: {fileInfo.Name}", InfoType.Warning);
-            return message;
-        }
+        public InfoType Type { get; init; }
 
-        public static Message TemplateNotFound(FileInfo fileInfo)
-        {
-            Message message = new($"Template not found: {fileInfo.Name}", InfoType.Error);
-            return message;
-        }
+        public static Message TooManyArgs() => new("Received too many arguments.", InfoType.Error);
 
-        public static Message ProvidedPathIsNotProject()
-        {
-            string text = "The provided path does not appear to be a Stein project. (Missing a stein.json file?)";
-            Message message = new(text, Message.InfoType.Error);
-            return message;
-        }
+        public static Message NoEngine() => new("Engine not specified in stein.json", InfoType.Error);
+
+        public static Message NoTemplateKey(FileInfo fileInfo) => new($"No template key: {fileInfo.Name}", InfoType.Warning);
+
+        public static Message TemplateNotFound(FileInfo fileInfo) => new("Template not found: {fileInfo.Name}", InfoType.Error);
+
+        public static Message ProvidedPathIsNotProject() => new("The provided path does not appear to be a Stein project. (Missing a stein.json file?)", InfoType.Error);
 
         public static Message NotInProject(bool routineAcceptsPaths)
         {
@@ -45,39 +34,13 @@ namespace Stein.Models
             return message;
         }
 
-        public static Message CommandNotRecognized()
-        {
-            Message message = new("Command not recognized.", InfoType.Error);
-            return message;
-        }
+        public static Message CommandNotRecognized() => new("Command not recognized.", InfoType.Error);
 
-        public static Message ProvidedPathIsInvalid()
-        {
-            Message message = new("The provided path does not appear to be valid.", InfoType.Error);
-            return message;
-        }
+        public static Message ProvidedPathIsInvalid() => new("The provided path does not appear to be valid.", InfoType.Error);
 
-        public static Message NoExtension(FileInfo fileInfo)
-        {
-            Message message = new($"File has no extension: {fileInfo.Name}", InfoType.Error);
-            return message;
-        }
+        public static Message NoExtension(FileInfo fileInfo) => new($"File has no extension: {fileInfo.Name}", InfoType.Error);
 
-        public static Message InvalidJson(FileInfo fileInfo)
-        {
-            Message message = new($"Invalid JSON: {fileInfo.Name}", InfoType.Error);
-            return message;
-        }
-
-        public Message(string text, InfoType type)
-        {
-            Text = text;
-            Type = type;
-        }
-
-        public string Text { get; init; }
-
-        public InfoType Type { get; init; }
+        public static Message InvalidJson(FileInfo fileInfo) => new($"Invalid JSON: {fileInfo.Name}", InfoType.Error);
 
         public enum InfoType
         {
