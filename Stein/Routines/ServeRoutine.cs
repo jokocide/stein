@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Timers;
-using Stein.Interfaces;
 using Stein.Models;
 using Stein.Services;
 
 namespace Stein.Routines
 {
-    public sealed class ServeRoutine : Routine, IExecutable
+    public sealed class ServeRoutine : Routine
     {
         public ServeRoutine(Configuration config) : base(config) { }
 
@@ -19,9 +18,9 @@ namespace Stein.Routines
             Address = $"http://localhost:{port}/";
         }
 
-        public static ServeRoutine GetDefault => new ServeRoutine(new ConfigurationService().GetConfigOrNew());
+        public static ServeRoutine GetDefault => new ServeRoutine(new ConfigurationService().GetConfig());
 
-        public void Execute()
+        public override void Execute()
         {
             HttpListener listener = new HttpListener();
             listener.Prefixes.Add(Address);

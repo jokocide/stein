@@ -8,35 +8,21 @@ namespace Stein.Models
 {
     public class ConfigurationService : ISerializer
     {
-        public ConfigurationService() => Raw = File.Exists("stein.json") ? File.ReadAllText("stein.json") : null;
+        public ConfigurationService() =>
+            Raw = File.Exists("stein.json")
+            ? File.ReadAllText("stein.json")
+            : null;
 
-        public Configuration GetConfigOrNull()
+        public Configuration GetConfig()
         {
-            if (string.IsNullOrEmpty(Raw)) return null;
-
             try
             {
-                Configuration config = JsonSerializer.Deserialize<Configuration>(Raw);
-                return config;
+                return JsonSerializer.Deserialize<Configuration>(Raw);
             }
             catch (JsonException)
             {
+                MessageService.Log(Message.InvalidJson(new FileInfo("stein.json")));
                 return null;
-            }
-        }
-
-        public Configuration GetConfigOrNew()
-        {
-            if (string.IsNullOrEmpty(Raw)) return new Configuration();
-
-            try
-            {
-                Configuration config = JsonSerializer.Deserialize<Configuration>(Raw);
-                return config;
-            }
-            catch (JsonException)
-            {
-                return new Configuration();
             }
         }
 
@@ -44,13 +30,11 @@ namespace Stein.Models
         {
             dynamic item = new SerializedItem();
             SerializedItem castedItem = (SerializedItem)item;
-
             Dictionary<string, string> pairs = new JsonService().Deserialize(Raw);
 
             if (pairs == null) return null;
 
             foreach(var pair in pairs) castedItem.Add(pair.Key, pair.Value);
-
             return item;
         }
 

@@ -1,18 +1,17 @@
 using System;
 using System.IO;
-using Stein.Interfaces;
 using Stein.Models;
 using Stein.Services;
 
 namespace Stein.Routines
 {
-    public sealed class NewRoutine : Routine, IExecutable
+    public sealed class NewRoutine : Routine
     {
         public NewRoutine(Configuration config) : base(config) { }
 
-        public static NewRoutine GetDefault => new NewRoutine(new ConfigurationService().GetConfigOrNew());
+        public static NewRoutine GetDefault => new NewRoutine(new ConfigurationService().GetConfig());
 
-        public void Execute()
+        public override void Execute()
         {
             if (File.Exists("stein.json"))
             {

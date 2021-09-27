@@ -2,7 +2,7 @@
 
 namespace Stein.Models
 {
-    public class Routine
+    public abstract class Routine
     {
         public Routine(IEngine engine, Store store, Configuration config) : this(store, config) => Engine = engine;
 
@@ -10,9 +10,9 @@ namespace Stein.Models
 
         public Routine(Configuration config) => Config = config;
 
-        protected IEngine Engine { get; }
+        public Routine() { }
 
-        protected Store Store { get; }
+        public abstract void Execute();
 
         protected Configuration Config { get; }
     }

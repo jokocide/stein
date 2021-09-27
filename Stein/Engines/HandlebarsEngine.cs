@@ -1,4 +1,3 @@
-using System;
 using Stein.Interfaces;
 using Stein.Templates;
 using Stein.Models;

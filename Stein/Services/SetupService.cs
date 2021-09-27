@@ -1,5 +1,4 @@
 ﻿using Stein.Routines;
-using Stein.Interfaces;
 using Stein.Models;
 using System.IO;
 
@@ -7,7 +6,7 @@ namespace Stein.Services
 {
     public static class SetupService
     {
-        public static IExecutable Evaluate(string[] args)
+        public static Routine Evaluate(string[] args)
         {
             if (args.Length == 0) return HelpRoutine.GetDefault;
 
@@ -30,7 +29,7 @@ namespace Stein.Services
 
         private static int MaxServeArgs { get; } = 3;
 
-        private static IExecutable Help(string[] args)
+        private static Routine Help(string[] args)
         {
             if (args.Length > MaxHelpArgs)
             {
@@ -41,7 +40,7 @@ namespace Stein.Services
             return args.Length > 1 ? HelpTopic(args) : HelpRoutine.GetDefault;
         }
 
-        private static IExecutable HelpTopic(string[] args)
+        private static Routine HelpTopic(string[] args)
         {
             string topic = args[1].ToLower();
 
@@ -59,7 +58,7 @@ namespace Stein.Services
             };
         }
 
-        private static IExecutable Build(string[] args)
+        private static Routine Build(string[] args)
         {
             if (args.Length > MaxBuildArgs)
             {
@@ -78,7 +77,7 @@ namespace Stein.Services
             return BuildRoutine.GetDefault();
         }
 
-        private static IExecutable BuildPath(string[] args)
+        private static Routine BuildPath(string[] args)
         {
             try
             {
@@ -99,7 +98,7 @@ namespace Stein.Services
             return BuildRoutine.GetDefault();
         }
 
-        private static IExecutable New(string[] args)
+        private static Routine New(string[] args)
         {
             if (args.Length > MaxNewArgs)
             {
@@ -110,7 +109,7 @@ namespace Stein.Services
             return args.Length > 1 ? NewPath(args) : NewRoutine.GetDefault;
         }
 
-        private static IExecutable NewPath(string[] args)
+        private static Routine NewPath(string[] args)
         {
             if (!Directory.Exists(args[1]))
             {
@@ -129,7 +128,7 @@ namespace Stein.Services
             return NewRoutine.GetDefault;
         }
 
-        private static IExecutable Serve(string[] args)
+        private static Routine Serve(string[] args)
         {
             if (args.Length > MaxServeArgs)
             {
@@ -148,7 +147,7 @@ namespace Stein.Services
             return ServeRoutine.GetDefault;
         }
 
-        private static IExecutable ServePath(string[] args)
+        private static Routine ServePath(string[] args)
         {
             if (args.Length > 2) return ServePathPort(args);
 
@@ -167,7 +166,7 @@ namespace Stein.Services
             return ServeRoutine.GetDefault;
         }
 
-        private static IExecutable ServePathPort(string[] args)
+        private static Routine ServePathPort(string[] args)
         {
             if (!PathService.IsProject(args[1]))
             {

@@ -3,22 +3,31 @@ using System.IO;
 using Stein.Models;
 using Stein.Interfaces;
 using Stein.Services;
+using Stein.Engines;
 
 namespace Stein.Routines
 {
-    public sealed class BuildRoutine : Routine, IExecutable
+    public sealed class BuildRoutine : Routine
     {
-        public BuildRoutine(IEngine engine, Store store, Configuration config) : base(engine, store, config) { }
+        public BuildRoutine(Configuration config) : base(config)
+        {
+            switch (Config.Engine)
+            {
+                case "handlebars":
+                    Engine = new HandlebarsEngine();
+                    break;
+            }
+        }
         
         public static BuildRoutine GetDefault()
         {
-            Configuration config = new ConfigurationService().GetConfigOrNew();
+            Configuration config = new ConfigurationService().GetConfig();
             IEngine engine = Models.Engine.GetEngine(config);
 
             return new BuildRoutine(engine, new Store(), config);
         }
 
-        public void Execute()
+        public override void Execute()
         {
             // Most templates rely on partials, so assemble them first.
             Engine.RegisterPartial(PathService.PartialsFiles);
@@ -52,5 +61,9 @@ namespace Stein.Routines
 
             MessageService.Print();
         }
+
+        private Engine Engine { get; }
+
+        private Store Store { get; } = new();
     }
 }

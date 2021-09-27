@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Stein.Services
 {
-    public class YamlService
+    public class YamlService : IDeserializer
     {
         public Dictionary<string, string> Deserialize(string text)
         {
