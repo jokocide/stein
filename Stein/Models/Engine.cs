@@ -9,7 +9,7 @@ namespace Stein.Models
         {
             return config.Engine switch
             {
-                "handlebars" => new HandlebarsEngine(),
+                "hbs" => new HandlebarsEngine(),
                 _ => null
             };
         }

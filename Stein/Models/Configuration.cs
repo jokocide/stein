@@ -4,6 +4,6 @@
     {
         public bool SilenceWarnings { get; set; } = false;
 
-        public string Engine { get; } = "handlebars";
+        public string Engine { get; } = "hbs";
     }
 }

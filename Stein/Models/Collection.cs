@@ -36,6 +36,8 @@ namespace Stein.Models
             FileInfo[] files = info.GetFiles();
             foreach (FileInfo file in files)
             {
+                if (file.Name.StartsWith("_")) continue;
+
                 if (file.Extension == "")
                 {
                     MessageService.Log(Message.NoExtension(file));

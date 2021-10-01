@@ -151,19 +151,21 @@ namespace Stein.Services
         {
             if (args.Length > 2) return ServePathPort(args);
 
-            if (!PathService.IsProject(args[1]))
+            if (int.TryParse(args[1], out _) && (args[1].Length == 4 || args[1].Length == 5))
             {
-                if (int.TryParse(args[1], out _) && (args[1].Length == 4 || args[1].Length == 5))
-                {
-                    return new ServeRoutine(new Configuration(), args[1]);
-                }
-
-                MessageService.Log(Message.ProvidedPathIsNotProject());
-                MessageService.Print(true);
+                return new ServeRoutine(new Configuration(), args[1]);
             }
 
             Directory.SetCurrentDirectory(args[1]);
-            return ServeRoutine.GetDefault;
+            if (PathService.IsProject()) return ServeRoutine.GetDefault;
+
+            if (!PathService.IsProject(args[1]))
+            {
+                MessageService.Log(Message.ProvidedPathIsNotProject());
+                MessageService.Print(true);
+            }
+            
+            return new NotRecognizedRoutine();
         }
 
         private static Routine ServePathPort(string[] args)

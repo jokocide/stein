@@ -13,7 +13,7 @@ namespace Stein.Routines
         {
             switch (Config.Engine)
             {
-                case "handlebars":
+                case "hbs":
                     Engine = new HandlebarsEngine();
                     break;
             }
@@ -49,10 +49,10 @@ namespace Stein.Routines
                 Directory.Delete(PathService.SitePath, true);
 
             PathService.Synchronize(
-                PathService.ResourcesPublicPath,
-                PathService.SitePublicPath,
+                PathService.ResourcesStaticPath,
+                PathService.SiteStaticPath,
                 true);
-
+           
             Writable.Write(Store.Writable);
 
             StringService.Colorize($"({DateTime.Now:T}) ", ConsoleColor.Gray, false);
