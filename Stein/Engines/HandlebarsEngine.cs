@@ -9,6 +9,10 @@ namespace Stein.Engines
 {
     public class HandlebarsEngine : Engine, IEngine
     {
+        /// <summary>
+        /// The Handlebars.NET library is static, so this is just an abstraction that passes the
+        /// partial along.
+        /// </summary>
         public void RegisterPartial(string path)
         {
             string name = Path.GetFileNameWithoutExtension(path);
@@ -17,6 +21,9 @@ namespace Stein.Engines
             Handlebars.RegisterTemplate(name, body);
         }
 
+        /// <summary>
+        /// Return a compiled template from the file that exists at path.
+        /// </summary>
         public Template CompileTemplate(string path)
         {
             string ext = Path.GetExtension(path);
@@ -28,6 +35,10 @@ namespace Stein.Engines
             return new HandlebarsTemplate(new FileInfo(path), templateObject);
         }
 
+        /// <summary>
+        /// Render a Template object into a Writable.
+        /// </summary>
+        /// <param name="injectable">Optional data to be injected into the template.</param>
         public Writable RenderTemplate(Template template, Injectable injectable = null)
         {
             if (template is HandlebarsTemplate castedTemplate)
