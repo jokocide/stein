@@ -38,6 +38,8 @@ namespace Stein.Models
                     continue;
                 }
 
+                if (item.IsInvalid) continue;
+
                 Items.Add(item);
             }
         }

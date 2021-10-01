@@ -44,9 +44,15 @@ namespace Stein.Models
 
         public static Message InvalidJson(FileInfo fileInfo) => new($"Invalid JSON: {fileInfo.Name}", InfoType.Error);
 
+        public static Message NoYaml(FileInfo fileInfo) => new Message($"No YAML: {fileInfo.Name}", InfoType.Warning);
+
         public static Message ProjectAlreadyExists() => new("A stein.json already exists in target directory.", Message.InfoType.Error);
 
+        public static Message InvalidKeyValuePair(FileInfo fileInfo) => new($"Invalid key/value pair in YAML: {fileInfo.Name}", Message.InfoType.Error);
+
         public static Message InvalidConfiguration() => new($"Invalid project configuration in stein.json.", InfoType.Error);
+
+        public static Message ServerRestartRequired(ErrorEventArgs args) => new($"A server restart is required: ({args.GetException().Message})", Message.InfoType.Error);
 
         public static void Log(Message message) => Messages.Add(message);
 

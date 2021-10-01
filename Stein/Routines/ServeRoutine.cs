@@ -12,6 +12,7 @@ namespace Stein.Routines
     {
         public ServeRoutine(Configuration config, string port = null)
         {
+            Config = config;
             port ??= "8000";
             Port = port;
             Address = $"http://localhost:{port}/";
@@ -130,12 +131,12 @@ namespace Stein.Routines
             timer.Start();
         }
 
-        private void HandleError(object sender, ErrorEventArgs e)
+        private void HandleError(object sender, ErrorEventArgs args)
         {
-            Message.Log(new Message($"Server restart is required: ({e.GetException().Message})", Message.InfoType.Error));
+            Message.Log(Message.ServerRestartRequired(args));
             return;
         }
 
-        private void FullRebuild() =>new BuildRoutine(Config).Execute();
+        private void FullRebuild() => new BuildRoutine(Config).Execute();
     }
 }

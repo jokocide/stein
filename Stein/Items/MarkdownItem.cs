@@ -24,7 +24,7 @@ namespace Stein.Collections
             if (indicators.NoYaml)
             {
                 Invalidate(InvalidType.InvalidFrontmatter);
-                Message.Log(new Message($"No YAML: {Info.Name}", Message.InfoType.Warning));
+                Message.Log(Message.NoYaml(fileInfo));
             }
 
             Body = Markdown.ToHtml(rawFile[indicators.SecondEnd..].Trim());
@@ -78,7 +78,7 @@ namespace Stein.Collections
             catch (IndexOutOfRangeException)
             {
                 Invalidate(InvalidType.InvalidFrontmatter);
-                Message.Log(new Message($"Invalid key/value pair in YAML: {Info.Name}", Message.InfoType.Error));
+                Message.Log(Message.InvalidKeyValuePair(Info));
             }
 
             if (Issues.Contains(InvalidType.InvalidFrontmatter))

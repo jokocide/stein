@@ -213,7 +213,8 @@ namespace Stein.Models
                 return null;
             }
 
-            return new NotRecognizedRoutine();
+            Message.Log(Message.CommandNotRecognized());
+            return null;
         }
 
         private Routine ServePathPort(string[] args)
