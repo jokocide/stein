@@ -7,10 +7,12 @@ namespace Stein.Models
     {
         public Routine Evaluate(string[] args)
         {
-            if (args.Length == 0) return HelpRoutine.GetDefault;
+            if (args.Length == 0)
+                return HelpRoutine.GetDefault;
 
-            string firstArg = args[0].ToLower();
-            return firstArg switch
+            string one = args[0].ToLower();
+
+            return one switch
             {
                 "help" => Help(args),
                 "build" => Build(args),
@@ -115,6 +117,7 @@ namespace Stein.Models
                 try
                 {
                     Directory.CreateDirectory(args[1]);
+                    Directory.SetCurrentDirectory(args[1]);
                 }
                 catch (IOException)
                 {
@@ -123,7 +126,6 @@ namespace Stein.Models
                 }
             }
 
-            Directory.SetCurrentDirectory(args[1]);
             return new NewRoutine();
         }
 
@@ -155,7 +157,16 @@ namespace Stein.Models
                 return new ServeRoutine(args[1]);
             }
 
-            Directory.SetCurrentDirectory(args[1]);
+            try
+            {
+                Directory.SetCurrentDirectory(args[1]);
+            }
+            catch (IOException)
+            {
+                Message.Log(Message.ProvidedPathIsInvalid());
+                Message.Print(true);
+            }
+
             if (IsProject()) return new ServeRoutine();
 
             if (!IsProject(args[1]))
@@ -163,7 +174,7 @@ namespace Stein.Models
                 Message.Log(Message.ProvidedPathIsNotProject());
                 Message.Print(true);
             }
-            
+
             return new NotRecognizedRoutine();
         }
 
@@ -175,7 +186,15 @@ namespace Stein.Models
                 Message.Print(true);
             }
 
-            Directory.SetCurrentDirectory(args[1]);
+            try
+            {
+                Directory.SetCurrentDirectory(args[1]);
+            }
+            catch (IOException)
+            {
+                Message.Log(Message.ProvidedPathIsInvalid());
+                Message.Print(true);
+            }
             return new ServeRoutine(args[2]);
         }
 
