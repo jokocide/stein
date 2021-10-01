@@ -4,36 +4,17 @@ using Stein.Models;
 using HandlebarsDotNet;
 using System.IO;
 using Stein.Services;
-using System.Collections.Generic;
 
 namespace Stein.Engines
 {
     public class HandlebarsEngine : Engine, IEngine
     {
-        public void RegisterPartial(IEnumerable<string> paths)
-        {
-            foreach (string path in paths) RegisterPartial(path);
-        }
-
         public void RegisterPartial(string path)
         {
             string name = Path.GetFileNameWithoutExtension(path);
             string body = PathService.ReadAllSafe(path);
 
             Handlebars.RegisterTemplate(name, body);
-        }
-
-        public IEnumerable<Template> CompileTemplate(IEnumerable<string> paths)
-        {
-            List<Template> templates = new();
-
-            foreach (string path in paths)
-            {
-                Template template = CompileTemplate(path);
-                templates.Add(template);
-            }
-
-            return templates;
         }
 
         public Template CompileTemplate(string path)
@@ -45,19 +26,6 @@ namespace Stein.Engines
             var templateObject = Handlebars.Compile(text);
 
             return new HandlebarsTemplate(new FileInfo(path), templateObject);
-        }
-
-        public IEnumerable<Writable> RenderTemplate(IEnumerable<Template> templates, Injectable injectable = null)
-        {
-            List<Writable> writables = new();
-
-            foreach (Template template in templates)
-            {
-                Writable writable = RenderTemplate(template, injectable);
-                writables.Add(writable);
-            }
-
-            return writables;
         }
 
         public Writable RenderTemplate(Template template, Injectable injectable = null)

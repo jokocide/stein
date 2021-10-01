@@ -24,7 +24,10 @@ namespace Stein.Routines
         public override void Execute()
         {
             // Most templates rely on partials, so assemble them first.
-            Engine.RegisterPartial(PathService.PartialsFiles);
+            foreach(string path in PathService.PartialsFiles)
+            {
+                Engine.RegisterPartial(path);
+            }
 
             // Populate the store will collection data that can be used to generate an Injectable
             // later on, and register each collection's items as a Writable while we are at it.
