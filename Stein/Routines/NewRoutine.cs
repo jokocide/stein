@@ -11,8 +11,8 @@ namespace Stein.Routines
         {
             if (File.Exists("stein.json"))
             {
-                Message.Log(new Message("A stein.json already exists in target directory.", Message.InfoType.Error));
-                Message.Print(true);
+                Message.Log(Message.ProjectAlreadyExists());
+                return;
             }
 
             File.WriteAllText("stein.json", new JsonService().Serialize(new Configuration()));

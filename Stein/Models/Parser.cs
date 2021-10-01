@@ -9,15 +9,19 @@ namespace Stein.Models
         {
             if (args.Length == 0) return HelpRoutine.GetDefault;
 
-            string firstArg = args[0].ToLower();
-            return firstArg switch
-            {
-                "help" => Help(args),
-                "build" => Build(args),
-                "new" => New(args),
-                "serve" => Serve(args),
-                _ => new NotRecognizedRoutine(),
-            };
+            string argOne = args[0].ToLower();
+
+            if (argOne == "help")
+                return Help(args);
+            if (argOne == "build")
+                return Build(args);
+            if (argOne == "new")
+                return New(args);
+            if (argOne == "serve")
+                return Serve(args);
+
+            Message.Log(Message.CommandNotRecognized());
+            return null;
         }
 
         private int MaxHelpArgs { get; } = 2;
@@ -33,7 +37,7 @@ namespace Stein.Models
             if (args.Length > MaxHelpArgs)
             {
                 Message.Log(Message.TooManyArgs());
-                Message.Print(true);
+                return null;
             }
 
             return args.Length > 1 ? HelpTopic(args) : HelpRoutine.GetDefault;
@@ -46,7 +50,7 @@ namespace Stein.Models
             if (topic != "build" && topic != "new" && topic != "serve")
             {
                 Message.Log(Message.CommandNotRecognized());
-                Message.Print(true);
+                return null;
             }
 
             return topic switch
@@ -62,7 +66,7 @@ namespace Stein.Models
             if (args.Length > MaxBuildArgs)
             {
                 Message.Log(Message.TooManyArgs());
-                Message.Print(true);
+                return null;
             }
 
             if (args.Length > 1) return BuildPath(args);
@@ -70,10 +74,18 @@ namespace Stein.Models
             if (!IsProject())
             {
                 Message.Log(Message.NotInProject(true));
-                Message.Print(true);
+                return null;
             }
 
-            return new BuildRoutine();
+            Configuration config = new Configuration().GetConfig();
+
+            if (config == null)
+            {
+                Message.Log(Message.InvalidJson(new("stein.json")));
+                return null;
+            }
+
+            return new BuildRoutine(config);
         }
 
         private Routine BuildPath(string[] args)
@@ -85,16 +97,24 @@ namespace Stein.Models
             catch (IOException)
             {
                 Message.Log(Message.ProvidedPathIsNotProject());
-                Message.Print(true);
+                return null;
             }
 
             if (!IsProject())
             {
                 Message.Log(Message.NotInProject(true));
-                Message.Print(true);
+                return null;
             }
 
-            return new BuildRoutine();
+            Configuration config = new Configuration().GetConfig();
+
+            if (config == null)
+            {
+                Message.Log(Message.InvalidJson(new("stein.json")));
+                return null;
+            }
+
+            return new BuildRoutine(config);
         }
 
         private Routine New(string[] args)
@@ -102,7 +122,7 @@ namespace Stein.Models
             if (args.Length > MaxNewArgs)
             {
                 Message.Log(Message.TooManyArgs());
-                Message.Print(true);
+                return null;
             }
 
             return args.Length > 1 ? NewPath(args) : new NewRoutine();
@@ -119,7 +139,7 @@ namespace Stein.Models
                 catch (IOException)
                 {
                     Message.Log(Message.ProvidedPathIsInvalid());
-                    Message.Print(true);
+                    return null;
                 }
             }
 
@@ -132,7 +152,7 @@ namespace Stein.Models
             if (args.Length > MaxServeArgs)
             {
                 Message.Log(Message.TooManyArgs());
-                Message.Print(true);
+                return null;
             }
 
             if (args.Length > 1) return ServePath(args);
@@ -140,10 +160,18 @@ namespace Stein.Models
             if (!IsProject())
             {
                 Message.Log(Message.NotInProject(true));
-                Message.Print(true);
+                return null;
             }
 
-            return new ServeRoutine();
+            Configuration config = new Configuration().GetConfig();
+
+            if (config == null)
+            {
+                Message.Log(Message.InvalidJson(new("stein.json")));
+                return null;
+            }
+
+            return new ServeRoutine(config);
         }
 
         private Routine ServePath(string[] args)
@@ -152,16 +180,36 @@ namespace Stein.Models
 
             if (int.TryParse(args[1], out _) && (args[1].Length == 4 || args[1].Length == 5))
             {
-                return new ServeRoutine(args[1]);
+                Configuration config = new Configuration().GetConfig();
+
+                if (config == null)
+                {
+                    Message.Log(Message.InvalidJson(new("stein.json")));
+                    return null;
+                }
+
+                return new ServeRoutine(config, args[1]);
             }
 
             Directory.SetCurrentDirectory(args[1]);
-            if (IsProject()) return new ServeRoutine();
+
+            if (IsProject())
+            {
+                Configuration config = new Configuration().GetConfig();
+
+                if (config == null)
+                {
+                    Message.Log(Message.InvalidJson(new("stein.json")));
+                    return null;
+                }
+
+                return new ServeRoutine(config);
+            }
 
             if (!IsProject(args[1]))
             {
                 Message.Log(Message.ProvidedPathIsNotProject());
-                Message.Print(true);
+                return null;
             }
             
             return new NotRecognizedRoutine();
@@ -172,11 +220,20 @@ namespace Stein.Models
             if (!IsProject(args[1]))
             {
                 Message.Log(Message.ProvidedPathIsNotProject());
-                Message.Print(true);
+                return null;
             }
 
             Directory.SetCurrentDirectory(args[1]);
-            return new ServeRoutine(args[2]);
+
+            Configuration config = new Configuration().GetConfig();
+
+            if (config == null)
+            {
+                Message.Log(Message.InvalidJson(new("stein.json")));
+                return null;
+            }
+
+            return new ServeRoutine(config, args[2]);
         }
 
         private bool IsProject(string path = null)

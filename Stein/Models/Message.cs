@@ -34,6 +34,8 @@ namespace Stein.Models
             return message;
         }
 
+        public static Message NoEngine() => new("A recognized engine (hbs) is not specified in stein.json.", InfoType.Error);
+
         public static Message CommandNotRecognized() => new("Command not recognized.", InfoType.Error);
 
         public static Message ProvidedPathIsInvalid() => new("The provided path does not appear to be valid.", InfoType.Error);
@@ -41,6 +43,10 @@ namespace Stein.Models
         public static Message NoExtension(FileInfo fileInfo) => new($"File has no extension: {fileInfo.Name}", InfoType.Error);
 
         public static Message InvalidJson(FileInfo fileInfo) => new($"Invalid JSON: {fileInfo.Name}", InfoType.Error);
+
+        public static Message ProjectAlreadyExists() => new("A stein.json already exists in target directory.", Message.InfoType.Error);
+
+        public static Message InvalidConfiguration() => new($"Invalid project configuration in stein.json.", InfoType.Error);
 
         public static void Log(Message message) => Messages.Add(message);
 

@@ -73,15 +73,14 @@ namespace Stein.Services
             collections ??= new();
             pages ??= new();
 
-            Configuration config = new Configuration().GetConfig();
-
             string[] filesDirs = Directory.GetFileSystemEntries(path);
             foreach(string item in filesDirs)
             {
-                if (IsIgnored(item)) continue;
+                if (IsIgnored(item)) 
+                    continue;
 
-                if (File.Exists(item) && Path.GetExtension(item) == $".{config.Engine}") 
-                pages.Add(item);
+                if (File.Exists(item)) 
+                    pages.Add(item);
 
                 else if (Directory.Exists(item))
                 {

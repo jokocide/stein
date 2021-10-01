@@ -1,5 +1,4 @@
 ﻿using Stein.Models;
-using Stein.Services;
 
 namespace Stein.Routines
 {
@@ -8,7 +7,7 @@ namespace Stein.Routines
         public override void Execute()
         {
             Message.Log(Message.CommandNotRecognized());
-            Message.Print(true);
+            return;
         }
     }
 }

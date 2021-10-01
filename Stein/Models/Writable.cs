@@ -43,6 +43,9 @@ namespace Stein.Models
 
         private static Writable GetWritable(MarkdownItem item)
         {
+            if (item.Template == null)
+                return null;
+
             string rawTemplate;
             string commonPath = Path.Join(PathService.TemplatesPath, item.Template);
 

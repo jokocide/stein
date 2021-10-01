@@ -9,25 +9,25 @@ namespace Stein.Routines
 {
     public sealed class BuildRoutine : Routine
     {
-        public BuildRoutine() 
+        public BuildRoutine(Configuration config) 
         {
-            Config = new Configuration().GetConfig();
+            Config = config;
 
-            switch (Config.Engine)
-            {
-                case "hbs":
-                    Engine = new HandlebarsEngine();
-                    break;
-            }
+            if (config.Engine == "hbs")
+                Engine = new HandlebarsEngine();
         }
 
         public override void Execute()
         {
-            // Most templates rely on partials, so assemble them first.
-            foreach(string path in PathService.PartialsFiles)
+            if (Engine == null)
             {
-                Engine.RegisterPartial(path);
+                Message.Log(Message.NoEngine());
+                return;
             }
+
+            // Most templates rely on partials, so assemble them first.
+            foreach (string path in PathService.PartialsFiles)
+                Engine.RegisterPartial(path);
 
             // Populate the store will collection data that can be used to generate an Injectable
             // later on, and register each collection's items as a Writable while we are at it.
@@ -39,6 +39,10 @@ namespace Stein.Routines
                 foreach(Item item in collection.Items)
                 {
                     Writable writable = Writable.GetWritable(item);
+
+                    if (writable == null) 
+                        continue;
+
                     Store.Register(writable);
                 }
             }
@@ -52,6 +56,10 @@ namespace Stein.Routines
             foreach(string path in PathService.PagesFiles)
             {
                 Template page = Engine.CompileTemplate(path);
+
+                if (page == null) 
+                    continue;
+
                 Writable writable = Engine.RenderTemplate(page, injectable);
                 Store.Register(writable);
             }
@@ -75,8 +83,6 @@ namespace Stein.Routines
             StringService.Colorize($"({DateTime.Now:T}) ", ConsoleColor.Gray, false);
             StringService.Colorize($"Built project ", ConsoleColor.White, false);
             StringService.Colorize($"'{new DirectoryInfo(Directory.GetCurrentDirectory()).Name}' ", ConsoleColor.Gray, true);
-
-            Message.Print();
         }
 
         private IEngine Engine { get; }

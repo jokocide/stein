@@ -10,7 +10,7 @@ namespace Stein.Routines
 {
     public sealed class ServeRoutine : Routine
     {
-        public ServeRoutine(string port = null)
+        public ServeRoutine(Configuration config, string port = null)
         {
             port ??= "8000";
             Port = port;
@@ -99,6 +99,8 @@ namespace Stein.Routines
 
         private string Address { get; } = "http://localhost:8000/";
 
+        private Configuration Config { get; }
+
         /// <summary>
         /// Temporarily store the name of files that have emitted an event 
         /// here, necessary to avoid multiple event emits from a single change.
@@ -131,9 +133,9 @@ namespace Stein.Routines
         private void HandleError(object sender, ErrorEventArgs e)
         {
             Message.Log(new Message($"Server restart is required: ({e.GetException().Message})", Message.InfoType.Error));
-            Message.Print(true);
+            return;
         }
 
-        private void FullRebuild() =>new BuildRoutine().Execute();
+        private void FullRebuild() =>new BuildRoutine(Config).Execute();
     }
 }

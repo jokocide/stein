@@ -16,19 +16,25 @@ namespace Stein.Models
 
         public bool SilenceWarnings { get; set; } = false;
 
-        public string Engine { get; } = "hbs";
+        public string Engine { get; set; } = "hbs";
 
         public Configuration GetConfig()
         {
+            Configuration config;
+
             try
             {
-                return JsonSerializer.Deserialize<Configuration>(Raw);
+                config = JsonSerializer.Deserialize<Configuration>(Raw, JsonService.Options);
             }
             catch (JsonException)
             {
-                Message.Log(Message.InvalidJson(new FileInfo("stein.json")));
                 return null;
             }
+
+            if (config.Engine.StartsWith("."))
+                config.Engine = config.Engine.Remove(0, 1);
+
+            return config;
         }
 
         public SerializedItem GetConfigAllKeys()
