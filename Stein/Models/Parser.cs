@@ -7,7 +7,8 @@ namespace Stein.Models
     {
         public Routine Evaluate(string[] args)
         {
-            if (args.Length == 0) return HelpRoutine.GetDefault;
+            if (args.Length == 0)
+                return HelpRoutine.GetDefault;
 
             string argOne = args[0].ToLower();
 
@@ -135,6 +136,7 @@ namespace Stein.Models
                 try
                 {
                     Directory.CreateDirectory(args[1]);
+                    Directory.SetCurrentDirectory(args[1]);
                 }
                 catch (IOException)
                 {
@@ -143,7 +145,6 @@ namespace Stein.Models
                 }
             }
 
-            Directory.SetCurrentDirectory(args[1]);
             return new NewRoutine();
         }
 
@@ -211,7 +212,7 @@ namespace Stein.Models
                 Message.Log(Message.ProvidedPathIsNotProject());
                 return null;
             }
-            
+
             return new NotRecognizedRoutine();
         }
 

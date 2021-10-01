@@ -31,12 +31,12 @@ namespace Stein.Routines
 
             // Populate the store will collection data that can be used to generate an Injectable
             // later on, and register each collection's items as a Writable while we are at it.
-            foreach(string path in PathService.CollectionsDirectories)
+            foreach (string path in PathService.CollectionsDirectories)
             {
-                Collection collection = Collection.GetCollection(path);
+                Collection collection = new(path);
                 Store.Register(collection);
 
-                foreach(Item item in collection.Items)
+                foreach (Item item in collection.Items)
                 {
                     Writable writable = Writable.GetWritable(item);
 
@@ -53,7 +53,7 @@ namespace Stein.Routines
             Injectable injectable = Injectable.Assemble(Store, Config);
 
             // With the Injectable in hand we can render the page files.
-            foreach(string path in PathService.PagesFiles)
+            foreach (string path in PathService.PagesFiles)
             {
                 Template page = Engine.CompileTemplate(path);
 
@@ -75,7 +75,7 @@ namespace Stein.Routines
                 true);
 
             // Writing out the results.
-            foreach(Writable writable in Store.Writable)
+            foreach (Writable writable in Store.Writable)
             {
                 Writable.Write(writable);
             }

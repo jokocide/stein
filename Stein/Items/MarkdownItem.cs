@@ -29,40 +29,13 @@ namespace Stein.Collections
 
             Body = Markdown.ToHtml(rawFile[indicators.SecondEnd..].Trim());
 
-            if (Issues.Contains(InvalidType.NoFrontmatter) || Issues.Contains(InvalidType.InvalidFrontmatter))
+            if (
+                Issues.Contains(InvalidType.NoFrontmatter)
+                || Issues.Contains(InvalidType.InvalidFrontmatter)
+                )
                 return;
 
-            Dictionary<string, string> rawPairs = new();
-
-            try
-            {
-                string section = StringService.Slice(indicators.FirstEnd, indicators.SecondStart, rawFile);
-                rawPairs = new YamlService().Deserialize(section);
-            }
-            catch (IndexOutOfRangeException)
-            {
-                Invalidate(InvalidType.InvalidFrontmatter);
-                Message.Log(new Message($"Invalid key/value pair in YAML: {Info.Name}", Message.InfoType.Error));
-            }
-
-            if (Issues.Contains(InvalidType.InvalidFrontmatter))
-                return;
-
-            foreach (var (key, value) in rawPairs)
-            {
-                switch (key.ToLower())
-                {
-                    case "date":
-                        Date = value;
-                        break;
-                    case "template":
-                        Template = value;
-                        break;
-                    default:
-                        Frontmatter.Add(key, value);
-                        break;
-                }
-            }
+            PopulateFrontmatter(indicators, rawFile);
 
             if (Template == null)
             {
@@ -92,5 +65,35 @@ namespace Stein.Collections
         private Dictionary<string, string> Frontmatter { get; } = new();
 
         private string Body { get; set; }
+
+        private void PopulateFrontmatter(YamlIndicators indicators, string rawFile)
+        {
+            Dictionary<string, string> rawPairs = new();
+
+            try
+            {
+                string section = StringService.Slice(indicators.FirstEnd, indicators.SecondStart, rawFile);
+                rawPairs = new YamlService().Deserialize(section);
+            }
+            catch (IndexOutOfRangeException)
+            {
+                Invalidate(InvalidType.InvalidFrontmatter);
+                Message.Log(new Message($"Invalid key/value pair in YAML: {Info.Name}", Message.InfoType.Error));
+            }
+
+            if (Issues.Contains(InvalidType.InvalidFrontmatter))
+                return;
+
+            foreach (var (key, value) in rawPairs)
+            {
+                string point = key.ToLower();
+                if (point == "date")
+                    Date = value;
+                else if (point == "template")
+                    Template = value;
+                else
+                    Frontmatter.Add(key, value);
+            }
+        }
     }
 }

@@ -1,47 +1,49 @@
 ﻿using Stein.Collections;
 using System.Collections.Generic;
 using System.IO;
+using Stein.Services;
 
 namespace Stein.Models
 {
     public class Collection
     {
-        public Collection(DirectoryInfo directoryInfo) => Info = directoryInfo;
+        public Collection(string path) : this(new DirectoryInfo(path)) { }
 
-        public DirectoryInfo Info { get; }
-
-        public List<Item> Items { get; } = new();
-
-        public static Collection GetCollection(string directory)
+        public Collection(DirectoryInfo directoryInfo)
         {
-            DirectoryInfo info = new(directory);
+            Info = directoryInfo;
 
-            Collection collection = new(info);
-
-            FileInfo[] files = info.GetFiles();
-            foreach (FileInfo file in files)
+            FileInfo[] files = directoryInfo.GetFiles();
+            foreach (var path in files)
             {
-                if (file.Name.StartsWith("_")) continue;
+                if (PathService.IsIgnored(path.Name))
+                    continue;
 
-                if (file.Extension == "")
+                if (path.Extension == "")
                 {
-                    Message.Log(Message.NoExtension(file));
+                    Message.Log(Message.NoExtension(path));
                     continue;
                 }
 
-                Item item = Item.GetItem(file);
+                Item item = path.Extension switch
+                {
+                    ".md" => new MarkdownItem(path),
+                    _ => null
+                };
 
                 if (item is not MarkdownItem)
                 {
-                    Message message = new($"Format unsupported: {item.Info.Name}", Message.InfoType.Error);
+                    Message message = new($"Format unsupported: {path.Name}", Message.InfoType.Error);
                     Message.Log(message);
                     continue;
                 }
 
-                collection.Items.Add(item);
+                Items.Add(item);
             }
-
-            return collection;
         }
+
+        public DirectoryInfo Info { get; }
+
+        public List<Item> Items { get; } = new();
     }
 }

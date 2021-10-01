@@ -1,5 +1,4 @@
-﻿using Stein.Collections;
-using Stein.Services;
+﻿using Stein.Services;
 using System.Collections.Generic;
 using System.IO;
 
@@ -18,24 +17,6 @@ namespace Stein.Models
         public bool IsInvalid { get; private set; }
 
         public FileInfo Info { get; }
-
-        public static Item GetItem(FileInfo fileInfo)
-        {
-            Item item;
-            string extension = fileInfo.Extension;
-
-            switch (extension)
-            {
-                case ".md":
-                    item = new MarkdownItem(fileInfo);
-                    break;
-                default:
-                    item = null;
-                    break;
-            }
-
-            return item;
-        }
 
         public List<InvalidType> Issues { get; } = new();
 
