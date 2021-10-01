@@ -8,13 +8,9 @@ namespace Stein.Services
         public static void Sort(Collection collection, SortMethod method)
         {
             if (method is SortMethod.LatestDate)
-            {
                 collection.Items.Sort(LatestDateComparison);
-            } 
             else if (method is SortMethod.EarliestDate)
-            {
                 collection.Items.Sort(EarliestDateComparison);
-            }
         }
 
         public enum SortMethod

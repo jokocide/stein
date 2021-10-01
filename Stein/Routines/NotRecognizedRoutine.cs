@@ -7,8 +7,8 @@ namespace Stein.Routines
     {
         public override void Execute()
         {
-            MessageService.Log(Message.CommandNotRecognized());
-            MessageService.Print(true);
+            Message.Log(Message.CommandNotRecognized());
+            Message.Print(true);
         }
     }
 }

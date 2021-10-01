@@ -7,7 +7,7 @@ using Stein.Services;
 
 namespace Stein.Engines
 {
-    public class HandlebarsEngine : Engine, IEngine
+    public class HandlebarsEngine : IEngine
     {
         /// <summary>
         /// The Handlebars.NET library is static, so this is just an abstraction that passes the

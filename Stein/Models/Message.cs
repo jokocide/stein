@@ -1,4 +1,8 @@
+using Stein.Services;
+using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Stein.Models
 {
@@ -16,11 +20,7 @@ namespace Stein.Models
 
         public static Message TooManyArgs() => new("Received too many arguments.", InfoType.Error);
 
-        public static Message NoEngine() => new("Engine not specified in stein.json", InfoType.Error);
-
         public static Message NoTemplateKey(FileInfo fileInfo) => new($"No template key: {fileInfo.Name}", InfoType.Warning);
-
-        public static Message TemplateNotFound(FileInfo fileInfo) => new("Template not found: {fileInfo.Name}", InfoType.Error);
 
         public static Message ProvidedPathIsNotProject() => new("The provided path does not appear to be a Stein project. (Missing a stein.json file?)", InfoType.Error);
 
@@ -42,10 +42,34 @@ namespace Stein.Models
 
         public static Message InvalidJson(FileInfo fileInfo) => new($"Invalid JSON: {fileInfo.Name}", InfoType.Error);
 
+        public static void Log(Message message) => Messages.Add(message);
+
+        public static void Print(bool exit = false)
+        {
+            Print(Messages);
+            if (exit) Environment.Exit(0);
+        }
+
         public enum InfoType
         {
             Warning,
             Error
+        }
+
+        private static List<Message> Messages { get; } = new();
+
+        private static void Print(IEnumerable<Message> messages) => messages.ToList().ForEach(Print);
+
+        private static void Print(Message message)
+        {
+            if (message.Type == Message.InfoType.Warning && new Configuration().GetConfig().SilenceWarnings)
+                return;
+
+            if (message.Type == Message.InfoType.Error) StringService.Colorize("Error: ", ConsoleColor.Red, false);
+            else if (message.Type == Message.InfoType.Warning) StringService.Colorize("Warning: ", ConsoleColor.Yellow, false);
+
+            StringService.Colorize(message.Text, ConsoleColor.Gray, true);
+            Messages.Remove(message);
         }
     }
 }

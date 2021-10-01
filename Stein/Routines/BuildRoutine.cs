@@ -11,7 +11,7 @@ namespace Stein.Routines
     {
         public BuildRoutine() 
         {
-            Config = new ConfigurationService().GetConfig();
+            Config = new Configuration().GetConfig();
 
             switch (Config.Engine)
             {
@@ -76,7 +76,7 @@ namespace Stein.Routines
             StringService.Colorize($"Built project ", ConsoleColor.White, false);
             StringService.Colorize($"'{new DirectoryInfo(Directory.GetCurrentDirectory()).Name}' ", ConsoleColor.Gray, true);
 
-            MessageService.Print();
+            Message.Print();
         }
 
         private IEngine Engine { get; }

@@ -1,11 +1,11 @@
-﻿using Stein.Interfaces;
-using Stein.Models;
+﻿using Stein.Models;
+using System;
 using System.Collections.Generic;
 using System.Text.Json;
 
 namespace Stein.Services
 {
-    public class JsonService : IDeserializer
+    public class JsonService
     {
         public static JsonSerializerOptions Options { get; } = new JsonSerializerOptions
         {
@@ -45,7 +45,14 @@ namespace Stein.Services
 
         public string Serialize(Configuration config)
         {
-            return JsonSerializer.Serialize(config, Options);
+            try
+            {
+                return JsonSerializer.Serialize(config, Options);
+            }
+            catch(NotSupportedException)
+            {
+                return null;
+            }
         }
     }
 }

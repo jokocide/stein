@@ -10,7 +10,7 @@ namespace Stein.Models
         public Writable(FileInfo file, string payload)
         {
             Payload = payload;
-            Target = PathService.GetOutputPath(file);
+            Target = GetOutputPath(file);
         }
 
         public string Target { get; }
@@ -33,18 +33,6 @@ namespace Stein.Models
                 case MarkdownItem markdownItem:
                     writable = GetWritable(markdownItem);
                     break;
-                case JsonItem jsonItem:
-                    writable = GetWritable(jsonItem);
-                    break;
-                case CsvItem csvItem:
-                    writable =  GetWritable(csvItem);
-                    break;
-                case TomlItem tomlItem:
-                    writable =  GetWritable(tomlItem);
-                    break;
-                case XmlItem xmlItem:
-                    writable =  GetWritable(xmlItem);
-                    break;
                 default:
                     writable = null;
                     break;
@@ -52,14 +40,6 @@ namespace Stein.Models
 
             return writable;
         }
-
-        private static Writable GetWritable(JsonItem item) => null;
-
-        private static Writable GetWritable(CsvItem item) => null;
-
-        private static Writable GetWritable(TomlItem item) => null;
-
-        private static Writable GetWritable(XmlItem item) => null;
 
         private static Writable GetWritable(MarkdownItem item)
         {
@@ -90,6 +70,26 @@ namespace Stein.Models
             var compiledTemplate = Handlebars.Compile(rawTemplate);
             string renderedTemplate = compiledTemplate(injectable);
             return new Writable(item.Info, renderedTemplate);
+        }
+
+        private static string GetOutputPath(FileInfo file)
+        {
+            string fileNameNoExtension = Path.GetFileNameWithoutExtension(file.Name);
+            string relative = Path.GetRelativePath(PathService.ResourcesPath, file.FullName);
+            Configuration config = new Configuration().GetConfig();
+
+            if (relative == $"index.{config.Engine}")
+            {
+                return Path.Join(PathService.SitePath, "index.html");
+            }
+            else
+            {
+                string name = Path.GetFileNameWithoutExtension(relative);
+                string parent = Path.GetDirectoryName(relative);
+                string directory = Path.Join(PathService.SitePath, parent, name);
+                Directory.CreateDirectory(directory);
+                return Path.Join(directory, "index.html");
+            }
         }
     }
 }

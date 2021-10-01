@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Stein.Interfaces;
 using Stein.Services;
 
 namespace Stein.Models
@@ -10,7 +9,7 @@ namespace Stein.Models
 
         public static Injectable Assemble(Store store, Configuration config)
         {
-            SerializedItem configuration = new ConfigurationService().Serialize();
+            SerializedItem configuration = new Configuration().GetConfigAllKeys();
             Dictionary<string, object> members = configuration.Pairs;
 
             Injectable injectable = new();
@@ -29,8 +28,7 @@ namespace Stein.Models
 
                 foreach(Item item in collection.Items)
                 {
-                    ISerializer castedItem = item as ISerializer;
-                    serializedMembers.Add(castedItem.Serialize());
+                    serializedMembers.Add(item.Serialize());
                 }
 
                 injectable.Items.Add(collection.Info.Name, serializedMembers);

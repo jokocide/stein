@@ -1,5 +1,4 @@
 ﻿using Markdig;
-using Stein.Interfaces;
 using Stein.Models;
 using Stein.Services;
 using System;
@@ -8,11 +7,11 @@ using System.IO;
 
 namespace Stein.Collections
 {
-    public sealed class MarkdownItem : Item, ISerializer
+    public sealed class MarkdownItem : Item
     {
         public MarkdownItem(FileInfo fileInfo) : base(fileInfo)
         {
-            Link = PathService.GetIterablePath(Info);
+            Link = GetIterablePath(Info);
             Slug = StringService.Slugify(Path.GetFileNameWithoutExtension(Info.Name));
 
             string rawFile = PathService.ReadAllSafe(Info.FullName);
@@ -25,7 +24,7 @@ namespace Stein.Collections
             if (indicators.NoYaml)
             {
                 Invalidate(InvalidType.InvalidFrontmatter);
-                MessageService.Log(new Message($"No YAML: {Info.Name}", Message.InfoType.Warning));
+                Message.Log(new Message($"No YAML: {Info.Name}", Message.InfoType.Warning));
             }
 
             Body = Markdown.ToHtml(rawFile[indicators.SecondEnd..].Trim());
@@ -43,7 +42,7 @@ namespace Stein.Collections
             catch (IndexOutOfRangeException)
             {
                 Invalidate(InvalidType.InvalidFrontmatter);
-                MessageService.Log(new Message($"Invalid key/value pair in YAML: {Info.Name}", Message.InfoType.Error));
+                Message.Log(new Message($"Invalid key/value pair in YAML: {Info.Name}", Message.InfoType.Error));
             }
 
             if (Issues.Contains(InvalidType.InvalidFrontmatter))
@@ -67,12 +66,12 @@ namespace Stein.Collections
 
             if (Template == null)
             {
-                MessageService.Log(Message.NoTemplateKey(Info));
+                Message.Log(Message.NoTemplateKey(Info));
                 return;
             }
         }
 
-        public SerializedItem Serialize()
+        public override SerializedItem Serialize()
         {
             dynamic injectable = new SerializedItem();
             SerializedItem castedInjectable = (SerializedItem)injectable;

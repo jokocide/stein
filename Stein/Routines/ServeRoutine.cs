@@ -130,8 +130,8 @@ namespace Stein.Routines
 
         private void HandleError(object sender, ErrorEventArgs e)
         {
-            MessageService.Log(new Message($"Server restart is required: ({e.GetException().Message})", Message.InfoType.Error));
-            MessageService.Print(true);
+            Message.Log(new Message($"Server restart is required: ({e.GetException().Message})", Message.InfoType.Error));
+            Message.Print(true);
         }
 
         private void FullRebuild() =>new BuildRoutine().Execute();

@@ -1,12 +1,11 @@
 ﻿using Stein.Routines;
-using Stein.Models;
 using System.IO;
 
-namespace Stein.Services
+namespace Stein.Models
 {
-    public static class SetupService
+    public class Parser
     {
-        public static Routine Evaluate(string[] args)
+        public Routine Evaluate(string[] args)
         {
             if (args.Length == 0) return HelpRoutine.GetDefault;
 
@@ -21,33 +20,33 @@ namespace Stein.Services
             };
         }
 
-        private static int MaxHelpArgs { get; } = 2;
+        private int MaxHelpArgs { get; } = 2;
 
-        private static int MaxBuildArgs { get; } = 2;
+        private int MaxBuildArgs { get; } = 2;
 
-        private static int MaxNewArgs { get; } = 2;
+        private int MaxNewArgs { get; } = 2;
 
-        private static int MaxServeArgs { get; } = 3;
+        private int MaxServeArgs { get; } = 3;
 
-        private static Routine Help(string[] args)
+        private Routine Help(string[] args)
         {
             if (args.Length > MaxHelpArgs)
             {
-                MessageService.Log(Message.TooManyArgs());
-                MessageService.Print(true);
+                Message.Log(Message.TooManyArgs());
+                Message.Print(true);
             }
 
             return args.Length > 1 ? HelpTopic(args) : HelpRoutine.GetDefault;
         }
 
-        private static Routine HelpTopic(string[] args)
+        private Routine HelpTopic(string[] args)
         {
             string topic = args[1].ToLower();
 
             if (topic != "build" && topic != "new" && topic != "serve")
             {
-                MessageService.Log(Message.CommandNotRecognized());
-                MessageService.Print(true);
+                Message.Log(Message.CommandNotRecognized());
+                Message.Print(true);
             }
 
             return topic switch
@@ -58,26 +57,26 @@ namespace Stein.Services
             };
         }
 
-        private static Routine Build(string[] args)
+        private Routine Build(string[] args)
         {
             if (args.Length > MaxBuildArgs)
             {
-                MessageService.Log(Message.TooManyArgs());
-                MessageService.Print(true);
+                Message.Log(Message.TooManyArgs());
+                Message.Print(true);
             }
 
             if (args.Length > 1) return BuildPath(args);
 
-            if (!PathService.IsProject())
+            if (!IsProject())
             {
-                MessageService.Log(Message.NotInProject(true));
-                MessageService.Print(true);
+                Message.Log(Message.NotInProject(true));
+                Message.Print(true);
             }
 
             return new BuildRoutine();
         }
 
-        private static Routine BuildPath(string[] args)
+        private Routine BuildPath(string[] args)
         {
             try
             {
@@ -85,31 +84,31 @@ namespace Stein.Services
             }
             catch (IOException)
             {
-                MessageService.Log(Message.ProvidedPathIsNotProject());
-                MessageService.Print(true);
+                Message.Log(Message.ProvidedPathIsNotProject());
+                Message.Print(true);
             }
 
-            if (!PathService.IsProject())
+            if (!IsProject())
             {
-                MessageService.Log(Message.NotInProject(true));
-                MessageService.Print(true);
+                Message.Log(Message.NotInProject(true));
+                Message.Print(true);
             }
 
             return new BuildRoutine();
         }
 
-        private static Routine New(string[] args)
+        private Routine New(string[] args)
         {
             if (args.Length > MaxNewArgs)
             {
-                MessageService.Log(Message.TooManyArgs());
-                MessageService.Print(true);
+                Message.Log(Message.TooManyArgs());
+                Message.Print(true);
             }
 
             return args.Length > 1 ? NewPath(args) : new NewRoutine();
         }
 
-        private static Routine NewPath(string[] args)
+        private Routine NewPath(string[] args)
         {
             if (!Directory.Exists(args[1]))
             {
@@ -119,8 +118,8 @@ namespace Stein.Services
                 }
                 catch (IOException)
                 {
-                    MessageService.Log(Message.ProvidedPathIsInvalid());
-                    MessageService.Print(true);
+                    Message.Log(Message.ProvidedPathIsInvalid());
+                    Message.Print(true);
                 }
             }
 
@@ -128,26 +127,26 @@ namespace Stein.Services
             return new NewRoutine();
         }
 
-        private static Routine Serve(string[] args)
+        private Routine Serve(string[] args)
         {
             if (args.Length > MaxServeArgs)
             {
-                MessageService.Log(Message.TooManyArgs());
-                MessageService.Print(true);
+                Message.Log(Message.TooManyArgs());
+                Message.Print(true);
             }
 
             if (args.Length > 1) return ServePath(args);
 
-            if (!PathService.IsProject())
+            if (!IsProject())
             {
-                MessageService.Log(Message.NotInProject(true));
-                MessageService.Print(true);
+                Message.Log(Message.NotInProject(true));
+                Message.Print(true);
             }
 
             return new ServeRoutine();
         }
 
-        private static Routine ServePath(string[] args)
+        private Routine ServePath(string[] args)
         {
             if (args.Length > 2) return ServePathPort(args);
 
@@ -157,27 +156,33 @@ namespace Stein.Services
             }
 
             Directory.SetCurrentDirectory(args[1]);
-            if (PathService.IsProject()) return new ServeRoutine();
+            if (IsProject()) return new ServeRoutine();
 
-            if (!PathService.IsProject(args[1]))
+            if (!IsProject(args[1]))
             {
-                MessageService.Log(Message.ProvidedPathIsNotProject());
-                MessageService.Print(true);
+                Message.Log(Message.ProvidedPathIsNotProject());
+                Message.Print(true);
             }
             
             return new NotRecognizedRoutine();
         }
 
-        private static Routine ServePathPort(string[] args)
+        private Routine ServePathPort(string[] args)
         {
-            if (!PathService.IsProject(args[1]))
+            if (!IsProject(args[1]))
             {
-                MessageService.Log(Message.ProvidedPathIsNotProject());
-                MessageService.Print(true);
+                Message.Log(Message.ProvidedPathIsNotProject());
+                Message.Print(true);
             }
 
             Directory.SetCurrentDirectory(args[1]);
             return new ServeRoutine(args[2]);
+        }
+
+        private bool IsProject(string path = null)
+        {
+            path ??= Directory.GetCurrentDirectory();
+            return File.Exists(Path.Join(path, "stein.json"));
         }
     }
 }

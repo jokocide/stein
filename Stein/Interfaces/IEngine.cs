@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Stein.Models;
 
 namespace Stein.Interfaces

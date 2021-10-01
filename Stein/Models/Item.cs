@@ -1,4 +1,5 @@
 ﻿using Stein.Collections;
+using Stein.Services;
 using System.Collections.Generic;
 using System.IO;
 
@@ -28,18 +29,6 @@ namespace Stein.Models
                 case ".md":
                     item = new MarkdownItem(fileInfo);
                     break;
-                case ".csv":
-                    item = new CsvItem(fileInfo);
-                    break;
-                case ".json":
-                    item = new JsonItem(fileInfo);
-                    break;
-                case ".toml":
-                    item = new TomlItem(fileInfo);
-                    break;
-                case ".xml":
-                    item = new XmlItem(fileInfo);
-                    break;
                 default:
                     item = null;
                     break;
@@ -56,6 +45,8 @@ namespace Stein.Models
             Issues.Add(type);
         }
 
+        public abstract SerializedItem Serialize();
+
         public enum InvalidType
         {
             InvalidFrontmatter,
@@ -65,5 +56,13 @@ namespace Stein.Models
         }
 
         protected Item(FileInfo fileInfo) => Info = fileInfo;
+
+        protected static string GetIterablePath(FileInfo file)
+        {
+            string relative = Path.GetRelativePath(PathService.ResourcesPath, file.FullName);
+            string noExtension = Path.ChangeExtension(relative, null);
+            string forwardSlashes = noExtension.Replace("\\", "/");
+            return $"/{forwardSlashes}/";
+        }
     }
 }

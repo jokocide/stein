@@ -1,10 +1,9 @@
-﻿using Stein.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Stein.Services
 {
-    public class YamlService : IDeserializer
+    public class YamlService 
     {
         public Dictionary<string, string> Deserialize(string text)
         {
