@@ -9,8 +9,10 @@ namespace Stein.Routines
 {
     public sealed class BuildRoutine : Routine
     {
-        public BuildRoutine(Configuration config) : base(config)
+        public BuildRoutine() 
         {
+            Config = new ConfigurationService().GetConfig();
+
             switch (Config.Engine)
             {
                 case "hbs":
@@ -19,41 +21,53 @@ namespace Stein.Routines
             }
         }
 
-        public static BuildRoutine GetDefault()
-        {
-            Configuration config = new ConfigurationService().GetConfig();
-            IEngine engine = Models.Engine.GetEngine(config);
-
-            return new BuildRoutine(config);
-        }
-
         public override void Execute()
         {
             // Most templates rely on partials, so assemble them first.
             Engine.RegisterPartial(PathService.PartialsFiles);
 
-            // Page files rely on Collection data, so register them with the store.
-            Store.Register(Collection.GetCollection(PathService.CollectionsDirectories));
+            // Populate the store will collection data that can be used to generate an Injectable
+            // later on, and register each collection's items as a Writable while we are at it.
+            foreach(string path in PathService.CollectionsDirectories)
+            {
+                Collection collection = Collection.GetCollection(path);
+                Store.Register(collection);
 
-            // We can serialize the data in Store into dynamic objects and pack them together
-            // as an Injectable object.
+                foreach(Item item in collection.Items)
+                {
+                    Writable writable = Writable.GetWritable(item);
+                    Store.Register(writable);
+                }
+            }
+
+            // This Injectable object represents the result of serializing all collection
+            // items together as dynamic objects, this is what provides template files with 
+            // access to the iterable collections and data in stein.json.
             Injectable injectable = Injectable.Assemble(Store, Config);
 
-            // With the Collections in hand, we can now safely render the Page files.
-            Store.Register(Engine.RenderTemplate(Engine.CompileTemplate(PathService.PagesFiles), injectable));
+            // With the Injectable in hand we can render the page files.
+            foreach(string path in PathService.PagesFiles)
+            {
+                Template page = Engine.CompileTemplate(path);
+                Writable writable = Engine.RenderTemplate(page, injectable);
+                Store.Register(writable);
+            }
 
-            // Lastly, we can convert the Collection items into Writable objects as well.
-            Store.Register(Writable.GetWritable(Store.Collections));
-
+            // Deleting the old site directory.
             if (Directory.Exists(PathService.SitePath))
                 Directory.Delete(PathService.SitePath, true);
 
+            // Resynchronizing the static directory.
             PathService.Synchronize(
                 PathService.ResourcesStaticPath,
                 PathService.SiteStaticPath,
                 true);
-           
-            Writable.Write(Store.Writable);
+
+            // Writing out the results.
+            foreach(Writable writable in Store.Writable)
+            {
+                Writable.Write(writable);
+            }
 
             StringService.Colorize($"({DateTime.Now:T}) ", ConsoleColor.Gray, false);
             StringService.Colorize($"Built project ", ConsoleColor.White, false);
@@ -65,5 +79,7 @@ namespace Stein.Routines
         private IEngine Engine { get; }
 
         private Store Store { get; } = new();
+
+        private Configuration Config { get; }
     }
 }

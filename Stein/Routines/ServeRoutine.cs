@@ -10,15 +10,12 @@ namespace Stein.Routines
 {
     public sealed class ServeRoutine : Routine
     {
-        public ServeRoutine(Configuration config) : base(config) { }
-
-        public ServeRoutine(Configuration config, string port) : this(config)
+        public ServeRoutine(string port = null)
         {
+            port ??= "8000";
             Port = port;
             Address = $"http://localhost:{port}/";
         }
-
-        public static ServeRoutine GetDefault => new ServeRoutine(new ConfigurationService().GetConfig());
 
         public override void Execute()
         {
@@ -137,6 +134,6 @@ namespace Stein.Routines
             MessageService.Print(true);
         }
 
-        private void FullRebuild() => BuildRoutine.GetDefault().Execute();
+        private void FullRebuild() =>new BuildRoutine().Execute();
     }
 }

@@ -32,19 +32,6 @@ namespace Stein.Services
 
         public static string SiteStaticPath=> Path.Join(SitePath, "static");
 
-        public static IEnumerable<string> TryGetCollections(string path, List<string> collections = null)
-        {
-            collections ??= new();
-            string[] dirs = Directory.GetDirectories(path);
-            foreach(string dir in dirs)
-            {
-                if (IsIgnored(dir)) continue;
-                collections.Add(dir);
-                TryGetCollections(dir, collections);
-            }
-            return collections;
-        }
-
         public static void Synchronize(string source, string destination, bool recursive = false)
         {
             DirectoryInfo dir = new DirectoryInfo(source);

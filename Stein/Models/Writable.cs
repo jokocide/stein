@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.IO;
 using HandlebarsDotNet;
 using Stein.Collections;
@@ -18,50 +17,11 @@ namespace Stein.Models
 
         public string Payload { get; }
 
-        public static void Write(IEnumerable<Writable> writables)
-        {
-            foreach (Writable writable in writables) Write(writable);
-        }
-
         public static void Write(Writable writable)
         {
             string directory = Path.GetDirectoryName(writable.Target);
             Directory.CreateDirectory(directory);
             File.WriteAllText(writable.Target, writable.Payload);
-        }
-
-        public static IEnumerable<Writable> GetWritable(IEnumerable<Collection> collections)
-        {
-            List<Writable> writables = new();
-
-            foreach(Collection collection in collections)
-            {
-                IEnumerable<Writable> newWritables = GetWritable(collection);
-                writables.AddRange(newWritables);
-            }
-
-            return writables;
-
-        }
-
-        public static IEnumerable<Writable> GetWritable(Collection collection)
-        {
-            List<Writable> writables = new();
-
-            foreach(Item item in collection.Items)
-                writables.Add(GetWritable(item));
-
-            return writables;
-        }
-
-        public static IEnumerable<Writable> GetWritable(IEnumerable<Item> items)
-        {
-            List<Writable> writables = new();
-
-            foreach(Item item in items)
-                writables.Add(GetWritable(item));
-
-            return writables;
         }
 
         public static Writable GetWritable(Item item)

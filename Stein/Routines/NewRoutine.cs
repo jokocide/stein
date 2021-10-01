@@ -7,8 +7,6 @@ namespace Stein.Routines
 {
     public sealed class NewRoutine : Routine
     {
-        public static NewRoutine GetDefault => new NewRoutine();
-
         public override void Execute()
         {
             if (File.Exists("stein.json"))

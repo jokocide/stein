@@ -74,7 +74,7 @@ namespace Stein.Services
                 MessageService.Print(true);
             }
 
-            return BuildRoutine.GetDefault();
+            return new BuildRoutine();
         }
 
         private static Routine BuildPath(string[] args)
@@ -95,7 +95,7 @@ namespace Stein.Services
                 MessageService.Print(true);
             }
 
-            return BuildRoutine.GetDefault();
+            return new BuildRoutine();
         }
 
         private static Routine New(string[] args)
@@ -106,7 +106,7 @@ namespace Stein.Services
                 MessageService.Print(true);
             }
 
-            return args.Length > 1 ? NewPath(args) : NewRoutine.GetDefault;
+            return args.Length > 1 ? NewPath(args) : new NewRoutine();
         }
 
         private static Routine NewPath(string[] args)
@@ -125,7 +125,7 @@ namespace Stein.Services
             }
 
             Directory.SetCurrentDirectory(args[1]);
-            return NewRoutine.GetDefault;
+            return new NewRoutine();
         }
 
         private static Routine Serve(string[] args)
@@ -144,7 +144,7 @@ namespace Stein.Services
                 MessageService.Print(true);
             }
 
-            return ServeRoutine.GetDefault;
+            return new ServeRoutine();
         }
 
         private static Routine ServePath(string[] args)
@@ -153,11 +153,11 @@ namespace Stein.Services
 
             if (int.TryParse(args[1], out _) && (args[1].Length == 4 || args[1].Length == 5))
             {
-                return new ServeRoutine(new Configuration(), args[1]);
+                return new ServeRoutine(args[1]);
             }
 
             Directory.SetCurrentDirectory(args[1]);
-            if (PathService.IsProject()) return ServeRoutine.GetDefault;
+            if (PathService.IsProject()) return new ServeRoutine();
 
             if (!PathService.IsProject(args[1]))
             {
@@ -177,7 +177,7 @@ namespace Stein.Services
             }
 
             Directory.SetCurrentDirectory(args[1]);
-            return new ServeRoutine(new Configuration(), args[2]);
+            return new ServeRoutine(args[2]);
         }
     }
 }
