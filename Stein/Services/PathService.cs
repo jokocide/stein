@@ -68,6 +68,18 @@ namespace Stein.Services
             return text;
         }
 
+        public static bool IsIgnored(string path)
+        {
+            string name = Path.GetFileName(path);
+
+            if (name == "static" || name == "templates" || name == "partials")
+                return true;
+
+            if (name.StartsWith("_")) return true;
+
+            return false;
+        }
+
         private static void FindFiles(string path, List<string> collections = null, List<string> pages = null)
         {
             collections ??= new();
@@ -76,12 +88,12 @@ namespace Stein.Services
             Configuration config = new Configuration().GetConfig();
 
             string[] filesDirs = Directory.GetFileSystemEntries(path);
-            foreach(string item in filesDirs)
+            foreach (string item in filesDirs)
             {
                 if (IsIgnored(item)) continue;
 
-                if (File.Exists(item) && Path.GetExtension(item) == $".{config.Engine}") 
-                pages.Add(item);
+                if (File.Exists(item) && Path.GetExtension(item) == $".{config.Engine}")
+                    pages.Add(item);
 
                 else if (Directory.Exists(item))
                 {
@@ -90,20 +102,9 @@ namespace Stein.Services
                 }
             }
 
-             CollectionsDirectories = collections;
-             PagesFiles = pages;
+            CollectionsDirectories = collections;
+            PagesFiles = pages;
         }
 
-        private static bool IsIgnored(string path)
-        {
-            string name = Path.GetFileName(path);
-
-            if (name == "static" || name == "templates" || name == "partials") 
-                return true;
-
-            if (name.StartsWith("_")) return true;
-
-            return false;
-        }
     }
 }
