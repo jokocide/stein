@@ -6,10 +6,9 @@ namespace Stein
     {
         private static void Main(string[] args)
         {
-            Routine routine = new Parser().Evaluate(args);
-
-            if (routine != null) 
-                routine.Execute();
+            new Parser()
+                .Evaluate(args)?
+                .Execute();
 
             Message.Print(true);
         }

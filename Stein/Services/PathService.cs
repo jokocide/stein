@@ -2,6 +2,7 @@
 using System.IO;
 using System.Collections.Generic;
 using Stein.Models;
+using System.Threading;
 
 namespace Stein.Services
 {
@@ -55,14 +56,22 @@ namespace Stein.Services
             }
         }
 
-        public static string ReadAllSafe(string path)
+        public static string ReadAllSafe(string path, int time = 100)
         {
             string text;
 
-            using (var stream = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Read))
+            try
             {
-                var reader = new StreamReader(stream);
-                text = reader.ReadToEnd();
+                using (var stream = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Read))
+                {
+                    var reader = new StreamReader(stream);
+                    text = reader.ReadToEnd();
+                }
+            }
+            catch(IOException)
+            {
+                Thread.Sleep(time);
+                return ReadAllSafe(path, (time + 10));
             }
 
             return text;
