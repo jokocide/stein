@@ -2,6 +2,8 @@
 using static Stein.Routines.HelpRoutine;
 using System.IO;
 using Stein.Services;
+using Stein.Interfaces;
+using Stein.Engines;
 
 namespace Stein.Models
 {
@@ -21,18 +23,19 @@ namespace Stein.Models
         private int MaxServeArgs { get; } = 3;
 
         /// <summary>
-        /// Evaluates the given arguments to return a suitable Routine object.
+        /// Initializes a new instance of the Parser class that contains 
+        /// the specified arguments.
         /// </summary>
-        /// <param name="args">The arguments to be evaluated.</param>
+        /// <param name="args">
+        /// The arguments to be parsed.
+        /// </param>
         public Parser(string[] args) => Args = args;
 
         /// <summary>
-        /// Sets up program execution by making usre that we are in the correct directory
-        /// and have access to a valid project configuration before returning a Routine.
+        /// Set up program execution and return a new instance of a class that
+        /// derives from Routine.
         /// </summary>
-        /// <returns>
-        /// Returns a Routine suitable for valid arguments, or null for invalid arguments.
-        /// </returns>
+        /// <remarks>Returns null for invalid arguments.</remarks>
         public Routine Evaluate()
         {
             if (Args.Length == 0)
@@ -106,7 +109,18 @@ namespace Stein.Models
                 return null;
             }
 
-            return new BuildRoutine(config);
+            IEngine engine = null;
+
+            if (config.Engine == "hbs")
+                engine = new HandlebarsEngine();
+
+            if (engine == null)
+            {
+                Message.Log(Message.NoEngine());
+                return null;
+            }
+
+            return new BuildRoutine(config, engine);
         }
 
         private Routine CheckBuildPath()
@@ -135,7 +149,18 @@ namespace Stein.Models
                 return null;
             }
 
-            return new BuildRoutine(config);
+            IEngine engine = null;
+
+            if (config.Engine == "hbs")
+                engine = new HandlebarsEngine();
+
+            if (engine == null)
+            {
+                Message.Log(Message.NoEngine());
+                return null;
+            }
+
+            return new BuildRoutine(config, engine);
         }
 
         private Routine CheckNew()
@@ -205,7 +230,18 @@ namespace Stein.Models
                 return null;
             }
 
-            return new ServeRoutine(config);
+            IEngine engine = null;
+
+            if (config.Engine == "hbs")
+                engine = new HandlebarsEngine();
+
+            if (engine == null)
+            {
+                Message.Log(Message.NoEngine());
+                return null;
+            }
+
+            return new ServeRoutine(config, engine);
         }
 
         private Routine CheckServePath()
@@ -222,7 +258,18 @@ namespace Stein.Models
                     return null;
                 }
 
-                return new ServeRoutine(config, Args[1]);
+                IEngine engine = null;
+
+                if (config.Engine == "hbs")
+                    engine = new HandlebarsEngine();
+
+                if (engine == null)
+                {
+                    Message.Log(Message.NoEngine());
+                    return null;
+                }
+
+                return new ServeRoutine(config, engine, Args[1]);
             }
 
             Directory.SetCurrentDirectory(Args[1]);
@@ -237,7 +284,18 @@ namespace Stein.Models
                     return null;
                 }
 
-                return new ServeRoutine(config);
+                IEngine engine = null;
+
+                if (config.Engine == "hbs")
+                    engine = new HandlebarsEngine();
+
+                if (engine == null)
+                {
+                    Message.Log(Message.NoEngine());
+                    return null;
+                }
+
+                return new ServeRoutine(config, engine);
             }
 
             if (!IsProject(Args[1]))
@@ -268,7 +326,18 @@ namespace Stein.Models
                 return null;
             }
 
-            return new ServeRoutine(config, Args[2]);
+            IEngine engine = null;
+
+            if (config.Engine == "hbs")
+                engine = new HandlebarsEngine();
+
+            if (engine == null)
+            {
+                Message.Log(Message.NoEngine());
+                return null;
+            }
+
+            return new ServeRoutine(config, engine, Args[2]);
         }
 
         private bool IsProject(string path = null)

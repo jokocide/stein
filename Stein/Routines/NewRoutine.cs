@@ -6,43 +6,37 @@ using Stein.Services;
 namespace Stein.Routines
 {
     /// <summary>
-    /// A Routine used to scaffold out new projects.
+    /// Scaffolds out new projects by creating directories and writing out a configuration file.
     /// </summary>
     public sealed class NewRoutine : Routine
     {
         /// <summary>
-        /// Create a new project with the provided configuration.
+        /// Initializes a new instance of the NewRoutine class with the specified configuration.
         /// </summary>
         /// <param name="serializedConfiguration">
-        /// A serialized JSON string representation of a Configuration object.
+        /// A serialized JSON string representation of the Configuration that should be used to 
+        /// generate the project configuration file.
         /// </param>
         public NewRoutine(string serializedConfiguration)
             => SerializedConfiguration = serializedConfiguration;
 
+        /// <summary>
+        /// Coordinates the execution of the routine.
+        /// </summary>
         public override void Execute()
         {
             File.WriteAllText("stein.json", SerializedConfiguration);
-            ScaffoldDirectories();
-            WriteUserOutput();
-        }
-
-        private string SerializedConfiguration { get; }
-
-        private void ScaffoldDirectories()
-        {
             Directory.CreateDirectory(Path.Join("resources", "pages"));
             Directory.CreateDirectory(Path.Join("resources", "templates", "partials"));
             Directory.CreateDirectory(Path.Join("resources", "collections"));
             Directory.CreateDirectory(Path.Join("resources", "public"));
             Directory.CreateDirectory("site");
-        }
-
-        private void WriteUserOutput()
-        {
             StringService.Colorize($"({DateTime.Now:T}) ", ConsoleColor.Gray, false);
             StringService.Colorize("Created project ", ConsoleColor.White, false);
             string projectName = Path.GetFileName(Directory.GetCurrentDirectory());
             StringService.Colorize($"'{projectName}'", ConsoleColor.Gray, true);
         }
+
+        private string SerializedConfiguration { get; }
     }
 }

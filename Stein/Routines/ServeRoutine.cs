@@ -3,43 +3,54 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Timers;
+using Stein.Interfaces;
 using Stein.Models;
 using Stein.Services;
 
 namespace Stein.Routines
 {
+    /// <summary>
+    /// Serves a project's site directory at a local address.
+    /// </summary>
     public sealed class ServeRoutine : Routine
     {
-        public ServeRoutine(Configuration config, string port = null)
+        /// <summary>
+        /// Initializes a new instance of the ServeRoutine class with the given configuration, engine and port.
+        /// </summary>
+        /// <param name="config">A Configuration object used to influence behavior of the routine.</param>
+        /// <param name="engine">
+        /// The desired templating engine. Passed to a new instance of
+        /// the BuildRoutine class when a file is changed.
+        /// </param>
+        /// <param name="port">The port to host the server on.</param>
+        public ServeRoutine(Configuration config, IEngine engine, string port = "8000")
         {
             Config = config;
-            port ??= "8000";
+            Engine = engine;
             Port = port;
-            Address = $"http://localhost:{port}/";
-        }
 
-        public override void Execute()
-        {
-            HttpListener listener = new HttpListener();
-            listener.Prefixes.Add(Address);
+            Listener.Prefixes.Add($"http://localhost:{port}/");
 
-            FileSystemWatcher watcher = new(PathService.ResourcesPath);
-            watcher.IncludeSubdirectories = true;
-
-            watcher.NotifyFilter =
+            // FileSystemWatcher setup
+            Watcher.IncludeSubdirectories = true;
+            Watcher.NotifyFilter =
                 NotifyFilters.DirectoryName
                 | NotifyFilters.FileName
                 | NotifyFilters.LastWrite
                 | NotifyFilters.Size;
+            Watcher.Changed += HandleEvent;
+            Watcher.Deleted += HandleEvent;
+            Watcher.Renamed += HandleEvent;
+            Watcher.Error += HandleError;
+            Watcher.EnableRaisingEvents = true;
+        }
 
-            watcher.Changed += HandleEvent;
-            watcher.Deleted += HandleEvent;
-            watcher.Renamed += HandleEvent;
-            watcher.Error += HandleError;
-
-            watcher.EnableRaisingEvents = true;
-
-            listener.Start();
+        /// <summary>
+        /// Coordinates the execution of the routine.
+        /// </summary>
+        public override void Execute()
+        {
+            Listener.Start();
 
             string projectName = Path.GetFileName(Directory.GetCurrentDirectory());
             StringService.Colorize($"({DateTime.Now:T}) ", ConsoleColor.Gray, false);
@@ -48,7 +59,7 @@ namespace Stein.Routines
 
             while (true)
             {
-                HttpListenerContext context = listener.GetContext();
+                HttpListenerContext context = Listener.GetContext();
 
                 byte[] buffer = Array.Empty<byte>();
 
@@ -96,11 +107,15 @@ namespace Stein.Routines
             }
         }
 
-        private string Port { get; } = "8000";
-
-        private string Address { get; } = "http://localhost:8000/";
+        private string Port { get; }
 
         private Configuration Config { get; }
+
+        private IEngine Engine { get; }
+
+        private HttpListener Listener { get; } = new();
+
+        private FileSystemWatcher Watcher { get; } = new(PathService.ResourcesPath);
 
         /// <summary>
         /// Temporarily store the name of files that have emitted an event 
@@ -115,7 +130,7 @@ namespace Stein.Routines
 
             if (e.ChangeType == WatcherChangeTypes.Changed)
             {
-                FullRebuild();
+                new BuildRoutine(Config, Engine).Execute();
             }
 
             Timer timer = new Timer(100) { AutoReset = false };
@@ -136,7 +151,5 @@ namespace Stein.Routines
             Message.Log(Message.ServerRestartRequired(args));
             return;
         }
-
-        private void FullRebuild() => new BuildRoutine(Config).Execute();
     }
 }

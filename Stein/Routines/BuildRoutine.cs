@@ -3,34 +3,36 @@ using System.IO;
 using Stein.Models;
 using Stein.Interfaces;
 using Stein.Services;
-using Stein.Engines;
 
 namespace Stein.Routines
 {
+    /// <summary>
+    /// Transforms the resources of a project into a finished site.
+    /// </summary>
     public sealed class BuildRoutine : Routine
     {
-        public BuildRoutine(Configuration config) 
+        /// <summary>
+        /// Initializes a new instance of the BuildRoutine class with the provided configuration and engine.
+        /// </summary>
+        /// <param name="config">A Configuration object used to influence behavior of the routine.</param>
+        /// <param name="engine">The desired templating engine.</param>
+        public BuildRoutine(Configuration config, IEngine engine) 
         {
             Config = config;
-
-            if (config.Engine == "hbs")
-                Engine = new HandlebarsEngine();
+            Engine = engine;
         }
 
+        /// <summary>
+        /// Coordinates the execution of the routine.
+        /// </summary>
         public override void Execute()
         {
-            if (Engine == null)
-            {
-                Message.Log(Message.NoEngine());
-                return;
-            }
-
             // Most templates rely on partials, so assemble them first.
             foreach (string path in PathService.PartialsFiles)
                 Engine.RegisterPartial(path);
 
-            // Populate the store will collection data that can be used to generate an Injectable
-            // later on, and register each collection's items as a Writable while we are at it.
+            // Populate the store with collection data that can be used to generate an Injectable, and
+            // register each collection's items as a Writable while we are at it.
             foreach (string path in PathService.CollectionsDirectories)
             {
                 Collection collection = new(path);
@@ -40,7 +42,7 @@ namespace Stein.Routines
                 {
                     Writable writable = Writable.GetWritable(item);
 
-                    if (writable == null) 
+                    if (writable == null)
                         continue;
 
                     Store.Register(writable);
@@ -57,14 +59,14 @@ namespace Stein.Routines
             {
                 Template page = Engine.CompileTemplate(path);
 
-                if (page == null) 
+                if (page == null)
                     continue;
 
                 Writable writable = Engine.RenderTemplate(page, injectable);
                 Store.Register(writable);
             }
 
-            // Deleting the old site directory.
+            // Cleaning up the old site directory.
             if (Directory.Exists(PathService.SitePath))
                 Directory.Delete(PathService.SitePath, true);
 
@@ -74,7 +76,7 @@ namespace Stein.Routines
                 PathService.SiteStaticPath,
                 true);
 
-            // Writing out the results.
+            // Writing the results out the project's site directory.
             foreach (Writable writable in Store.Writable)
             {
                 Writable.Write(writable);
