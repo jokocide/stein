@@ -1,10 +1,12 @@
 ﻿using Stein.Routines;
+using static Stein.Routines.HelpRoutine;
 using System.IO;
+using Stein.Services;
 
 namespace Stein.Models
 {
     /// <summary>
-    /// Command line argument parsing.
+    /// Facilitates command line argument parsing.
     /// </summary>
     public class Parser
     {
@@ -29,13 +31,12 @@ namespace Stein.Models
         /// and have access to a valid project configuration before returning a Routine.
         /// </summary>
         /// <returns>
-        /// Returns a Routine suitable for valid arguments, or null of the arguments
-        /// are invalid.
+        /// Returns a Routine suitable for valid arguments, or null for invalid arguments.
         /// </returns>
         public Routine Evaluate()
         {
             if (Args.Length == 0)
-                return HelpRoutine.GetDefault;
+                return new HelpRoutine();
 
             string argOne = Args[0].ToLower();
 
@@ -60,7 +61,7 @@ namespace Stein.Models
                 return null;
             }
 
-            return Args.Length > 1 ? CheckHelpTopic() : HelpRoutine.GetDefault;
+            return Args.Length > 1 ? CheckHelpTopic() : new HelpRoutine();
         }
 
         private Routine CheckHelpTopic()
@@ -75,9 +76,9 @@ namespace Stein.Models
 
             return topic switch
             {
-                "build" => HelpRoutine.GetBuildTopic,
-                "new" => HelpRoutine.GetNewTopic,
-                _ => HelpRoutine.GetServeTopic
+                "build" => new HelpRoutine(HelpTopic.Build),
+                "new" => new HelpRoutine(HelpTopic.New),
+                _ => new HelpRoutine(HelpTopic.Serve)
             };
         }
 
@@ -153,7 +154,8 @@ namespace Stein.Models
                 return null;
             }
 
-            return Args.Length > 1 ? CheckNewPath() : new NewRoutine();
+            string serializedConfiguration = new JsonService().Serialize(new Configuration());
+            return Args.Length > 1 ? CheckNewPath() : new NewRoutine(serializedConfiguration);
         }
 
         private Routine CheckNewPath()
@@ -175,7 +177,8 @@ namespace Stein.Models
                 return null;
             }
 
-            return new NewRoutine();
+            string serializedConfiguration = new JsonService().Serialize(new Configuration());
+            return new NewRoutine(serializedConfiguration);
         }
 
         private Routine CheckServe()

@@ -4,17 +4,16 @@ using Stein.Models;
 
 namespace Stein.Routines
 {
+    /// <summary>
+    /// A Routine to display command line usage information.
+    /// </summary>
     public sealed class HelpRoutine : Routine
     {
+        /// <summary>
+        /// Display information related to the provided topic.
+        /// </summary>
+        /// <param name="topic">A HelpTopic representing the desired information.</param>
         public HelpRoutine(HelpTopic topic = HelpTopic.General) => Topic = topic;
-
-        public static HelpRoutine GetDefault => new HelpRoutine();
-
-        public static HelpRoutine GetBuildTopic => new HelpRoutine(HelpTopic.Build);
-
-        public static HelpRoutine GetNewTopic => new HelpRoutine(HelpTopic.New);
-
-        public static HelpRoutine GetServeTopic => new HelpRoutine(HelpTopic.Serve);
 
         public override void Execute()
         {
@@ -28,6 +27,9 @@ namespace Stein.Routines
                 PrintHelpTopicGeneral();
         }
 
+        /// <summary>
+        /// The supported and documented topics.
+        /// </summary>
         public enum HelpTopic
         {
             General,
