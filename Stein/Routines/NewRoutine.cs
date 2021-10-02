@@ -9,12 +9,6 @@ namespace Stein.Routines
     {
         public override void Execute()
         {
-            if (File.Exists("stein.json"))
-            {
-                Message.Log(Message.ProjectAlreadyExists());
-                return;
-            }
-
             File.WriteAllText("stein.json", new JsonService().Serialize(new Configuration()));
 
             Directory.CreateDirectory(Path.Join("resources", "pages"));

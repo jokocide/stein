@@ -3,27 +3,12 @@ using System.IO;
 
 namespace Stein.Models
 {
+    /// <summary>
+    /// Command line argument parsing.
+    /// </summary>
     public class Parser
     {
-        public Routine Evaluate(string[] args)
-        {
-            if (args.Length == 0)
-                return HelpRoutine.GetDefault;
-
-            string argOne = args[0].ToLower();
-
-            if (argOne == "help")
-                return Help(args);
-            if (argOne == "build")
-                return Build(args);
-            if (argOne == "new")
-                return New(args);
-            if (argOne == "serve")
-                return Serve(args);
-
-            Message.Log(Message.CommandNotRecognized());
-            return null;
-        }
+        private string[] Args { get; }
 
         private int MaxHelpArgs { get; } = 2;
 
@@ -33,20 +18,54 @@ namespace Stein.Models
 
         private int MaxServeArgs { get; } = 3;
 
-        private Routine Help(string[] args)
+        /// <summary>
+        /// Evaluates the given arguments to return a suitable Routine object.
+        /// </summary>
+        /// <param name="args">The arguments to be evaluated.</param>
+        public Parser(string[] args) => Args = args;
+
+        /// <summary>
+        /// Sets up program execution by making usre that we are in the correct directory
+        /// and have access to a valid project configuration before returning a Routine.
+        /// </summary>
+        /// <returns>
+        /// Returns a Routine suitable for valid arguments, or null of the arguments
+        /// are invalid.
+        /// </returns>
+        public Routine Evaluate()
         {
-            if (args.Length > MaxHelpArgs)
+            if (Args.Length == 0)
+                return HelpRoutine.GetDefault;
+
+            string argOne = Args[0].ToLower();
+
+            if (argOne == "help")
+                return CheckHelp();
+            if (argOne == "build")
+                return CheckBuild();
+            if (argOne == "new")
+                return CheckNew();
+            if (argOne == "serve")
+                return CheckServe();
+
+            Message.Log(Message.CommandNotRecognized());
+            return null;
+        }
+
+        private Routine CheckHelp()
+        {
+            if (Args.Length > MaxHelpArgs)
             {
                 Message.Log(Message.TooManyArgs());
                 return null;
             }
 
-            return args.Length > 1 ? HelpTopic(args) : HelpRoutine.GetDefault;
+            return Args.Length > 1 ? CheckHelpTopic() : HelpRoutine.GetDefault;
         }
 
-        private Routine HelpTopic(string[] args)
+        private Routine CheckHelpTopic()
         {
-            string topic = args[1].ToLower();
+            string topic = Args[1].ToLower();
 
             if (topic != "build" && topic != "new" && topic != "serve")
             {
@@ -62,15 +81,15 @@ namespace Stein.Models
             };
         }
 
-        private Routine Build(string[] args)
+        private Routine CheckBuild()
         {
-            if (args.Length > MaxBuildArgs)
+            if (Args.Length > MaxBuildArgs)
             {
                 Message.Log(Message.TooManyArgs());
                 return null;
             }
 
-            if (args.Length > 1) return BuildPath(args);
+            if (Args.Length > 1) return CheckBuildPath();
 
             if (!IsProject())
             {
@@ -89,11 +108,11 @@ namespace Stein.Models
             return new BuildRoutine(config);
         }
 
-        private Routine BuildPath(string[] args)
+        private Routine CheckBuildPath()
         {
             try
             {
-                Directory.SetCurrentDirectory(args[1]);
+                Directory.SetCurrentDirectory(Args[1]);
             }
             catch (IOException)
             {
@@ -118,45 +137,56 @@ namespace Stein.Models
             return new BuildRoutine(config);
         }
 
-        private Routine New(string[] args)
+        private Routine CheckNew()
         {
-            if (args.Length > MaxNewArgs)
+            if (Args.Length > MaxNewArgs)
             {
                 Message.Log(Message.TooManyArgs());
                 return null;
             }
 
-            return args.Length > 1 ? NewPath(args) : new NewRoutine();
+            if (Args.Length > 1) return CheckNewPath();
+
+            if (IsProject())
+            {
+                Message.Log(Message.ProjectAlreadyExists());
+                return null;
+            }
+
+            return Args.Length > 1 ? CheckNewPath() : new NewRoutine();
         }
 
-        private Routine NewPath(string[] args)
+        private Routine CheckNewPath()
         {
-            if (!Directory.Exists(args[1]))
+            try
             {
-                try
-                {
-                    Directory.CreateDirectory(args[1]);
-                    Directory.SetCurrentDirectory(args[1]);
-                }
-                catch (IOException)
-                {
-                    Message.Log(Message.ProvidedPathIsInvalid());
-                    return null;
-                }
+                Directory.CreateDirectory(Args[1]);
+                Directory.SetCurrentDirectory(Args[1]);
+            }
+            catch (IOException)
+            {
+                Message.Log(Message.ProvidedPathIsInvalid());
+                return null;
+            }
+
+            if (IsProject())
+            {
+                Message.Log(Message.ProjectAlreadyExists());
+                return null;
             }
 
             return new NewRoutine();
         }
 
-        private Routine Serve(string[] args)
+        private Routine CheckServe()
         {
-            if (args.Length > MaxServeArgs)
+            if (Args.Length > MaxServeArgs)
             {
                 Message.Log(Message.TooManyArgs());
                 return null;
             }
 
-            if (args.Length > 1) return ServePath(args);
+            if (Args.Length > 1) return CheckServePath();
 
             if (!IsProject())
             {
@@ -175,11 +205,11 @@ namespace Stein.Models
             return new ServeRoutine(config);
         }
 
-        private Routine ServePath(string[] args)
+        private Routine CheckServePath()
         {
-            if (args.Length > 2) return ServePathPort(args);
+            if (Args.Length > 2) return CheckServePathPort();
 
-            if (int.TryParse(args[1], out _) && (args[1].Length == 4 || args[1].Length == 5))
+            if (int.TryParse(Args[1], out _) && (Args[1].Length == 4 || Args[1].Length == 5))
             {
                 Configuration config = new Configuration().GetConfig();
 
@@ -189,10 +219,10 @@ namespace Stein.Models
                     return null;
                 }
 
-                return new ServeRoutine(config, args[1]);
+                return new ServeRoutine(config, Args[1]);
             }
 
-            Directory.SetCurrentDirectory(args[1]);
+            Directory.SetCurrentDirectory(Args[1]);
 
             if (IsProject())
             {
@@ -207,7 +237,7 @@ namespace Stein.Models
                 return new ServeRoutine(config);
             }
 
-            if (!IsProject(args[1]))
+            if (!IsProject(Args[1]))
             {
                 Message.Log(Message.ProvidedPathIsNotProject());
                 return null;
@@ -217,15 +247,15 @@ namespace Stein.Models
             return null;
         }
 
-        private Routine ServePathPort(string[] args)
+        private Routine CheckServePathPort()
         {
-            if (!IsProject(args[1]))
+            if (!IsProject(Args[1]))
             {
                 Message.Log(Message.ProvidedPathIsNotProject());
                 return null;
             }
 
-            Directory.SetCurrentDirectory(args[1]);
+            Directory.SetCurrentDirectory(Args[1]);
 
             Configuration config = new Configuration().GetConfig();
 
@@ -235,7 +265,7 @@ namespace Stein.Models
                 return null;
             }
 
-            return new ServeRoutine(config, args[2]);
+            return new ServeRoutine(config, Args[2]);
         }
 
         private bool IsProject(string path = null)
