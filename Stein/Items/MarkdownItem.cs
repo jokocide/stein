@@ -7,8 +7,15 @@ using System.IO;
 
 namespace Stein.Collections
 {
+    /// <summary>
+    /// Represents an Item derived from a Markdown file.
+    /// </summary>
     public sealed class MarkdownItem : Item
     {
+        /// <summary>
+        /// Initialize a new instance of MarkdownItem with the given FileInfo and populate all
+        /// available properties within the instance.
+        /// </summary>
         public MarkdownItem(FileInfo fileInfo) : base(fileInfo)
         {
             Link = GetIterablePath(Info);
@@ -44,22 +51,30 @@ namespace Stein.Collections
             }
         }
 
+        /// <summary>
+        /// Initialize a new instance of SerializedItem and make the properties of this instance of
+        /// MarkdownItem available within the dynamic container of that new instance.
+        /// </summary>
+        /// <returns>
+        /// Returns a new Instance of SerializedItem, containing a dynamic object where all 
+        /// properties are available at the top level.
+        /// </returns>
         public override SerializedItem Serialize()
         {
-            dynamic injectable = new SerializedItem();
-            SerializedItem castedInjectable = (SerializedItem)injectable;
+            dynamic serializedItem = new SerializedItem();
+            SerializedItem castedItem = (SerializedItem)serializedItem;
 
-            injectable.Link = Link;
-            injectable.Date = Date;
-            injectable.Body = Body;
-            injectable.Slug = Slug;
+            serializedItem.Link = Link;
+            serializedItem.Date = Date;
+            serializedItem.Body = Body;
+            serializedItem.Slug = Slug;
 
             foreach (KeyValuePair<string, string> pair in Frontmatter)
             {
-                castedInjectable.Add(pair.Key, pair.Value);
+                castedItem.Add(pair.Key, pair.Value);
             }
 
-            return injectable;
+            return serializedItem;
         }
 
         private Dictionary<string, string> Frontmatter { get; } = new();

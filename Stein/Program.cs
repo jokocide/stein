@@ -1,10 +1,8 @@
 ﻿using Stein.Models;
-using Stein.Services;
-using System.Collections.Generic;
 
 namespace Stein
 {
-     public class Program
+    public class Program
     {
         private static void Main(string[] args)
         {

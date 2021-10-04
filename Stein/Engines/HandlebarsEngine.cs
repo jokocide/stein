@@ -10,8 +10,7 @@ namespace Stein.Engines
     public class HandlebarsEngine : IEngine
     {
         /// <summary>
-        /// The Handlebars.NET library is static, so this is just an abstraction that passes the
-        /// partial along.
+        /// Register the file at path with the static Handlebars class.
         /// </summary>
         public void RegisterPartial(string path)
         {
@@ -38,8 +37,8 @@ namespace Stein.Engines
         /// <summary>
         /// Render a Template object into a Writable.
         /// </summary>
-        /// <param name="injectable">Optional data to be injected into the template.</param>
-        public Writable RenderTemplate(Template template, Injectable injectable = null)
+        /// <param name="injectable">Data to be injected into the template.</param>
+        public Writable RenderTemplate(Template template, Injectable injectable)
         {
             if (template is HandlebarsTemplate castedTemplate)
             {
