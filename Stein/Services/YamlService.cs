@@ -3,8 +3,15 @@ using System.Collections.Generic;
 
 namespace Stein.Services
 {
-    public class YamlService 
+    /// <summary>
+    /// Helper methods for interacting with YAML.
+    /// </summary>
+    public class YamlService
     {
+        /// <summary>
+        /// Split a string up by lines, and then divide each line into a key/value pairing
+        /// based on the ':' character.
+        /// </summary>
         public Dictionary<string, string> Deserialize(string text)
         {
             Dictionary<string, string> dictionary = new();

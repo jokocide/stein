@@ -3,8 +3,15 @@ using System;
 
 namespace Stein.Services
 {
+    /// <summary>
+    /// Helper methods for interacting with DateTime objects and strings that 
+    /// represent dates in ISO8601 format.
+    /// </summary>
     public static class DateService
     {
+        /// <summary>
+        /// Sort the collection using the requested method.
+        /// </summary>
         public static void Sort(Collection collection, SortMethod method)
         {
             if (method is SortMethod.LatestDate)
@@ -13,6 +20,9 @@ namespace Stein.Services
                 collection.Items.Sort(EarliestDateComparison);
         }
 
+        /// <summary>
+        /// Defines the available sort methods.
+        /// </summary>
         public enum SortMethod
         {
             LatestDate,

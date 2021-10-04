@@ -14,7 +14,6 @@ namespace Stein.Templates
         /// </summary>
         /// <param name="fileInfo">A FileInfo representation of the file.</param>
         /// <param name="templateObject">An object returned by HandlebarsEngine.</param>
-        /// <returns></returns>
         /// <remarks>
         /// Handlebars.NET is a static library that returns an object to represent a compiled template.
         /// The templateObject provides a place to store that object within a new instance of HandlebarsTemplate.
