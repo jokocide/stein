@@ -3,6 +3,7 @@ using System.IO;
 using Stein.Models;
 using Stein.Interfaces;
 using Stein.Services;
+using System.Collections.Generic;
 
 namespace Stein.Routines
 {
@@ -28,13 +29,20 @@ namespace Stein.Routines
         /// </summary>
         public override void Execute()
         {
+            // Pulling the pages and collections in as a tuple allows me to generate both lists with one loop.
+            (List<string>, List<string>) content = PathService.GetPagesAndCollections(PathService.GetResourcesPath());
+
+            List<string> pages = content.Item1;
+            List<string> collections = content.Item2;
+
             // Most templates rely on partials, so assemble them first.
-            foreach (string path in PathService.PartialsFiles)
+            string[] partials = Directory.GetFiles(PathService.GetPartialsPath());
+            foreach (string path in partials)
                 Engine.RegisterPartial(path);
 
             // Populate the store with collection data that can be used to generate an Injectable, and
             // register each collection's items as a Writable while we are at it.
-            foreach (string path in PathService.CollectionsDirectories)
+            foreach (string path in collections)
             {
                 Collection collection = new(path);
                 Store.Register(collection);
@@ -53,10 +61,10 @@ namespace Stein.Routines
             // This Injectable object represents the result of serializing all collection
             // items together as dynamic objects, this is what provides template files with 
             // access to the iterable collections and data in stein.json.
-            Injectable injectable = Injectable.Assemble(Store, Config);
+            Injectable injectable = new(Store, Config);
 
             // With the Injectable in hand we can render the page files.
-            foreach (string path in PathService.PagesFiles)
+            foreach (string path in pages)
             {
                 Template page = Engine.CompileTemplate(path);
 
@@ -68,13 +76,13 @@ namespace Stein.Routines
             }
 
             // Cleaning up the old site directory.
-            if (Directory.Exists(PathService.SitePath))
-                Directory.Delete(PathService.SitePath, true);
+            if (Directory.Exists(PathService.GetSitePath()))
+                Directory.Delete(PathService.GetSitePath(), true);
 
             // Resynchronizing the static directory.
             PathService.Synchronize(
-                PathService.ResourcesStaticPath,
-                PathService.SiteStaticPath,
+                PathService.GetResourcesStaticPath(),
+                PathService.GetSiteStaticPath(),
                 true);
 
             // Writing the results out the project's site directory.

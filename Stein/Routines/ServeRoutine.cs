@@ -73,10 +73,10 @@ namespace Stein.Routines
                 StringService.Colorize($"({DateTime.Now:T}) ", ConsoleColor.Gray, false);
                 StringService.Colorize($"{context.Request.RawUrl} ", ConsoleColor.White, false);
 
-                if (File.Exists(Path.Join(PathService.SitePath, requestedFile)))
+                if (File.Exists(Path.Join(PathService.GetSitePath(), requestedFile)))
                 {
                     StringService.Colorize("200", ConsoleColor.Green, true);
-                    buffer = File.ReadAllBytes(Path.Join(PathService.SitePath, requestedFile));
+                    buffer = File.ReadAllBytes(Path.Join(PathService.GetSitePath(), requestedFile));
                     context.Response.StatusCode = 200;
 
                     string extension = Path.GetExtension(requestedFile);
@@ -116,7 +116,7 @@ namespace Stein.Routines
 
         private HttpListener Listener { get; } = new();
 
-        private FileSystemWatcher Watcher { get; } = new(PathService.ResourcesPath);
+        private FileSystemWatcher Watcher { get; } = new(PathService.GetResourcesPath());
 
         /// <summary>
         /// Temporarily store the name of files that have emitted an event 

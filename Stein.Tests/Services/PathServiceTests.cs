@@ -40,47 +40,5 @@ namespace Stein.Services.Tests
             Directory.Delete(testDirOne, true);
             Directory.Delete(testDirTwo, true);
         }
-
-        [Fact()]
-        public void IsProjectFalseTest()
-        {
-            string cd = Directory.GetCurrentDirectory();
-            Assert.False(PathService.IsProject(cd));
-        }
-
-        [Fact()]
-        public void IsProjectTrueTest()
-        {
-            string cd = Directory.GetCurrentDirectory();
-            string fileLocation = Path.Join(cd, "stein.json");
-
-            FileStream fileStream = File.Create(fileLocation);
-            fileStream.Close();
-
-            Assert.True(PathService.IsProject(Path.Join(cd)));
-
-            File.Delete(fileLocation);
-        }
-
-        [Theory()]
-        [MemberData(nameof(OutputFiles))]
-        public void GetOutputPathTest(FileInfo fileInfo, string expectedResult)
-        {
-            string result = PathService.GetOutputPath(fileInfo);
-            string fileName = Path.GetFileName(result);
-            string? directory = Path.GetFileName(Path.GetDirectoryName(result));
-
-            Assert.Equal(expectedResult, Path.Join(directory, fileName));
-        }
-
-        [Theory()]
-        [MemberData(nameof(IterableFiles))]
-        public void GetIterablePathTest(FileInfo fileInfo, string expectedResult)
-        {
-            string result = PathService.GetIterablePath(fileInfo);
-            string? directory = Path.GetFileName(Path.GetDirectoryName(result));
-
-            Assert.Equal(expectedResult, directory);
-        }
     }
 }
