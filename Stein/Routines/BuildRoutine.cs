@@ -7,7 +7,8 @@ using Stein.Services;
 namespace Stein.Routines
 {
     /// <summary>
-    /// Transforms the resources of a project into a finished site.
+    /// Represents a Routine that can be used to build the resources of a project into
+    /// a finished site.
     /// </summary>
     public sealed class BuildRoutine : Routine
     {
@@ -16,14 +17,14 @@ namespace Stein.Routines
         /// </summary>
         /// <param name="config">A Configuration object used to influence behavior of the routine.</param>
         /// <param name="engine">The desired templating engine.</param>
-        public BuildRoutine(Configuration config, IEngine engine) 
+        public BuildRoutine(Configuration config, IEngine engine)
         {
             Config = config;
             Engine = engine;
         }
 
         /// <summary>
-        /// Coordinates the execution of the routine.
+        /// Transforms the resources of a project into a finished site.
         /// </summary>
         public override void Execute()
         {

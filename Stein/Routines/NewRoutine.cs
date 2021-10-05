@@ -6,7 +6,8 @@ using Stein.Services;
 namespace Stein.Routines
 {
     /// <summary>
-    /// Scaffolds out new projects by creating directories and writing out a configuration file.
+    /// Represents a Routine that can be used to scaffold out common directories and
+    /// a new configuration file containing default values.
     /// </summary>
     public sealed class NewRoutine : Routine
     {
@@ -21,7 +22,7 @@ namespace Stein.Routines
             => SerializedConfiguration = serializedConfiguration;
 
         /// <summary>
-        /// Coordinates the execution of the routine.
+        /// Scaffold out new projects by creating directories and writing out a configuration file.
         /// </summary>
         public override void Execute()
         {

@@ -5,7 +5,8 @@ using Stein.Models;
 namespace Stein.Routines
 {
     /// <summary>
-    /// Displays command line usage information.
+    /// Represents a Routine that can be used to display helpful information about 
+    /// the command line interface.
     /// </summary>
     public sealed class HelpRoutine : Routine
     {
@@ -19,7 +20,7 @@ namespace Stein.Routines
         public HelpRoutine(HelpTopic topic = HelpTopic.General) => Topic = topic;
 
         /// <summary>
-        /// Coordinates the execution of the routine.
+        /// Display command line usage information.
         /// </summary>
         public override void Execute()
         {

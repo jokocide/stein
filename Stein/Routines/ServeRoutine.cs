@@ -10,7 +10,8 @@ using Stein.Services;
 namespace Stein.Routines
 {
     /// <summary>
-    /// Serves a project's site directory at a local address.
+    /// Represents a Routine that can be used to make a project available at localhost on 
+    /// any valid port number, and automatically rebuild the project when a change is detected.
     /// </summary>
     public sealed class ServeRoutine : Routine
     {
@@ -46,7 +47,7 @@ namespace Stein.Routines
         }
 
         /// <summary>
-        /// Coordinates the execution of the routine.
+        /// Serve a project at a local address.
         /// </summary>
         public override void Execute()
         {
