@@ -4,6 +4,7 @@ using Stein.Models;
 using Stein.Interfaces;
 using Stein.Services;
 using System.Collections.Generic;
+using Stein.Items;
 
 namespace Stein.Routines
 {
@@ -44,7 +45,7 @@ namespace Stein.Routines
             // register each collection's items as a Writable while we are at it.
             foreach (string path in collections)
             {
-                Collection collection = new(path);
+                Collection collection = new Collection(path);
                 Store.Register(collection);
 
                 foreach (Item item in collection.Items)
@@ -61,17 +62,29 @@ namespace Stein.Routines
             // This Injectable object represents the result of serializing all collection
             // items together as dynamic objects, this is what provides template files with 
             // access to the iterable collections and data in stein.json.
-            Injectable injectable = new(Store, Config);
+            Injectable injectable = new Injectable(Store, Config);
 
             // With the Injectable in hand we can render the page files.
             foreach (string path in pages)
             {
-                Template page = Engine.CompileTemplate(path);
+                Item item = Item.GetItem(path);
 
-                if (page == null)
-                    continue;
+                Writable writable = null;
 
-                Writable writable = Engine.RenderTemplate(page, injectable);
+                if (item != null)
+                {
+                    writable = Writable.GetWritable(item);
+                }
+                else
+                {
+                    Template page = Engine.CompileTemplate(path);
+
+                    if (page == null)
+                        continue;
+
+                    writable = Engine.RenderTemplate(page, injectable);
+                }
+
                 Store.Register(writable);
             }
 
@@ -98,7 +111,7 @@ namespace Stein.Routines
 
         private IEngine Engine { get; }
 
-        private Store Store { get; } = new();
+        private Store Store { get; } = new Store();
 
         private Configuration Config { get; }
     }

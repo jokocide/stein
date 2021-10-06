@@ -1,6 +1,7 @@
+using System;
 using System.IO;
 using HandlebarsDotNet;
-using Stein.Collections;
+using Stein.Items;
 using Stein.Services;
 
 namespace Stein.Models
@@ -101,9 +102,9 @@ namespace Stein.Models
         {
             string fileNameNoExtension = Path.GetFileNameWithoutExtension(file.Name);
             string relative = Path.GetRelativePath(PathService.GetResourcesPath(), file.FullName);
-            Configuration config = new Configuration().GetConfig();
+            // Configuration config = new Configuration().GetConfig();
 
-            if (relative == $"index.{config.Engine}")
+            if (fileNameNoExtension == "index")
             {
                 return Path.Join(PathService.GetSitePath(), "index.html");
             }

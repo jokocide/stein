@@ -1,7 +1,7 @@
-﻿using Stein.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using Stein.Services;
+using Stein.Items;
 
 namespace Stein.Models
 {
@@ -25,7 +25,7 @@ namespace Stein.Models
             Info = directoryInfo;
 
             FileInfo[] files = directoryInfo.GetFiles();
-            foreach (var path in files)
+            foreach (FileInfo path in files)
             {
                 if (PathService.IsIgnored(path.Name))
                     continue;
@@ -36,20 +36,17 @@ namespace Stein.Models
                     continue;
                 }
 
-                Item item = path.Extension switch
-                {
-                    ".md" => new MarkdownItem(path),
-                    _ => null
-                };
+                Item item = Item.GetItem(path);
 
                 if (item is not MarkdownItem)
                 {
-                    Message message = new($"Format unsupported: {path.Name}", Message.InfoType.Error);
+                    Message message = new Message($"Format unsupported: {path.Name}", Message.InfoType.Error);
                     Message.Log(message);
                     continue;
                 }
 
-                if (item.IsInvalid) continue;
+                if (item.IsInvalid)
+                    continue;
 
                 Items.Add(item);
             }
@@ -63,6 +60,6 @@ namespace Stein.Models
         /// <summary>
         /// The items associated with this collection.
         /// </summary>
-        public List<Item> Items { get; } = new();
+        public List<Item> Items { get; } = new List<Item>();
     }
 }

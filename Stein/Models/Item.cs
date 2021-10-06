@@ -1,4 +1,5 @@
-﻿using Stein.Services;
+﻿using Stein.Items;
+using Stein.Services;
 using System.Collections.Generic;
 using System.IO;
 
@@ -45,16 +46,25 @@ namespace Stein.Models
         /// <summary>
         /// Contains the issues that were discovered during processing.
         /// </summary>
-        public List<InvalidType> Issues { get; } = new();
+        public List<InvalidType> Issues { get; } = new List<InvalidType>();
+
+        public static Item GetItem(string path)
+        {
+            FileInfo info = new FileInfo(path);
+            return GetItem(info);
+        }
 
         /// <summary>
-        /// Record an issue with the object.
+        /// Create a new Item based on path.
         /// </summary>
-        /// <param name="type">Describes the nature of the issue.</param>
-        public void Invalidate(InvalidType type)
+        public static Item GetItem(FileInfo path)
         {
-            if (!IsInvalid) IsInvalid = true;
-            Issues.Add(type);
+            Item item = null;
+
+            if (path.Extension == ".md")
+                item = new MarkdownItem(path);
+
+            return item;
         }
 
         /// <summary>
@@ -71,6 +81,16 @@ namespace Stein.Models
             NoFrontmatter,
             TemplateNotFound,
             NoTemplate
+        }
+
+        /// <summary>
+        /// Record an issue with the object.
+        /// </summary>
+        /// <param name="type">Describes the nature of the issue.</param>
+        protected void Invalidate(InvalidType type)
+        {
+            if (!IsInvalid) IsInvalid = true;
+            Issues.Add(type);
         }
 
         protected Item(FileInfo fileInfo) => Info = fileInfo;

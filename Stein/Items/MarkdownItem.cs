@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Stein.Collections
+namespace Stein.Items
 {
     /// <summary>
     /// Represents an Item derived from a Markdown file.
@@ -26,7 +26,7 @@ namespace Stein.Collections
             if (String.IsNullOrEmpty(rawFile))
                 return;
 
-            YamlIndicators indicators = new(rawFile);
+            YamlIndicators indicators = new YamlIndicators(rawFile);
 
             if (indicators.NoYaml)
             {
@@ -77,13 +77,13 @@ namespace Stein.Collections
             return serializedItem;
         }
 
-        private Dictionary<string, string> Frontmatter { get; } = new();
+        private Dictionary<string, string> Frontmatter { get; } = new Dictionary<string, string>();
 
-        private string Body { get; set; }
+        public string Body { get; set; }
 
         private void PopulateFrontmatter(YamlIndicators indicators, string rawFile)
         {
-            Dictionary<string, string> rawPairs = new();
+            Dictionary<string, string> rawPairs = new Dictionary<string, string>();
 
             try
             {

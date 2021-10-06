@@ -151,7 +151,7 @@ namespace Stein.Services
                 else if (Directory.Exists(item))
                 {
                     collections.Add(item);
-                    GetPagesAndCollections(item, collections, pages);
+                    GetPagesAndCollections(item, pages, collections);
                 }
             }
 
