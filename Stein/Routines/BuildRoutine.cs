@@ -4,8 +4,6 @@ using Stein.Models;
 using Stein.Interfaces;
 using Stein.Services;
 using System.Linq;
-using System.Collections.Generic;
-using Stein.Items;
 
 namespace Stein.Routines
 {
@@ -51,19 +49,19 @@ namespace Stein.Routines
             {
                 Collection collection = new Collection(c);
                 Store.Register(collection);
-            
+
                 foreach (Item item in collection.Items)
                 {
                     Writable writable = Writable.GetWritable(item, Config, Engine);
-            
+
                     if (writable == null)
                         continue;
-            
+
                     Store.Register(writable);
                 }
-            } 
+            }
 
-            
+
 
             // This Injectable object represents the result of serializing all collection
             // items together as dynamic objects, this is what provides template files with 
@@ -73,46 +71,44 @@ namespace Stein.Routines
             // With the Injectable in hand we can render the page files.
             foreach (string c in pages)
             {
-                Item item = Item.GetItem(c);
-            
-                Writable writable = null;
-            
-                if (item != null)
-                {
-                    writable = Writable.GetWritable(item);
-                }
-                else
-                {
-                    Template page = Engine.CompileTemplate(c);
-            
-                    if (page == null)
-                        continue;
-            
-                    writable = Engine.RenderTemplate(page, injectable);
-                }
-            
+                Template page = Engine.CompileTemplate(c);
+
+                if (page == null)
+                    continue;
+
+                string result = Engine.RenderTemplate(page, injectable);
+                Writable writable = new Writable(new FileInfo(c), result);
+
+                if (writable == null)
+                    continue;
+
                 Store.Register(writable);
             }
 
+            foreach (Writable c in Store.Writable)
+            {
+                System.Console.WriteLine(c.Target);
+            }
+
             // Cleaning up the old site directory.
-            // if (Directory.Exists(PathService.GetSitePath()))
-            //     Directory.Delete(PathService.GetSitePath(), true);
+            if (Directory.Exists(PathService.GetSitePath()))
+                Directory.Delete(PathService.GetSitePath(), true);
 
             // Resynchronizing the static directory.
-            // PathService.Synchronize(
-            //     PathService.GetResourcesStaticPath(),
-            //     PathService.GetSiteStaticPath(),
-            //     true);
+            PathService.Synchronize(
+                PathService.GetResourcesStaticPath(),
+                PathService.GetSiteStaticPath(),
+                true);
 
             // Writing the results out the project's site directory.
-            // foreach (Writable writable in Store.Writable)
-            // {
-            //     Writable.Write(writable);
-            // }
+            foreach (Writable writable in Store.Writable)
+            {
+                Writable.Write(writable);
+            }
             //
-            // StringService.Colorize($"({DateTime.Now:T}) ", ConsoleColor.Gray, false);
-            // StringService.Colorize($"Built project ", ConsoleColor.White, false);
-            // StringService.Colorize($"'{new DirectoryInfo(Directory.GetCurrentDirectory()).Name}' ", ConsoleColor.Gray, true);
+            StringService.Colorize($"({DateTime.Now:T}) ", ConsoleColor.Gray, false);
+            StringService.Colorize($"Built project ", ConsoleColor.White, false);
+            StringService.Colorize($"'{new DirectoryInfo(Directory.GetCurrentDirectory()).Name}' ", ConsoleColor.Gray, true);
         }
 
         private IEngine Engine { get; }
