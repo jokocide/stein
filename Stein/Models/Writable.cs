@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using HandlebarsDotNet;
+using Stein.Interfaces;
 using Stein.Items;
 using Stein.Services;
 
@@ -47,33 +48,14 @@ namespace Stein.Models
         /// <summary>
         /// Create a new Writable object from item.
         /// </summary>
-        public static Writable GetWritable(Item item)
-        {
-            Writable writable;
-
-            switch (item)
-            {
-                case MarkdownItem markdownItem:
-                    writable = GetWritable(markdownItem);
-                    break;
-                default:
-                    writable = null;
-                    break;
-            }
-
-            return writable;
-        }
-
-        private static Writable GetWritable(MarkdownItem item)
+        public static Writable GetWritable(Item item, Configuration config, IEngine engine)
         {
             if (item.Template == null)
                 return null;
 
-            string rawTemplate;
             string commonPath = Path.Join(PathService.GetTemplatesPath(), item.Template);
 
             string resolvedPath;
-            FileStream stream;
 
             if (Path.HasExtension(item.Template))
             {
@@ -81,21 +63,15 @@ namespace Stein.Models
             }
             else
             {
-                resolvedPath = commonPath + ".hbs";
+                resolvedPath = commonPath + $".{config.Engine}";
             }
-
-            stream = File.Open(resolvedPath, FileMode.Open, FileAccess.Read, FileShare.Read);
-
-            StreamReader reader = new StreamReader(stream);
-            rawTemplate = reader.ReadToEnd();
-
-            stream.Close();
 
             SerializedItem injectable = item.Serialize();
 
-            var compiledTemplate = Handlebars.Compile(rawTemplate);
-            string renderedTemplate = compiledTemplate(injectable);
-            return new Writable(item.Info, renderedTemplate);
+            var compiledTemplate = engine.CompileTemplate(resolvedPath);
+            string result = engine.RenderTemplate(compiledTemplate, injectable);
+            
+            return new Writable(item.Info, result);
         }
 
         private static string GetOutputPath(FileInfo file)

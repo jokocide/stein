@@ -38,13 +38,23 @@ namespace Stein.Engines
         /// Render a Template object into a Writable.
         /// </summary>
         /// <param name="injectable">Data to be injected into the template.</param>
-        public Writable RenderTemplate(Template template, Injectable injectable)
+        public string RenderTemplate(Template template, Injectable injectable)
         {
             if (template is HandlebarsTemplate castedTemplate)
             {
                 var castedObject = (HandlebarsTemplate<object, object>)castedTemplate.TemplateObject;
-                string result = castedObject(injectable.Items);
-                return new Writable(castedTemplate.Info, result);
+                return castedObject(injectable.Items);
+            }
+
+            return null;
+        }
+
+        public string RenderTemplate(Template template, SerializedItem serializedItem)
+        {
+            if (template is HandlebarsTemplate castedTemplate)
+            {
+                var castedObject = (HandlebarsTemplate<object, object>)castedTemplate.TemplateObject;
+                return castedObject(serializedItem);
             }
 
             return null;

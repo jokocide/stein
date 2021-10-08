@@ -47,21 +47,26 @@ namespace Stein.Routines
 
             // Populate the store with collection data that can be used to generate an Injectable, and
             // register each collection's items as a Writable while we are at it.
-            // foreach (string path in collections)
-            // {
-            //     Collection collection = new Collection(path);
-            //     Store.Register(collection);
+            foreach (string c in collections)
+            {
+                Collection collection = new Collection(c);
+                Store.Register(collection);
             
-            //     foreach (Item item in collection.Items)
-            //     {
-            //         Writable writable = Writable.GetWritable(item);
+                foreach (Item item in collection.Items)
+                {
+                    Writable writable = Writable.GetWritable(item, Config, Engine);
             
-            //         if (writable == null)
-            //             continue;
+                    if (writable == null)
+                        continue;
             
-            //         Store.Register(writable);
-            //     }
-            // }
+                    Store.Register(writable);
+                }
+            } 
+
+            foreach (Writable e in Store.Writable)
+            {
+                System.Console.WriteLine(e.Target);
+            }
 
             // This Injectable object represents the result of serializing all collection
             // items together as dynamic objects, this is what provides template files with 
