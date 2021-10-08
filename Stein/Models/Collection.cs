@@ -23,8 +23,8 @@ namespace Stein.Models
         public Collection(DirectoryInfo directoryInfo)
         {
             Info = directoryInfo;
-
             FileInfo[] files = directoryInfo.GetFiles();
+
             foreach (FileInfo path in files)
             {
                 if (PathService.IsIgnored(path.Name))

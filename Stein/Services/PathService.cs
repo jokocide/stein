@@ -113,49 +113,17 @@ namespace Stein.Services
         public static bool IsIgnored(string path)
         {
             string name = Path.GetFileName(path);
+            string dir = Path.GetFileName(Path.GetDirectoryName(path));
 
             if (name == "static" || name == "templates" || name == "partials")
+                return true;
+
+            if (dir == "static" || dir == "templates" || dir == "partials")
                 return true;
 
             if (name.StartsWith("_")) return true;
 
             return false;
-        }
-
-        /// <summary>
-        /// Return two organized lists of the pages and collections available within a project.
-        /// </summary>
-        /// <param name="path">The directory to be searched.</param>
-        /// <param name="pages">Contains the page files during recursion.</param>
-        /// <param name="collections">Contains the collection directories during recursion.</param>
-        /// <returns>
-        /// A tuple where Item1 represents the pages and Item2 represents the collections.
-        /// </returns>
-        public static (List<string> pages, List<string> collections) GetPagesAndCollections(
-            string path,
-            List<string> pages = null,
-            List<string> collections = null)
-        {
-            pages ??= new();
-            collections ??= new();
-
-            string[] filesDirs = Directory.GetFileSystemEntries(path);
-            foreach (string item in filesDirs)
-            {
-                if (IsIgnored(item))
-                    continue;
-
-                if (File.Exists(item))
-                    pages.Add(item);
-
-                else if (Directory.Exists(item))
-                {
-                    collections.Add(item);
-                    GetPagesAndCollections(item, pages, collections);
-                }
-            }
-
-            return (pages, collections);
         }
     }
 }
