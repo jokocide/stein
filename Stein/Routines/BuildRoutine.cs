@@ -63,39 +63,36 @@ namespace Stein.Routines
                 }
             } 
 
-            foreach (Writable e in Store.Writable)
-            {
-                System.Console.WriteLine(e.Target);
-            }
+            
 
             // This Injectable object represents the result of serializing all collection
             // items together as dynamic objects, this is what provides template files with 
             // access to the iterable collections and data in stein.json.
-            // Injectable injectable = new Injectable(Store, Config);
+            Injectable injectable = new Injectable(Store, Config);
 
             // With the Injectable in hand we can render the page files.
-            // foreach (string path in pages)
-            // {
-            //     Item item = Item.GetItem(path);
-            //
-            //     Writable writable = null;
-            //
-            //     if (item != null)
-            //     {
-            //         writable = Writable.GetWritable(item);
-            //     }
-            //     else
-            //     {
-            //         Template page = Engine.CompileTemplate(path);
-            //
-            //         if (page == null)
-            //             continue;
-            //
-            //         writable = Engine.RenderTemplate(page, injectable);
-            //     }
-            //
-            //     Store.Register(writable);
-            // }
+            foreach (string c in pages)
+            {
+                Item item = Item.GetItem(c);
+            
+                Writable writable = null;
+            
+                if (item != null)
+                {
+                    writable = Writable.GetWritable(item);
+                }
+                else
+                {
+                    Template page = Engine.CompileTemplate(c);
+            
+                    if (page == null)
+                        continue;
+            
+                    writable = Engine.RenderTemplate(page, injectable);
+                }
+            
+                Store.Register(writable);
+            }
 
             // Cleaning up the old site directory.
             // if (Directory.Exists(PathService.GetSitePath()))

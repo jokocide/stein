@@ -63,6 +63,8 @@ namespace Stein.Models
 
             if (path.Extension == ".md")
                 item = new MarkdownItem(path);
+            if (path.Extension == ".json")
+                item = new JsonItem(path);
 
             return item;
         }
@@ -93,7 +95,12 @@ namespace Stein.Models
             Issues.Add(type);
         }
 
-        protected Item(FileInfo fileInfo) => Info = fileInfo;
+        protected Item(FileInfo fileInfo)
+        {
+            Info = fileInfo;
+            Link = GetIterablePath(Info);
+            Slug = StringService.Slugify(Path.GetFileNameWithoutExtension(Info.Name));
+        }
 
         protected static string GetIterablePath(FileInfo file)
         {

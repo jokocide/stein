@@ -9,10 +9,6 @@ namespace Stein.Models
     /// </summary>
     public class Injectable
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
         public Dictionary<string, object> Items { get; } = new();
 
         /// <summary>

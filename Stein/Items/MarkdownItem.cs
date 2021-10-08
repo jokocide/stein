@@ -18,9 +18,6 @@ namespace Stein.Items
         /// </summary>
         public MarkdownItem(FileInfo fileInfo) : base(fileInfo)
         {
-            Link = GetIterablePath(Info);
-            Slug = StringService.Slugify(Path.GetFileNameWithoutExtension(Info.Name));
-
             string rawFile = PathService.ReadAllSafe(Info.FullName);
 
             if (String.IsNullOrEmpty(rawFile))
