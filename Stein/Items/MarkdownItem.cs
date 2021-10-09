@@ -40,12 +40,6 @@ namespace Stein.Items
                 return;
 
             PopulateFrontmatter(indicators, rawFile);
-
-            if (Template == null)
-            {
-                Message.Log(Message.NoTemplateKey(Info));
-                return;
-            }
         }
 
         /// <summary>

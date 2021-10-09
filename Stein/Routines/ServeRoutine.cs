@@ -132,6 +132,7 @@ namespace Stein.Routines
             if (e.ChangeType == WatcherChangeTypes.Changed)
             {
                 new BuildRoutine(Config, Engine).Execute();
+                Message.Print();
             }
 
             Timer timer = new Timer(100) { AutoReset = false };

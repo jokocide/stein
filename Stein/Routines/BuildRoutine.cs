@@ -49,7 +49,7 @@ namespace Stein.Routines
             {
                 Collection collection = new Collection(c);
                 Store.Register(collection);
-
+                
                 foreach (Item item in collection.Items)
                 {
                     Writable writable = Writable.GetWritable(item, Config, Engine);
@@ -60,8 +60,6 @@ namespace Stein.Routines
                     Store.Register(writable);
                 }
             }
-
-
 
             // This Injectable object represents the result of serializing all collection
             // items together as dynamic objects, this is what provides template files with 
@@ -83,11 +81,6 @@ namespace Stein.Routines
                     continue;
 
                 Store.Register(writable);
-            }
-
-            foreach (Writable c in Store.Writable)
-            {
-                System.Console.WriteLine(c.Target);
             }
 
             // Cleaning up the old site directory.

@@ -34,12 +34,6 @@ namespace Stein.Items
                 else
                     Data.Add(key, value);
             }
-
-            if (Template == null)
-            {
-                Message.Log(Message.NoTemplateKey(Info));
-                return;
-            }
         }
 
         /// <summary>
