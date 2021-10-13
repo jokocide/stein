@@ -22,7 +22,7 @@ namespace Stein.Interfaces
         /// Render a compiled Template with the given Injectable.
         /// </summary>
         public string RenderTemplate(Template template, Injectable injectable = null);
-
+        
         public string RenderTemplate(Template template, SerializedItem serializedItem = null);
     }
 }

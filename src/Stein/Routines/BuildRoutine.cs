@@ -61,6 +61,26 @@ namespace Stein.Routines
                 }
             }
 
+            // Catch non-template files that are not in a collection.
+            string[] looseFiles = Directory.GetFiles(PathService.GetResourcesPath(), "")
+                .Where(item => !PathService.IsIgnored(item))
+                .ToArray<string>();
+
+            foreach (string c in looseFiles)
+            {
+                Item item = Item.GetItem(c);
+
+                if (item == null)
+                    continue;
+
+                Writable writable = Writable.GetWritable(item, Config, Engine);
+
+                if (writable == null)
+                    continue;
+
+                Store.Register(writable);
+            }
+
             // This Injectable object represents the result of serializing all collection
             // items together as dynamic objects, this is what provides template files with 
             // access to the iterable collections and data in stein.json.
