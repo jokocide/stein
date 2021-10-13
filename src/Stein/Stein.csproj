@@ -9,18 +9,15 @@
     <TargetFramework>net5.0</TargetFramework>
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>stein</ToolCommandName>
-    <PackageOutputPath>../Package</PackageOutputPath>
+    <PackageOutputPath>../../package</PackageOutputPath>
     <RootNamespace>Stein</RootNamespace>
-    <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <PackageIcon>stein_logo_normal.png</PackageIcon>
+    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+    <PackageIcon>logo.png</PackageIcon>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="StyleCop.Analyzers" />
-  </ItemGroup>
-  <ItemGroup>
-      <None Include="../LICENSE" Pack="true" PackagePath="" />
-      <None Include="../stein_logo_normal.png" Pack="true" PackagePath="" />
+      <None Include="../../LICENSE.md" Pack="true" PackagePath="" />
+      <None Include="../../logo.png" Pack="true" PackagePath="" />
   </ItemGroup>
   
   <ItemGroup>

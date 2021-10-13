@@ -2,8 +2,8 @@ PROJECT_NAME ?= Stein
 
 .PHONY: build install uninstall reinstall build-install build-reinstall
 
-build:
-	nuget locals all -clear && dotnet pack
+pack:
+	nuget locals all -clear && dotnet pack ./src
 
 install:
 	dotnet tool install -g --add-source ./Package stein
@@ -14,8 +14,8 @@ uninstall:
 reinstall:
 	make uninstall && make install
 
-build-install:
-	make build && make install
+build:
+	dotnet run --project ./src/stein build ../jokoci.de
 
-build-reinstall:
-	make build && make reinstall
+serve:
+	dotnet run --project ./src/stein serve ../jokoci.de
