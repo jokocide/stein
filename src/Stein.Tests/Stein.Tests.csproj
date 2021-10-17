@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Stein\Stein.csproj" />
+    <ProjectReference Include="..\Stein.Console\Stein.Console.csproj" />
   </ItemGroup>
 
 </Project>
