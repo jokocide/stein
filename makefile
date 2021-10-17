@@ -6,16 +6,16 @@ pack:
 	nuget locals all -clear && dotnet pack ./src
 
 install:
-	dotnet tool install -g --add-source ./Package stein
+	dotnet tool install -g --add-source ./Package Stein
 
 uninstall:
-	dotnet tool uninstall stein -g
+	dotnet tool uninstall Stein -g
 
 reinstall:
 	make uninstall && make install
 
 build:
-	dotnet run --project ./src/stein build ../jokoci.de
+	dotnet run --project ./src/Stein.Console build ../jokoci.de
 
 serve:
-	dotnet run --project ./src/stein serve ../jokoci.de
+	dotnet run --project ./src/Stein.Console serve ../jokoci.de

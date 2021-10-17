@@ -1,9 +1,8 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31624.102
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Stein", "Stein\Stein.csproj", "{26EEA9FD-4FB3-4A99-AA43-B5F986043140}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Stein.Console", "Stein.Console\Stein.Console.csproj", "{26EEA9FD-4FB3-4A99-AA43-B5F986043140}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Stein.Tests", "Stein.Tests\Stein.Tests.csproj", "{C7EAA018-45FA-4B40-8273-DBE15AF68982}"
 EndProject
