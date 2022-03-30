@@ -2,11 +2,11 @@
 
   <PropertyGroup>
     <PackageId>Stein</PackageId>
-    <Version>0.1.5</Version>
+    <Version>0.1.6</Version>
     <Authors>Jonathan Koenig</Authors>
     <Description>A patchwork static site generator.</Description>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>stein</ToolCommandName>
     <PackageOutputPath>../../package</PackageOutputPath>
@@ -19,8 +19,8 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="Handlebars.Net" Version="2.0.9" />
-    <PackageReference Include="Markdig" Version="0.26.0" />
+    <PackageReference Include="Handlebars.Net" Version="2.1.1" />
+    <PackageReference Include="Markdig" Version="0.28.1" />
   </ItemGroup>
 
 </Project>
