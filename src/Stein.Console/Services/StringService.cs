@@ -8,6 +8,48 @@ namespace Stein.Services
     public static class StringService
     {
         /// <summary>
+        /// Print text with the specified color.
+        /// </summary>
+        /// <param name="text">The desired text output.</param>
+        /// <param name="color">The desired color of text.<param>
+        public static void Colorize(string text, ConsoleColor color)
+        {
+            Console.ForegroundColor = color;
+            Console.Write(text);
+            Console.ResetColor();
+        }
+        
+        /// <summary>
+        /// Print text with the specified color, followed by a newline.
+        /// </summary>
+        /// <param name="text">The desired text output.</param>
+        /// <param name="color">The desired color of text.<param>
+        public static void ColorizeLine(string text, ConsoleColor color)
+        {
+            Console.ForegroundColor = color;
+            Console.WriteLine(text);
+            Console.ResetColor();
+        }
+
+        /// <summary>
+        /// Print text in bold using ASCII escape sequences, with no newline.
+        /// </summary>
+        /// <param name="text">The desired text output.</param>
+        public static void Bold(string text)
+        {
+            Console.Write($"\x1b[1m{text}\x1b[0m");
+        }
+
+        /// <summary>
+        /// Print text in bold using ASCII escape sequences, followed by a newline.
+        /// </summary>
+        /// <param name="text">The desired text output.</param>
+        public static void BoldLine(string text)
+        {
+            Console.WriteLine($"\x1b[1m{text}\x1b[0m");
+        }
+
+        /// <summary>
         /// Return the string between the starting and ending indices.
         /// </summary>
         /// <param name="startIndex">
@@ -27,28 +69,6 @@ namespace Stein.Services
         }
 
         /// <summary>
-        /// Print text with the specified 
-        /// </summary>
-        /// <param name="text">The desired output.</param>
-        /// <param name="color">The desired color.<param>
-        /// <param name="newLine">Determines if a new line will be printed after the text.</param>
-        public static void Colorize(string text, ConsoleColor color, bool newLine)
-        {
-            Console.ForegroundColor = color;
-
-            if (newLine)
-            {
-                Console.WriteLine(text);
-            }
-            else
-            {
-                Console.Write(text);
-            }
-
-            Console.ResetColor();
-        }
-
-        /// <summary>
         /// Return a slug representation of text.
         /// </summary>
         /// <returns>Returns a lowercase string where whitespace has been replaced with a hyphen.</returns>
@@ -61,7 +81,10 @@ namespace Stein.Services
         /// <summary>
         /// Return a camel case representation of text.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>
+        /// A string where all whitespace is removed and the first character of every 
+        /// word except the first is capitalized.
+        /// </returns>
         public static string Camelize(string text)
         {
             text = Squash(text);
@@ -75,7 +98,10 @@ namespace Stein.Services
         /// <summary>
         /// Return a pascal case representation of text.
         /// </summary>
-        /// <returns>A string where </returns>
+        /// <returns>
+        /// A string where all whitespace is removed and the first character of every
+        /// word is capitalized.
+        /// </returns>
         public static string Pascalize(string text)
         {
             text = Squash(text);

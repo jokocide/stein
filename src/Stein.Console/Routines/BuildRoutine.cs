@@ -118,10 +118,8 @@ namespace Stein.Routines
             {
                 Writable.Write(writable);
             }
-            //
-            StringService.Colorize($"({DateTime.Now:T}) ", ConsoleColor.Gray, false);
-            StringService.Colorize($"Built project ", ConsoleColor.White, false);
-            StringService.Colorize($"'{new DirectoryInfo(Directory.GetCurrentDirectory()).Name}' ", ConsoleColor.Gray, true);
+
+            Console.WriteLine($"Built project {new DirectoryInfo(Directory.GetCurrentDirectory()).Name}");
         }
 
         private IEngine Engine { get; }

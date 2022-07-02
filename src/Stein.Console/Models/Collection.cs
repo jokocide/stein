@@ -40,7 +40,7 @@ namespace Stein.Models
 
                 if (item is not MarkdownItem && item is not JsonItem)
                 {
-                    Message message = new Message($"Format unsupported: {path.Name}", Message.InfoType.Error);
+                    Message message = new Message($"Format unsupported: {path.Name}", Message.InfoType.Warning);
                     Message.Log(message);
                     continue;
                 }

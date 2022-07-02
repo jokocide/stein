@@ -52,11 +52,7 @@ namespace Stein.Routines
         public override void Execute()
         {
             Listener.Start();
-
-            string projectName = Path.GetFileName(Directory.GetCurrentDirectory());
-            StringService.Colorize($"({DateTime.Now:T}) ", ConsoleColor.Gray, false);
-            StringService.Colorize($"Serving {projectName} ", ConsoleColor.White, false);
-            StringService.Colorize($"on http://localhost:{Port}", ConsoleColor.White, true);
+            Console.WriteLine($"Serving {Path.GetFileName(Directory.GetCurrentDirectory())} on http://localhost:{Port}");
 
             while (true)
             {
@@ -70,12 +66,12 @@ namespace Stein.Routines
                     ? Path.Join(context.Request.RawUrl, "index.html")
                     : context.Request.RawUrl;
 
-                StringService.Colorize($"({DateTime.Now:T}) ", ConsoleColor.Gray, false);
-                StringService.Colorize($"{context.Request.RawUrl} ", ConsoleColor.White, false);
+                StringService.Colorize($"({DateTime.Now:T}) ", ConsoleColor.Gray);
+                StringService.Colorize($"{context.Request.RawUrl} ", ConsoleColor.White);
 
                 if (File.Exists(Path.Join(PathService.GetSitePath(), requestedFile)))
                 {
-                    StringService.Colorize("200", ConsoleColor.Green, true);
+                    StringService.ColorizeLine("200", ConsoleColor.Green);
                     buffer = File.ReadAllBytes(Path.Join(PathService.GetSitePath(), requestedFile));
                     context.Response.StatusCode = 200;
 
@@ -100,7 +96,7 @@ namespace Stein.Routines
                 }
                 else
                 {
-                    StringService.Colorize("404", ConsoleColor.Red, true);
+                    StringService.ColorizeLine("404", ConsoleColor.Red);
                     context.Response.StatusCode = 404;
                 }
 

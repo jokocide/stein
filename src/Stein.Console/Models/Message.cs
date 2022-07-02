@@ -157,10 +157,10 @@ namespace Stein.Models
             if (message.Type == Message.InfoType.Warning && new Configuration().GetConfig().SilenceWarnings)
                 return;
 
-            if (message.Type == Message.InfoType.Error) StringService.Colorize("Error: ", ConsoleColor.Red, false);
-            else if (message.Type == Message.InfoType.Warning) StringService.Colorize("Warning: ", ConsoleColor.Yellow, false);
+            if (message.Type == Message.InfoType.Error) StringService.Colorize("Error: ", ConsoleColor.DarkRed);
+            else if (message.Type == Message.InfoType.Warning) StringService.Colorize("Warning: ", ConsoleColor.DarkYellow);
 
-            StringService.Colorize(message.Text, ConsoleColor.Gray, true);
+            Console.WriteLine(message.Text);
             Messages.Remove(message);
         }
     }

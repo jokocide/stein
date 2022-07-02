@@ -32,12 +32,12 @@ namespace Stein.Routines
             Directory.CreateDirectory(Path.Join("resources", "templates", "partials"));
             Directory.CreateDirectory("site");
             
-            StringService.Colorize($"({DateTime.Now:T}) ", ConsoleColor.Gray, false);
-            StringService.Colorize("Created project ", ConsoleColor.White, false);
+            StringService.Colorize($"({DateTime.Now:T}) ", ConsoleColor.Gray);
+            StringService.Colorize("Created project ", ConsoleColor.White);
 
             string projectName = Path.GetFileName(Directory.GetCurrentDirectory());
 
-            StringService.Colorize($"'{projectName}'", ConsoleColor.Gray, true);
+            StringService.ColorizeLine($"'{projectName}'", ConsoleColor.Gray);
         }
 
         private string SerializedConfiguration { get; }
