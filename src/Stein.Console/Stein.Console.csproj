@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <PackageId>Stein</PackageId>
-    <Version>0.1.6</Version>
+    <Version>0.2.0</Version>
     <Authors>Jonathan Koenig</Authors>
     <Description>A patchwork static site generator.</Description>
     <OutputType>Exe</OutputType>
