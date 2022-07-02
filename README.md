@@ -1,3 +1,1 @@
-Patchwork static site generator.
-
-Documentation available at https://stein.jokoci.de/.
+Project is under construction.
