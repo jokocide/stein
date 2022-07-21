@@ -89,10 +89,15 @@ namespace Stein.Routines
             // With the Injectable in hand we can render the page files.
             foreach (string c in pages)
             {
-                Template page = Engine.CompileTemplate(c);
+                Template page = null;
+
+                page = Engine.CompileTemplate(c);
 
                 if (page == null)
+                {
+                    Message.Log(Message.InvalidTemplate(new FileInfo(c)));
                     continue;
+                }
 
                 string result = Engine.RenderTemplate(page, injectable);
                 Writable writable = new Writable(new FileInfo(c), result);

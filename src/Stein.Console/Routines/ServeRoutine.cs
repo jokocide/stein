@@ -66,12 +66,8 @@ namespace Stein.Routines
                     ? Path.Join(context.Request.RawUrl, "index.html")
                     : context.Request.RawUrl;
 
-                StringService.Colorize($"({DateTime.Now:T}) ", ConsoleColor.Gray);
-                StringService.Colorize($"{context.Request.RawUrl} ", ConsoleColor.White);
-
                 if (File.Exists(Path.Join(PathService.GetSitePath(), requestedFile)))
                 {
-                    StringService.ColorizeLine("200", ConsoleColor.Green);
                     buffer = File.ReadAllBytes(Path.Join(PathService.GetSitePath(), requestedFile));
                     context.Response.StatusCode = 200;
 
@@ -96,7 +92,8 @@ namespace Stein.Routines
                 }
                 else
                 {
-                    StringService.ColorizeLine("404", ConsoleColor.Red);
+                    Console.Write($"{context.Request.RawUrl} ");
+                    StringService.ColorizeLine("404", ConsoleColor.DarkRed);
                     context.Response.StatusCode = 404;
                 }
 
