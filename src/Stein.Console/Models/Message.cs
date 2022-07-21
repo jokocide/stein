@@ -45,6 +45,12 @@ namespace Stein.Models
         public static Message NoTemplateKey(FileInfo fileInfo) => new($"No template key: {fileInfo.Name}", InfoType.Warning);
 
         /// <summary>
+        /// Return a new instance of the Message class to indicate that the template is invalid.
+        /// </summary>
+        /// <param name="fileInfo">A FileInfo object derived from the template file.</param>
+        public static Message InvalidTemplate(FileInfo fileInfo) => new($"Invalid template: {fileInfo.Name}", InfoType.Error);
+
+        /// <summary>
         /// Return a new instance of the Message class to indicate that the path provided to the routine does
         /// not lead to a valid project.
         /// </summary>

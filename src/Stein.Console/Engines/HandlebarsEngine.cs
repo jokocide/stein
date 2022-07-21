@@ -28,8 +28,17 @@ namespace Stein.Engines
             string ext = Path.GetExtension(path);
             if (ext != ".hbs") return null;
 
+            HandlebarsTemplate<object, object> templateObject = null;
+
             string text = PathService.ReadAllSafe(path);
-            var templateObject = Handlebars.Compile(text);
+            try
+            {
+                templateObject = Handlebars.Compile(text);
+            }
+            catch
+            {
+                return null;
+            }
 
             return new HandlebarsTemplate(new FileInfo(path), templateObject);
         }
