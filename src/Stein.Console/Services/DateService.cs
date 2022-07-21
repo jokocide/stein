@@ -21,12 +21,55 @@ namespace Stein.Services
         }
 
         /// <summary>
+        /// Rearrange a string that contains a date based on user preference.
+        /// </summary>
+        /// <param name="date">The current date string from Item.</param>
+        public static string Format(string date)
+        {
+            DateTime dateTime;
+            
+            try
+            {
+                dateTime = DateTime.Parse(date);
+            }
+            catch (ArgumentNullException)
+            {
+                return null;
+            }
+
+            int year = dateTime.Year;
+            int month = dateTime.Month;
+            int day = dateTime.Day;
+
+            string dateConfig = ConfigurationService.Config.DateFormat;
+
+            int yearStart = dateConfig.IndexOf("year");
+            string yearResult = dateConfig.Remove(yearStart, 4).Insert(yearStart, dateTime.Year.ToString());
+
+            int monthStart = yearResult.IndexOf("month");
+            string monthResult = yearResult.Remove(monthStart, 5).Insert(monthStart, dateTime.Month.ToString());
+
+            int dayStart = monthResult.IndexOf("day");
+            string dayResult = monthResult.Remove(dayStart, 3).Insert(dayStart, dateTime.Day.ToString());
+
+            return dayResult;
+        }
+
+        /// <summary>
         /// Defines the available sort methods.
         /// </summary>
         public enum SortMethod
         {
             LatestDate,
             EarliestDate
+        }
+
+        /// <summary>
+        /// Defines the available date formats.
+        /// </summary>
+        public enum FormatModifier
+        {
+            Alpha
         }
 
         private static int LatestDateComparison(Item x, Item y)

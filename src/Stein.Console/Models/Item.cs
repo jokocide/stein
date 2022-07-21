@@ -28,7 +28,14 @@ namespace Stein.Models
         /// <summary>
         /// Contains the date derived from the frontmatter.
         /// </summary>
-        public string Date { get; set; }
+        public string Date 
+        { 
+            get { return _date; }
+            set
+            {
+                _date = DateService.Format(value);
+            }
+        }
 
         /// <summary>
         /// Indicates the status of the object.
@@ -47,6 +54,8 @@ namespace Stein.Models
         /// Contains the issues that were discovered during processing.
         /// </summary>
         public List<InvalidType> Issues { get; } = new List<InvalidType>();
+
+        private string _date;
 
         public static Item GetItem(string path)
         {
