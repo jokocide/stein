@@ -38,6 +38,11 @@ namespace Stein.Models
         public string Engine { get; set; } = "hbs";
 
         /// <summary>
+        /// Defines the desired date format.
+        /// </summary>
+        public string DateFormat { get; set; }
+
+        /// <summary>
         /// Return a Configuration object based on the data derived from a stein.json file 
         /// in the current directory.
         /// </summary>
